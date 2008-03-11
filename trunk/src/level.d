@@ -38,11 +38,11 @@ private class Chunk
 
     void compile()
     {
-        uidDisplayList = glGenLists(1);
-        if (uidDisplayList == 0)
-            throw new Exception("Failed to create display list");
+//         uidDisplayList = glGenLists(1);
+//         if (uidDisplayList == 0)
+//             throw new Exception("Failed to create display list");
 
-        glNewList(uidDisplayList, GL_COMPILE);
+//         glNewList(uidDisplayList, GL_COMPILE);
         for(int y=y0+h-1; y >= y0; -- y)
         {
             for(int x=x0+w-1; x >= x0; -- x)
@@ -50,15 +50,15 @@ private class Chunk
                 level.getTile(x,y).compile();
             }
         }
-        glEndList();
+//         glEndList();
     }
 
     void draw()
     {
-        if(uidDisplayList == 0)
+//         if(uidDisplayList == 0)
             compile();
 
-        glCallList(uidDisplayList);
+//         glCallList(uidDisplayList);
     }
 }
 
