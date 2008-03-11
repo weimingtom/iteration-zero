@@ -129,9 +129,9 @@ class Engine
         while (_running) {
             // clear the screen. by default it clears to black
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            _updateStates();
             // draw our stuff =)
             _pipeline.render();
+            _updateStates();
             // swap the buffers, making our backbuffer the visible one
             SDL_GL_SwapBuffers();
 
