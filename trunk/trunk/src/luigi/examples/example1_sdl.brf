@@ -1,0 +1,16 @@
+# Change the -I paths below to point to the directories in
+# which the files reside on your system.
+# Then compile by using
+#   'bud @example1_gld'
+# Note I use a custom verison of bud that supports environment
+# variables.  Current bud version 3.04 does not have this feature.
+-release
+-full
+-cleanup
+-version=useDerelict
+-I$(DMDDIR)\baxissimo
+-I$(DMDDIR)\dmd\import
+-I$(DMDDIR)\dmd\import\derelict\DerelictGL
+-I$(DMDDIR)\dmd\import\derelict\DerelictUtil
+-I$(DMDDIR)\dmd\import\derelict\DerelictSDL
+example1_sdl.d
