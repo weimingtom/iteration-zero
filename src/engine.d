@@ -9,10 +9,8 @@ import derelict.sdl.sdl;
 import derelict.sdl.keysym;
 import derelict.sdl.image;
 import derelict.opengl.gl;
+import derelict.opengl.glext;
 import derelict.opengl.glu;
-
-import derelict.sdl.sdl;
-import derelict.opengl.gl;
 
 import texture;
 import pipeline;
@@ -116,17 +114,10 @@ class Engine
     Setup some basic OpenGL parameters
     */
     void setupGL() {
+        EXTBlendColor.load ("GL_EXT_blend_color");
+        ARBTextureNonPowerOfTwo.load ("GL_ARB_texture_non_power_of_two");
+
         glEnable (GL_DEPTH_TEST);
-        // switch to the projection mode matrix
-/+        glMatrixMode(GL_PROJECTION);
-        // load the identity matrix for projection
-        glLoadIdentity();
-        // setup a perspective projection matrix
-        gluPerspective(_fov, cast(float)_xResolution / _yResolution, _nearPlane, _farPlane);
-        // switch back to the modelview transformation matrix
-        glMatrixMode(GL_MODELVIEW);
-        // load the identity matrix for modelview
-        glLoadIdentity();+/
     }
 
     void mainLoop()

@@ -5,6 +5,7 @@ import std.stdio;
 import derelict.sdl.sdl;
 import derelict.sdl.image;
 import derelict.opengl.gl;
+import derelict.opengl.glext : ARBTextureNonPowerOfTwo;
 import derelict.opengl.glu;
 
 import util;
@@ -57,9 +58,18 @@ public:
         // store the original width and height
         Uint32 orig_w = image.w;
         Uint32 orig_h = image.h;
-        // calculate nearest power-of-two size
+
         Uint32 pot_w = nextPowerOfTwo(image.w);
         Uint32 pot_h = nextPowerOfTwo(image.h);
+
+        if( ARBTextureNonPowerOfTwo.isEnabled ) {
+            pot_w = image.w;
+            pot_h = image.h;
+        } else {
+            // calculate nearest power-of-two size
+            pot_w = nextPowerOfTwo(image.w);
+            pot_h = nextPowerOfTwo(image.h);
+        }
 
         // convert image to 32 bit RGBA image of power of two size if needed 
         if ( ((image.format.BitsPerPixel != 32)) || image.w != pot_w || image.h != pot_h)
@@ -104,10 +114,23 @@ public:
     Texture create(int width_, int height_, int sizebytePixel_, ubyte[] pix=null)
     {
         _alloc(width_, height_, sizebytePixel_);
-        if (pix == null)
+        if (pix == null) {
             data[] = 0;
-        else
-            data[0..pix.length] = pix[];
+	} else {
+            if( width == width_ && height == height_ )
+            {
+                data = pix;
+            } else 
+            {
+                data[] = 0;
+                int bpp = sizebytePixel_;
+                int linelen = width_*bpp;
+                for(long y=0; y != height_; ++y)
+                {
+                    data[y*width*bpp .. y*width*bpp + linelen] =  pix[y*width_*bpp .. y*width_*bpp + linelen];
+                }
+            }
+	}
         return this;
     }
 
@@ -220,17 +243,27 @@ public:
         // allocate bit data area in system memory
         void _alloc(int width_, int height_, int sizebytePixel_)
         {
-            switch (sizebytePixel_) {
-            case 1:  format = GL_LUMINANCE;       break;
-            case 2:  format = GL_LUMINANCE_ALPHA; break;
-            case 3:  format = GL_RGB;             break;
-            case 4:  format = GL_RGBA;            break;
-            default: format = GL_RGBA; sizebytePixel_=4; break;
+            switch (sizebytePixel_)
+            {
+                case 1:  format = GL_LUMINANCE;       break;
+                case 2:  format = GL_LUMINANCE_ALPHA; break;
+                case 3:  format = GL_RGB;             break;
+                case 4:  format = GL_RGBA;            break;
+                default: format = GL_RGBA; sizebytePixel_=4; break;
             }
 
-            width  = nextPowerOfTwo(width_);
-            height = nextPowerOfTwo(height_);
-            log2width = calcLog2(width);
+            if( ARBTextureNonPowerOfTwo.isEnabled )
+            {
+                width  = width_;
+                height = height_;
+                log2width = calcLog2(width);
+            } else
+            {
+                width  = nextPowerOfTwo(width_);
+                height = nextPowerOfTwo(height_);
+                log2width = calcLog2(width);
+            }
+
             sizebytePixel = sizebytePixel_;
 
             data.length = width * height * sizebytePixel;
