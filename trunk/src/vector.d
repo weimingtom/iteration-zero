@@ -3,6 +3,8 @@
 //    Copyright (c) kei mesuda 2007
 //    (http://www.yomogi.sakura.ne.jp/~si)
 //--------------------------------------------------------------------------------
+module vector;
+
 private import std.math;
 private import std.string;
 
