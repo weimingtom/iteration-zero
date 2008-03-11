@@ -294,7 +294,7 @@ public:
         // enable backface culling
         glEnable( GL_CULL_FACE );
         glCullFace( GL_BACK );
-        glColor4f( 1,1,1,.5 );
+        glColor4f( 1,1,1,1.0 );
 
     
         // interpolate

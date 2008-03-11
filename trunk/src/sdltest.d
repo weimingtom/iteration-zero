@@ -6,7 +6,7 @@ import level;
 import pipeline;
 import std.stdio;
 
-// import font;
+import font;
 import 
 	derelict.opengl.gl,
 	derelict.freetype.ft;
@@ -19,6 +19,7 @@ class TestState : IGameState
     public:
         Engine engine;
         LevelRenderer view;
+        Font sfont;
 
     this()
     {
@@ -36,6 +37,12 @@ class TestState : IGameState
         view.level = new Level ("data/levels/test.lvl");
         view.lookAt (0, 0);
 
+        sfont = new Font ("data/verdana.ttf",80);
+
+        glEnable(GL_COLOR_MATERIAL);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     void stop()
@@ -49,6 +56,17 @@ class TestState : IGameState
         view.toLevelCoords(&x,&y);
         view.drawHighlight(x,y);
         view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
+
+        char[][] hello = [ "Hello World!", "Fuck THIS CITY." ];
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, engine.xResolution, 0, engine.yResolution, -100, 100);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        sfont.draw(hello,[10.0f,10.0f],[1.0f,1.0f,1.0f,1.0f]);
     }
 
     string name() { return "test"; }

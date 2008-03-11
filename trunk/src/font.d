@@ -42,14 +42,13 @@ module font;
 import std.stdio;
 import std.file;
 import texture;
+import memory;
 
-import 
+import
+	derelict.util.exception,
 	derelict.opengl.gl,
 	derelict.freetype.ft,
-// 	derelict.util.loader,
-// 	derelict.util.exception,
-	derelict.opengl.extension.ext.blend_color; 
-	
+	derelict.opengl.extension.ext.blend_color;
 
 /// initialize font
 void open() 
@@ -151,6 +150,7 @@ class Font
 			setLineGap(0);
 			
 			lcdFilter = LCDFilter.Crisp;		// we'll be using the Crisp filter by default, but it can be changed on a per-Font basis.
+// 			lcdFilter = LCDFilter.Standard;		// we'll be using the Crisp filter by default, but it can be changed on a per-Font basis.
 			
 			// now let's add ourselves to the fontlist 
 			fontList[nameStr] = this; 
@@ -188,7 +188,8 @@ class Font
 		lineLoop: foreach (uint i, char[] line; lines)
 		{
 			float[2] pos = [location[0], location[1] + i * getLineSkip];
-			if (PrintResult.OUT_RIGHT == print_(pos, color, line)) break lineLoop;
+			if (PrintResult.OUT_RIGHT == print_(pos, color, line))
+                            break lineLoop;
 		}
 	}
 	
@@ -337,7 +338,6 @@ class Font
 					FT_Get_Kerning(fontFace, previous, glyphIndex, FT_Kerning_Mode.FT_KERNING_DEFAULT, &delta);
 					penX += delta.x >> 6;
 				}
-				
 				uint index = getGlyph(chr, glyphIndex);
 				if (uint.max == index) continue;
 				
@@ -377,33 +377,33 @@ class Font
 			glEnable(GL_COLOR_MATERIAL);
 			glEnable(GL_TEXTURE_2D);
 			glEnable(GL_BLEND);
-			
+
 			// Do 1 pass rendering if we have the glBlendColorEXT function
 			if (EXTBlendColor.isEnabled)
 			{
 				if (0 == str.length) return PrintResult.OK;
 				location[1] += this.getHeight;
-				
+
 				layoutText!(charType)(str, (int charIndex, charType c, float[2] pen, inout Glyph g) {
-					
 					pen[0] +=  g.offset[0] + location[0];
 					pen[1] += -g.offset[1] + location[1];
-					
 					// use OpenGL extension for font rendering 
 					glBlendFunc(GL_CONSTANT_COLOR_EXT, GL_ONE_MINUS_SRC_COLOR);
 					glBlendColorEXT(color[0] * color[3], color[1] * color[3], color[2] * color[3], 1);
 					glColor3f(color[3], color[3], color[3]);
 					
 					g.texture.bind();
-// 					glBindTexture(GL_TEXTURE_2D, getID);
-					
 					glBegin(GL_QUADS); 
 									
 					glTexCoord2d(g.texCoords[0][0], g.texCoords[1][1]); glVertex2f(pen[0], pen[1]+g.size[1]); 
 					glTexCoord2d(g.texCoords[1][0], g.texCoords[1][1]); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
 					glTexCoord2d(g.texCoords[1][0], g.texCoords[0][1]); glVertex2f(pen[0] + g.size[0], pen[1]); 
-					glTexCoord2d(g.texCoords[0][0], g.texCoords[0][1]); glVertex2f(pen[0], pen[1]); 
-
+					glTexCoord2d(g.texCoords[0][0], g.texCoords[0][1]); glVertex2f(pen[0], pen[1]);
+/+					glTexCoord2d(0,0); glVertex2f(pen[0], pen[1]+g.size[1]); 
+					glTexCoord2d(1,0); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
+					glTexCoord2d(1,1); glVertex2f(pen[0] + g.size[0], pen[1]); 
+					glTexCoord2d(0,1); glVertex2f(pen[0], pen[1]); 
++/
 					glEnd(); 
 										
 				});
@@ -418,16 +418,12 @@ class Font
 				location[1] += this.getHeight;
 				
 				layoutText!(charType)(str, (int charIndex, charType c, float[2] pen, inout Glyph g) {
-					
 					pen[0] +=  g.offset[0] + location[0];
 					pen[1] += -g.offset[1] + location[1];
 
 					// fist pass blend func 
 					glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR); glColor3f(color[3], color[3], color[3]);
-					
 					g.texture.bind();
-// 					glBindTexture(GL_TEXTURE_2D, g.texture.getID);
-					
 					glBegin(GL_QUADS); 
 									
 					glTexCoord2d(g.texCoords[0][0], g.texCoords[1][1]); glVertex2f(pen[0], pen[1]+g.size[1]); 
@@ -447,15 +443,12 @@ class Font
 				location[1] += this.getHeight;
 				
 				layoutText!(charType)(str, (int charIndex, charType c, float[2] pen, inout Glyph g) {
-					
 					pen[0] +=  g.offset[0] + location[0];
 					pen[1] += -g.offset[1] + location[1];
-
 					// second pass blend func 
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE); glColor4f(color[0], color[1], color[2], color[3]); 
 					
 					g.texture.bind();
-// 					glBindTexture(GL_TEXTURE_2D, g.texture.getID);
 					
 					glBegin(GL_QUADS); 
 									
@@ -538,13 +531,15 @@ class Font
 					glyphWidth += 2;
 					--glyph.offset[0];
 				}
-				
-				glyph.size[] = size[] = [cast(float)glyphWidth, cast(float)bitmap.rows];
+
+				size[] = [cast(float)glyphWidth, cast(float)bitmap.rows];
+				glyph.size[] = size;
 				
 				// only realloc if the provided buffer can't hold the data
 				int bytes = cast(int)(size[0] * size[1] * 4);
-				assert(0);
-// 				if (buffer.length < bytes) buffer.realloc(bytes);
+
+				if (buffer.length < bytes)
+					buffer.realloc(bytes);
 				
 				// return 255 if the bit at (x,y) position is set. 0 otherwise.
 				ubyte indexBinaryBitmap(FT_Bitmap bitmap, int x, int y) {
@@ -692,7 +687,7 @@ class Font
 						assert (size[1] <= g.size[1]);
 						
 						ubyte[] newBuf;
-						newBuf.length = cast(int)(size[0]*size[1]*4 + 1);
+						newBuf.alloc( cast(int)(size[0]*size[1]*4 + 1) );
 						
 						for (int y = 0; y < size[1]; ++y) {
 							int srcOff = cast(int)(((y + ymin) * g.size[0] + xmin) * 4);
@@ -703,7 +698,7 @@ class Font
 						}
 						
 						// update the glyph info, because we'll be using the new buffer
-						buffer.length = 0;//.free();
+						buffer.free();
 						buffer = newBuf;
 						g.size[] = size;
 						g.offset[0] += xmin;
@@ -711,24 +706,24 @@ class Font
 					}
 				}
 				
-				// tex coords; these will be set by the icon cache
-				float[2] bl, tr;
-				float[2] tbl, ttr;
+				Texture tex = new Texture(cast(int)(g.size[0]),cast(int)(g.size[1]+0.5),4,buffer);
+// 				tex.format = GL_LUMINANCE;
+// 				tex.isMipmapping = false;
+                                tex.register();
+				//fontCache.get(g.size, bl, tr, tbl, ttr);
 				
-				assert(0);
-				Texture tex = null;//fontCache.get(g.size, bl, tr, tbl, ttr);
-				
-				// copy our bitmap into the texture
-				//tex.updateTexture(bl, g.size, buffer);
+				// copy our bitmap into the texture -bl, g.size, buffer
+// 				tex.data = buffer;
+// 				tex.update();
 
 				// finish off the glyph struct
-				g.texCoords[0][] = tbl;
-				g.texCoords[1][] = ttr;
+				g.texCoords[0][] = [0.0f,1.0f];
+				g.texCoords[1][] = [1.0f,0.0f];
 				g.texture = tex;
 				glyphs ~= g;
 				
 				index = glyphs.length - 1;
-				buffer.length = 0;//free();
+				buffer.free();
 			}
 			
 			if (c < 128) {		// ascii chars use a faster path
@@ -809,10 +804,10 @@ private bool continueIfMissing(char[] libName, char[] procName) { return true; }
 private void loadFtLib() 
 {
 	// continue loading derelict if missing functions
-// 	Derelict_SetMissingProcCallback(&continueIfMissing);
+	Derelict_SetMissingProcCallback(&continueIfMissing);
 	
 	// load FreeType dynamic library, freetype.dll/.so is required for application to run
-// 	DerelictFT.load();		
+	DerelictFT.load();		
 	
 	assert (FT_Init_FreeType !is null);
 	
@@ -830,7 +825,7 @@ private void unloadFtLib()
 	FT_Done_FreeType(ftLib);
 	ftLib = null;
 
-// 	DerelictFT.unload();
+	DerelictFT.unload();
 }
 	
 private
