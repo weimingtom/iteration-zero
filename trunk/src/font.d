@@ -395,17 +395,11 @@ class Font
 					g.texture.bind();
 					glBegin(GL_QUADS); 
 									
-					glTexCoord2d(g.texCoords[0][0], g.texCoords[1][1]); glVertex2f(pen[0], pen[1]+g.size[1]); 
-					glTexCoord2d(g.texCoords[1][0], g.texCoords[1][1]); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
-					glTexCoord2d(g.texCoords[1][0], g.texCoords[0][1]); glVertex2f(pen[0] + g.size[0], pen[1]); 
-					glTexCoord2d(g.texCoords[0][0], g.texCoords[0][1]); glVertex2f(pen[0], pen[1]);
-/+					glTexCoord2d(0,0); glVertex2f(pen[0], pen[1]+g.size[1]); 
-					glTexCoord2d(1,0); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
-					glTexCoord2d(1,1); glVertex2f(pen[0] + g.size[0], pen[1]); 
-					glTexCoord2d(0,1); glVertex2f(pen[0], pen[1]); 
-+/
-					glEnd(); 
-										
+					glTexCoord2d(g.texCoords[0][0], g.texCoords[0][1]); glVertex2f(pen[0], pen[1]+g.size[1]); 
+					glTexCoord2d(g.texCoords[1][0], g.texCoords[0][1]); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
+					glTexCoord2d(g.texCoords[1][0], g.texCoords[1][1]); glVertex2f(pen[0] + g.size[0], pen[1]); 
+					glTexCoord2d(g.texCoords[0][0], g.texCoords[1][1]); glVertex2f(pen[0], pen[1]);
+					glEnd();
 				});
 			
 			} // 1 pass rendering if we have the glBlendColorEXT function
@@ -707,8 +701,8 @@ class Font
 				}
 				
 				Texture tex = new Texture(cast(int)(g.size[0]),cast(int)(g.size[1]+0.5),4,buffer);
-// 				tex.format = GL_LUMINANCE;
-// 				tex.isMipmapping = false;
+				tex.format = GL_RGBA;
+				tex.isMipmapping = false;
                                 tex.register();
 				//fontCache.get(g.size, bl, tr, tbl, ttr);
 				

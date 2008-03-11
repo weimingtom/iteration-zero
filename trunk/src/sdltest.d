@@ -61,12 +61,19 @@ class TestState : IGameState
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, engine.xResolution, 0, engine.yResolution, -100, 100);
+        glOrtho(0, engine.xResolution, engine.yResolution, 0, -100, 100);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-
-        sfont.draw(hello,[10.0f,10.0f],[1.0f,1.0f,1.0f,1.0f]);
+        glColor4f(1,1,1,1);
+        glLineWidth(2);
+        glBegin(GL_LINE_LOOP);
+            glVertex2f(1,1);
+            glVertex2f(engine.xResolution-2,1);
+            glVertex2f(engine.xResolution-2,engine.yResolution-2);
+            glVertex2f(1,engine.yResolution-2);
+        glEnd();
+        sfont.draw(hello,[10.0f,10.0f],[1.0f,1.0f,1.0f,0.7f]);
     }
 
     string name() { return "test"; }
