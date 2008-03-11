@@ -1,0 +1,19 @@
+# Change the -I paths below to point to the directories in
+# which the files reside on your system.
+# Then compile by using
+#   'bud @example1d_glfw'
+# Note I use a custom verison of bud that supports environment
+# variables.  Current bud version 3.04 does not have this feature.
+-debug
+-g
+-full
+-cleanup
+-version=useDerelict
+-I$(DMDDIR)\baxissimo
+-I$(DMDDIR)\dmd\import
+-I$(DMDDIR)\dmd\import\derelict\DerelictGL
+-I$(DMDDIR)\dmd\import\derelict\DerelictGLU
+-I$(DMDDIR)\dmd\import\derelict\DerelictUtil
+-I$(DMDDIR)\dmd\import\derelict\DerelictGLFW
+-Texample1d_glfw
+example1_glfw
