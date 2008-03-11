@@ -4,6 +4,14 @@ import level;
 import pipeline;
 import std.stdio;
 
+// import font;
+import 
+	derelict.opengl.gl,
+	derelict.freetype.ft;
+// 	derelict.util.loader,
+// 	derelict.util.exception,
+// 	derelict.opengl.extension.ext.blend_color;
+
 class TestState : IGameState
 {
     public:
@@ -26,24 +34,6 @@ class TestState : IGameState
         view.level = new Level ("data/levels/test.lvl");
         view.lookAt (0, 0);
 
-        with(luigui)
-        {
-            alias BorderArranger.Region Region;
-            auto wgroup = engine.gui.add_arranged (new FlowPanel (Alignment.Top, Gaps (0)), Region.West);
-            auto wtiles = wgroup.add_arranged (new Button ("Blarg"));
-
-            auto group = engine.gui.add_arranged (new FlowPanel (Alignment.Left, Gaps (0)), Region.North);
-
-            auto b_quit = group.add_arranged (new Button ("Quit"));
-            auto b_save = group.add_arranged (new Button ("Save"));
-            auto b_tiles = group.add_arranged (new Button ("Tiles"));
-
-            b_quit.clicked ~= (Widget w){ 
-                // engine.stop(); //SEGFAULT ???
-                Engine.instance.stop();
-            };
-            b_tiles.clicked.connect( &wgroup.toggle_shown );
-        }
     }
 
     void stop()

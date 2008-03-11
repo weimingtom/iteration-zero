@@ -11,10 +11,6 @@ import derelict.sdl.image;
 import derelict.opengl.gl;
 import derelict.opengl.glu;
 
-import luigui = luigi.gui;
-import luigi.adapters.sdladapter;
-static import luigi.themes.std;
-
 import derelict.sdl.sdl;
 import derelict.opengl.gl;
 
@@ -103,7 +99,6 @@ class Engine
 
         SDL_WM_SetCaption(toStringz("Engine"), null);
         setupGL();
-        setupGui(surface);
     }
 
     // be nice and release all resources
@@ -146,7 +141,6 @@ class Engine
             _updateStates();
             // draw our stuff =)
             _pipeline.render();
-            _gui.draw();
             // swap the buffers, making our backbuffer the visible one
             SDL_GL_SwapBuffers();
 
@@ -179,11 +173,7 @@ class Engine
     {
         SDL_Event event;
         // handle all SDL events that we might've received in this loop iteration
-        SDLAdapter adapter = cast(SDLAdapter)_gui.adapter;
         while (_running && SDL_PollEvent(&event)) {
-            if (adapter.dispatchEvent(event)) {
-                continue;
-            }
             switch (event.type) {
                 // user has clicked on the window's close button
                 case SDL_QUIT:
@@ -220,15 +210,6 @@ class Engine
         return _pipeline;
     }
 
-    void setupGui (SDL_Surface *win)
-    {
-        char[] theme = "dx";
-    
-        luigui.Luigi().adapter = SDLAdapter();
-        _gui = new luigui.Overlay(cast(luigui.WindowHandle)win);
-        _gui.arranger = new luigui.BorderArranger(luigui.Gaps(5));
-    }
-
     void stop()
     {
         _running = false;
@@ -250,8 +231,6 @@ class Engine
         assert( (state_.name in _states) is null );
         _states[ state_.name ] = state_;
     }
-
-    luigui.Overlay gui() { return _gui; }
 
     int   xResolution () { return _xResolution; }
     int   yResolution () { return _yResolution; }
@@ -280,7 +259,6 @@ class Engine
         
         TextureManager _textureManager;
         RenderPipeline _pipeline;
-        luigui.Overlay _gui;
 
         void _updateStates()
         {
