@@ -1,3 +1,5 @@
+module sdltest;
+
 import engine;
 import derelict.sdl.sdl;
 import level;
@@ -81,7 +83,8 @@ class TestState : IGameState
 
 }
 
-void main(char[][] argv) {
+void main(char[][] argv)
+{
     Engine engine = new Engine;
     scope(exit) delete engine;      // when we exit, perform cleanup
 

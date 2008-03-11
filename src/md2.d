@@ -14,6 +14,8 @@
   *@author KB (2008)
   */
 
+module md2;
+
 import std.stream;
 import std.stdio;
 import std.utf;

@@ -1,3 +1,5 @@
+module path;
+
 import baseClasses;
 
 private import std.stdio;

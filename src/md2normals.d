@@ -1,4 +1,4 @@
-
+module md2normals;
 import vector;
 
 static vector3[] anorms =
