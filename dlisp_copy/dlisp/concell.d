@@ -36,7 +36,8 @@ public {
   
   Cell* nil = null;
   
-  typedef Cell* function(DLisp, Cell*) PredefFunc;
+  typedef Cell* delegate(DLisp, Cell*) PredefFunc;
+  typedef Cell* function(DLisp, Cell*) PredefFuncPtr;
   
   enum CellType {
     ctSYM, ctINT, ctFLOAT, ctSTR, 
