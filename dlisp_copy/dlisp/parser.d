@@ -49,10 +49,17 @@ public template Parser() {
       static Pos pos;
       static uint backquotes = 0;
       
-      void nextch() {
+      void nextch(bool noraise = false) {
+        //KB When looking for an \n after a comment - do not throw. set ch to '\n' instead.
+        //KB
         char tch;
         if (ch == char.init)
-          throw new ParseState("Unexpected end of parse stream", pos);
+        {
+          if( !noraise )
+            throw new ParseState("Unexpected end of parse stream", pos);
+          ch = tch = '\n';
+          return; 
+        }
         ch = tch = stream.getc();
         if (ch == '\n') {
           pos.row++;
@@ -75,7 +82,7 @@ public template Parser() {
           nextch();
           if (ch == ';') {
             do {
-              nextch();
+              nextch(true);
             } while (ch != '\n' && ch != '\r');
           }
         } while(std.string.iswhite(ch));
@@ -153,7 +160,7 @@ public template Parser() {
           skipWhite();
         switch(ch) {
           case ')': 
-            throw new ParseState("Unexpected parateses", pos);
+            throw new ParseState("Unexpected parentheses", pos);
             break;
           case '(':
             return parseList();

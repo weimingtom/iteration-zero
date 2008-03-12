@@ -39,6 +39,11 @@ public {
     // "yifscan" "'y+" 1 eller fler symboler, ingen eval."
     uint i, a, mincnt, maxcnt;
     Cell*[] ret, tret;
+    if( args is null )
+    {
+        throw new Error("Got empty argument list.");
+    }
+
     void incI() {
       i++;
       if (i >= fmt.length) {
