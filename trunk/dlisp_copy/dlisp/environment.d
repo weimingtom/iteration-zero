@@ -32,6 +32,20 @@ private {
   import dlisp.dlisp;
 }
 
+PredefFunc toDelegate(PredefFuncPtr fn)
+{ 
+    struct holder {
+        PredefFuncPtr f;
+        Cell* call(DLisp dlisp, Cell* cell)
+        {
+            return f(dlisp,cell);
+        }
+    }
+    auto res = new holder;
+    res.f = fn;
+    return &res.call;
+}
+
 public class Environment {
   private Cell*[char[]] _globals;
   private Cell*[char[]][] _restore;
@@ -42,8 +56,13 @@ public class Environment {
     this() {
     }
     
-    void bindPredef(char[] name, PredefFunc func, char[] docs = "", bool ismacro = false) {
+    void bindDelegate(char[] name, PredefFunc func, char[] docs = "", bool ismacro = false) {
       this[name] = newPredef(name, func, docs, ismacro);
+    }
+
+    void bindPredef(char[] name, PredefFuncPtr funcPtr, char[] docs = "", bool ismacro = false) {
+//       auto func_dg = Cell* delegate(DLisp dlisp, Cell* cell) { return funcPtr(dlisp, cell); };
+      this[name] = newPredef(name, toDelegate(funcPtr), docs, ismacro);
     }
     
     void bindValue(char[] name, int* pointer) {

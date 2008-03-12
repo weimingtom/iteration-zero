@@ -24,4 +24,5 @@ interface IGObject
 interface ILevel
 {
     bool isBlocked(int x, int y);
+    void loadDataset(string);
 }

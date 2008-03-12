@@ -177,39 +177,40 @@ class Dataset
         TilePrototype[string]   _prototypes;
         GObjectPrototype[string] _objects;
 
-    this(sofu.List datasets)
+    this()
     {
-        foreach(sofu.SofuObject dset; datasets)
+    }
+
+    void load(string filename)
+    {
+        writefln ("Loading Dataset: %s", filename);
+        sofu.Map map = sofu.loadFile(filename);
+
+        sofu.List materials = map.list("materials");
+        foreach(sofu.SofuObject element; materials)
         {
-            writefln ("Loading Dataset: %s", dset.asValue().toString());
-            sofu.Map map = sofu.loadFile(dset.asValue().toString());
+            material.loadMaterials(element.toString());
+        }
 
-            sofu.List materials = map.list("materials");
-            foreach(sofu.SofuObject element; materials)
-            {
-                material.loadMaterials(element.toString());
-            }
-    
-            sofu.Map faces = map.map("faces");
-            foreach(wchar[] name, sofu.SofuObject element; faces)
-            {
-                writefln( "-- Loading Face Type: %s", name);
-                _faceInfos[toUTF8(name)] = new FaceInfo(element.asList());
-            }
-    
-            sofu.Map protoMap = map.map("prototypes");
-            foreach(wchar[] name, sofu.SofuObject element; protoMap)
-            {
-                writefln( "-- Loading Tile Type: %s", name);
-                _prototypes[toUTF8(name)] = new TilePrototype(this, toUTF8(name), element.asMap());
-            }
+        sofu.Map faces = map.map("faces");
+        foreach(wchar[] name, sofu.SofuObject element; faces)
+        {
+            writefln( "-- Loading Face Type: %s", name);
+            _faceInfos[toUTF8(name)] = new FaceInfo(element.asList());
+        }
 
-            sofu.Map entityMap = map.map("objects");
-            foreach(wchar[] name, sofu.SofuObject element; entityMap)
-            {
-                writefln( "-- Loading Object Type: %s", name);
-                _objects[toUTF8(name)] = new GObjectPrototype(toUTF8(name), element.asMap());
-            }
+        sofu.Map protoMap = map.map("prototypes");
+        foreach(wchar[] name, sofu.SofuObject element; protoMap)
+        {
+            writefln( "-- Loading Tile Type: %s", name);
+            _prototypes[toUTF8(name)] = new TilePrototype(this, toUTF8(name), element.asMap());
+        }
+
+        sofu.Map entityMap = map.map("objects");
+        foreach(wchar[] name, sofu.SofuObject element; entityMap)
+        {
+            writefln( "-- Loading Object Type: %s", name);
+            _objects[toUTF8(name)] = new GObjectPrototype(toUTF8(name), element.asMap());
         }
     }
 }

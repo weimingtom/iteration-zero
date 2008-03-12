@@ -18,6 +18,8 @@ private {
     import baseClasses;
     import dataset;
     import gobject;
+    import dlisp.dlisp;
+    import dlisp.predefs.all;
 }
 
 private class Chunk
@@ -62,6 +64,70 @@ private class Chunk
     }
 }
 
+private  import dlisp.evalhelpers;
+class LevelEnvironment : Environment
+{
+    Level level;
+
+    this(Level level_)
+    {
+        super();
+        level = level_;
+
+        bindDelegate("level-is-valid",&level_is_valid);
+        bindDelegate("level-init",&level_init);
+        bindDelegate("level-finish",&level_finish);
+        bindDelegate("level-place-tile",&level_place_tile);
+        bindDelegate("level-place-object",&level_place_object);
+        bindDelegate("level-load-dataset",&level_load_dataset);
+        bindValue("*level-name*", &level.name);
+    }
+
+    Cell* level_init(DLisp dlisp, Cell* cell)
+    {
+        Cell*[] args = evalArgs(dlisp, "ii", cell.cdr);
+        writefln ("init-level %d %d",args[0].intValue,args[1].intValue);
+        level.init(args[0].intValue,args[1].intValue);
+        return newSym("t");
+    }
+
+    Cell* level_finish(DLisp dlisp, Cell* cell)
+    {
+        level.finalize();
+        return newSym("t");
+    }
+
+    Cell* level_is_valid(DLisp dlisp, Cell* cell)
+    {
+        Cell*[] args = evalArgs(dlisp, "ii", cell.cdr);
+        if( !level.isValid(args[0].intValue,args[1].intValue) )
+            return nil;
+        return newSym("t");
+    }
+
+    Cell* level_load_dataset(DLisp dlisp, Cell* cell)
+    {
+        Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
+        level.loadDataset( args[0].strValue );
+        return nil;
+    }
+
+    Cell* level_place_tile(DLisp dlisp, Cell* cell)
+    {
+        Cell*[] args = evalArgs(dlisp, "iis", cell.cdr);
+        level.placeTile(args[0].intValue,args[1].intValue,args[2].strValue);
+        return nil;
+    }
+
+    Cell* level_place_object(DLisp dlisp, Cell* cell)
+    {
+        Cell*[] args = evalArgs(dlisp, "iis", cell.cdr);
+        level.placeObject(args[0].intValue,args[1].intValue,args[2].strValue);
+        return nil;
+    }
+
+}
+
 class Level : ILevel
 {
     public:
@@ -70,6 +136,8 @@ class Level : ILevel
     int width;
     int height;
 
+    DLisp dlisp;
+    LevelEnvironment env;
     Dataset dataset;
 
     Tile[] tiles;
@@ -86,57 +154,32 @@ class Level : ILevel
 
     this(string filename)
     {
-        sofu.Map map = sofu.loadFile(filename);
-        name = map.value("name").toString();
-        width  = map.list("size").value(0).toInt();
-        height = map.list("size").value(1).toInt();
+        dataset = new Dataset;
 
+        env = new LevelEnvironment(this);
+        dlisp = new DLisp(addAllToEnvironment(env));
+
+        dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);//"
+    }
+
+    void init(int w_, int h_)
+    {
         chunk_width  = 4;
         chunk_height = 4;
-        
-        width  = width + (chunk_width - width % chunk_width);
-        height = height + (chunk_height - height % chunk_height);
+        width  = w_ + (chunk_width - w_ % chunk_width);
+        height = w_ + (chunk_height - h_ % chunk_height);
 
         xchunks = width/chunk_width;
         ychunks = height/chunk_height;
 
         tiles.length = width*height;
         chunks.length = xchunks * ychunks;
-
-        dataset = new Dataset(map.list("datasets"));
         writefln ("Loading Level: %s [size=(%d %d)]",name,width,height);
+    }
 
-        sofu.List tilesInfos = map.list("tiles");
-        foreach(sofu.SofuObject element; tilesInfos)
-        {
-            sofu.List tileInfo = element.asList();
-            int x = tileInfo.list(0).value(0).toInt();
-            int y = tileInfo.list(0).value(1).toInt();
-            string proto = tileInfo.value(1).toString();
-            if( (proto in dataset._prototypes) is null)
-            {
-                throw new Exception("Unknown prototype: " ~ proto);
-            }
-            tiles[y*width + x] = dataset._prototypes[proto].create(x,y);
-        }
-        writefln ("%d Tiles created",width*height);
-
-        sofu.List objectInfos = map.list("objects");
-        foreach(sofu.SofuObject element; objectInfos)
-        {
-            sofu.List objectInfo = element.asList();
-            int x = objectInfo.list(0).value(0).toInt();
-            int y = objectInfo.list(0).value(1).toInt();
-            string proto = objectInfo.value(1).toString();
-            if( (proto in dataset._objects) is null)
-            {
-                throw new Exception ("Unknown object: " ~ proto);
-            }
-            gobjects ~= dataset._objects[proto].create (this, x, y);
-        }
-        writefln ("%d GObjects created", gobjects.length);
-
-        string defaultTile = map.value("default_tile").toString();
+    void finalize()
+    {
+        string defaultTile = "normal";//map.value("default_tile").toString();
         for(int i = 0; i != width*height; ++i)
             if( tiles[i] is null )
                 tiles[i] = dataset._prototypes[defaultTile].create(i%width,i/width);
@@ -149,7 +192,6 @@ class Level : ILevel
             }
         }
         writefln ("Loading Level: %s ... finished",name);
-
         centerx = width/2;
         centery = width/2;
     }
@@ -159,9 +201,26 @@ class Level : ILevel
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    void loadDataset(string filename)
+    {
+        dataset.load(filename);
+    }
+
     Tile getTile(int x, int y)
     {
         return tiles[y*width +x];
+    }
+
+    void placeTile(int x, int y, string name)
+    {
+        if( isValid(x,y) )
+            tiles[y*width + x] = dataset._prototypes[name].create(x,y);
+    }
+
+    void placeObject(int x, int y, string name)
+    {
+        if( isValid(x,y) )
+            gobjects ~= dataset._objects[name].create (this, x, y);
     }
 
     bool isBlocked (int x, int y)
