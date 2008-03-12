@@ -1,0 +1,152 @@
+INTRODUCTION
+============
+
+DLISP is an implementation of a Lisp dialect written in D, to leverage the 
+build-in memory management and hash-table support of the associative arrays.
+
+dle.d - Or dLISP Environment is a read-eval-print loop, suitable for end-
+users and debugging.
+
+tlisp.d - Is to be the linkable library for embedding dLISP in other 
+projects (Non D as well).
+
+The actual implementation resides in the dlisp package and should have as 
+few dependencies as possible.
+
+
+INTERNALS
+=========
+
+dLISP consist of three classes:
+ * Environment - To handle global and local bindings of symbols to values,
+   functions and external objects.
+ * DLisp - Consist of two main functionalities;
+   + A parser - That parses strings or streams into a Cells-tree suitable for 
+     data or code for the evaluator.
+   + An evaluator - That evaluates a Cell-tree and returns a reslting 
+     Cell-tree.
+
+
+CONCELLS
+========
+
+Some understanding of Lisp will help here :). The fundamental building 
+block of dLISP is the concell, declared as a pointer to the struct Cell 
+in consell.d. Each cell is eather an atom or a composite.
+
+An atom is an atomic value. Atoms are; Symbols (ctSYM), Integers (ctINT), 
+Floats (ctFLOAT), Strings (ctSTR), and Streams (ctSTREAM). Nil or the empty 
+list () is a special atom represented internally as a null pointer. Booleans 
+have no type of it's own. Nil is treated as false, and the symbol T is true
+(in fact allsymbols are true), so is any numeric other than zero and NaN, non
+zero length strings, and open streams.
+
+A composite is a list (ctCONS), or a function (ctFUNC and ctPREDEF). Each 
+list concell have the member car pointing to its value, and cdr pointing the 
+the next concell in the list.
+Each function have the member car pointing to the list of concells that is 
+the functions body, and cdr points to a list of symbols that is the functions
+arguments.
+Build-in forms differs from normals forms, they do not have car and cdr but a
+single function pointer member; func. It is the responsibility of the called
+function to handle arguments.
+
+LISTS
+=====
+
+Lisp is short for LISt Processing, so there is bound to be some lists.
+Actually quite a few kinds, and it is sometwhat important to know what kind
+of list is meant, and where as many functions are picky about them.
+
+Proper list - a proper list is a list where the last concells cdr is nil.
+  Ex: (1 2 3), ("foo"), ()
+  
+Dotted list - a dotted list is a list where the last concells cdr is not nil.
+  Ex: (1 2 . 3), ("foo" . "bar") (NIL . BAZ)
+
+Tree list - a tree list is a list of lists.
+  Ex: ((1 2) (3 4)), (1 ((2 . 3) 4)), (NIL NIL NIL)
+  
+Assoc list - an associative list is a list of lists where each sublists car
+  is used to identify the list.
+  Ex: ((1 . "Anders") (3 . "Berit") (7 . "Ceasar"))
+
+
+PARSER
+======
+
+The parser is a simple recursive state-machine implemented in the module
+dlisp.parser and accessable as method of thee DLisp class implemented in 
+dlisp.dlisp. Input is read from a stream instance, or a string. On success a
+valid tree list is returned. On failure an exception derived from ParseState
+is raised.
+
+This text has been rewritten from describing the internals to describing the
+expected input in detail. Implementation details are only included if it
+differes significally from Common Lisp.
+
+DLisp's syntax can be describes as follows (Semi correcly back naur):
+
+token ::= atom | list | container token ;
+tokens ::= token tokens | ;
+atom ::= symbol | integer | float | string ;
+list ::= properlist | dottedlist
+properlist ::= '(' tokens ')' ;
+dottedlist ::= '(' token tokens '.' atom ')' ;
+container ::= ''' | '`' | ',' ;
+symbol ::= !(integer | float | string) ;
+integer ::= [0-9]+ ;
+float ::= [0-9]+\.[0-9]+ ;
+string ::= ".*" ;
+
+The lists is naturaly short hand for chaining cons cells. So:
+(1 2 3) <=> (cons 1 (cons 2 (cons 3 nil)))
+
+The quote container is shorthand for the QUOTE macro:
+'foo <=> (quote foo)
+
+Common Lisp implements back quote and comma quotes as symbol macros, dLISP
+does it using macros (dLISP have no notion of sybol macros):
+`foo <=> (back-quote foo)
+,bar <=> (comma-quote bar)
+It is illegal to use comma quotes outside of a back quoted list, the parser
+will catch this as a ParseState, and at runtime it is an EvalState.
+
+
+ENVIRONMENT
+===========
+
+An instance of the Environment class handles scopes, and bindings of values,
+functions and external objects.
+
+The indexing operators are overloaded so globals["foo"] works for writing 
+and reading the global variable foo. Scopes are handled by three functions;
+pushScope() creates a new scope level and addLocal() is then used to add 
+variables to the new scope. popScope() end the current scope and restores/
+removes variables added by addLocal.
+
+
+EVALUATOR
+=========
+
+Tree lists are evaluated by the eval() method of the DLisp class. Implemented
+in dlisp.evaluator module. Atoms are passed back as is. For lists the first 
+symbol is used to look up the form in the global associative array. If a 
+correct form is found arguments are added to the local scope and the body of
+the form is evaluated recursivly by eval(). For buildin forms the function 
+pointer fo the form is called with the original concell as argument (as is 
+before form loo-up).
+
+What that means for buil-in formas is that the symbol with the forms-
+functions name can be found in the passed concells member car. And the 
+arguments in the passed concells member cdr.
+
+Trace functionality has been added.  It is advisable to only use 
+(trace [<sym> ...]) and (untrace [<sym> ...]) and not addTrace() and 
+removeTrace() directly.
+
+TODO
+====
+* Write test cases for *all* predefined functions.
+* Rewrite documentation for *all* predefined functions.
+* Write libdlisp, as C bindings.
