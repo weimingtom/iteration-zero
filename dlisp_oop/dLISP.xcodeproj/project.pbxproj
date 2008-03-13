@@ -1,0 +1,598 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A60058A209A726370075C7C3 /* validateparse.lisp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A60058A109A726370075C7C3 /* validateparse.lisp */; };
+		A602162A09307DBE008D7FAD /* validate.lisp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A602162909307DBE008D7FAD /* validate.lisp */; };
+		A6B449290965B0C900375C67 /* types.d in Sources */ = {isa = PBXBuildFile; fileRef = A6B449280965B0C900375C67 /* types.d */; };
+		A6B44A810965C40E00375C67 /* evaluator.d in Sources */ = {isa = PBXBuildFile; fileRef = A6C0FECF08F7E47500E1AFA9 /* evaluator.d */; };
+		A6B44A820965C41400375C67 /* parser.d in Sources */ = {isa = PBXBuildFile; fileRef = A6C0FFD308F8574C00E1AFA9 /* parser.d */; };
+		A6B44B900965D64000375C67 /* strings.d in Sources */ = {isa = PBXBuildFile; fileRef = A6B44B8F0965D64000375C67 /* strings.d */; };
+		A6B44CAE0966AE7A00375C67 /* loopcontrol.d in Sources */ = {isa = PBXBuildFile; fileRef = A6B44CAD0966AE7A00375C67 /* loopcontrol.d */; };
+		A6B518340947663E00BF2128 /* tutorial.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = A6B518330947663E00BF2128 /* tutorial.txt */; };
+		A6BB2D700927913500A8CE47 /* system.lisp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A6BB2D6F0927913400A8CE47 /* system.lisp */; };
+		A6BB9F88090247D800A055FF /* environment.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BB9F86090247D800A055FF /* environment.d */; };
+		A6BBD9310962E76B00284115 /* core.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9300962E76B00284115 /* core.d */; };
+		A6BBD9580962E9DD00284115 /* variables.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9570962E9DD00284115 /* variables.d */; };
+		A6BBD96D0962EB6A00284115 /* lists.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD96C0962EB6A00284115 /* lists.d */; };
+		A6BBD9880962ECC500284115 /* control.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9870962ECC500284115 /* control.d */; };
+		A6BBD9990962ED8D00284115 /* numeric.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9980962ED8D00284115 /* numeric.d */; };
+		A6BBD9AA0962EF9500284115 /* compare.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9A90962EF9500284115 /* compare.d */; };
+		A6BBD9B60962F0F600284115 /* stream.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9B50962F0F600284115 /* stream.d */; };
+		A6BBD9BE0962F23B00284115 /* boolean.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9BD0962F23B00284115 /* boolean.d */; };
+		A6BBD9F3096433BE00284115 /* all.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBD9F2096433BE00284115 /* all.d */; };
+		A6BBDA140964399E00284115 /* dlisp.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBDA130964399E00284115 /* dlisp.d */; };
+		A6BBDA1A09643A0D00284115 /* states.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBDA1909643A0D00284115 /* states.d */; };
+		A6BBDA3C09643E0000284115 /* evalhelpers.d in Sources */ = {isa = PBXBuildFile; fileRef = A6BBDA3B09643E0000284115 /* evalhelpers.d */; };
+		A6C0FE1808F7BC7700E1AFA9 /* dle.d in Sources */ = {isa = PBXBuildFile; fileRef = A6C0FE1708F7BC7700E1AFA9 /* dle.d */; };
+		A6C0FE1B08F7BCDE00E1AFA9 /* concell.d in Sources */ = {isa = PBXBuildFile; fileRef = A6C0FE1A08F7BCDE00E1AFA9 /* concell.d */; };
+		A6C0FE3208F7C87200E1AFA9 /* concellhelpers.d in Sources */ = {isa = PBXBuildFile; fileRef = A6C0FE3108F7C87200E1AFA9 /* concellhelpers.d */; };
+		A6EB2511092FD4F800B9B02D /* paintmap.lisp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A6EB250F092FD4F800B9B02D /* paintmap.lisp */; };
+		A6EB2512092FD4F800B9B02D /* paintmap_data.lisp in CopyFiles */ = {isa = PBXBuildFile; fileRef = A6EB2510092FD4F800B9B02D /* paintmap_data.lisp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		A674EF5508F976AC0059A2ED /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3_gdc;
+			fileType = sourcecode.d;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		A6C0FE1C08F7C5E000E1AFA9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3_gdc;
+			filePatterns = "*.d";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXBuildStyle section */
+		014CEA520018CE5811CA2923 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DEBUGGING_SYMBOLS = default;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		014CEA530018CE5811CA2923 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_ENABLE_TRIGRAPHS = YES;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				OTHER_CFLAGS = "-finline-functions";
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76FAF0486AB0100D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				A6BB2D700927913500A8CE47 /* system.lisp in CopyFiles */,
+				A6EB2511092FD4F800B9B02D /* paintmap.lisp in CopyFiles */,
+				A6EB2512092FD4F800B9B02D /* paintmap_data.lisp in CopyFiles */,
+				A602162A09307DBE008D7FAD /* validate.lisp in CopyFiles */,
+				A6B518340947663E00BF2128 /* tutorial.txt in CopyFiles */,
+				A60058A209A726370075C7C3 /* validateparse.lisp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8DD76FB20486AB0100D96B5E /* dLISP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dLISP; sourceTree = BUILT_PRODUCTS_DIR; };
+		A60058A109A726370075C7C3 /* validateparse.lisp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = validateparse.lisp; sourceTree = "<group>"; };
+		A602162909307DBE008D7FAD /* validate.lisp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = validate.lisp; sourceTree = "<group>"; };
+		A674EF4E08F9755D0059A2ED /* tlisp.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; path = tlisp.d; sourceTree = "<group>"; };
+		A674EF5408F976A30059A2ED /* tlisp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = tlisp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6B449280965B0C900375C67 /* types.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = types.d; path = dlisp/types.d; sourceTree = "<group>"; };
+		A6B44B8F0965D64000375C67 /* strings.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = strings.d; path = dlisp/predefs/strings.d; sourceTree = "<group>"; };
+		A6B44CAD0966AE7A00375C67 /* loopcontrol.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = loopcontrol.d; path = dlisp/predefs/loopcontrol.d; sourceTree = "<group>"; };
+		A6B518330947663E00BF2128 /* tutorial.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = tutorial.txt; sourceTree = "<group>"; };
+		A6BB2D6F0927913400A8CE47 /* system.lisp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = system.lisp; sourceTree = "<group>"; };
+		A6BB9F86090247D800A055FF /* environment.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = environment.d; path = dlisp/environment.d; sourceTree = "<group>"; };
+		A6BBD9300962E76B00284115 /* core.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = core.d; path = dlisp/predefs/core.d; sourceTree = "<group>"; };
+		A6BBD9570962E9DD00284115 /* variables.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = variables.d; path = dlisp/predefs/variables.d; sourceTree = "<group>"; };
+		A6BBD96C0962EB6A00284115 /* lists.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = lists.d; path = dlisp/predefs/lists.d; sourceTree = "<group>"; };
+		A6BBD9870962ECC500284115 /* control.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = control.d; path = dlisp/predefs/control.d; sourceTree = "<group>"; };
+		A6BBD9980962ED8D00284115 /* numeric.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = numeric.d; path = dlisp/predefs/numeric.d; sourceTree = "<group>"; };
+		A6BBD9A90962EF9500284115 /* compare.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = compare.d; path = dlisp/predefs/compare.d; sourceTree = "<group>"; };
+		A6BBD9B50962F0F600284115 /* stream.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = stream.d; path = dlisp/predefs/stream.d; sourceTree = "<group>"; };
+		A6BBD9BD0962F23B00284115 /* boolean.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = boolean.d; path = dlisp/predefs/boolean.d; sourceTree = "<group>"; };
+		A6BBD9F2096433BE00284115 /* all.d */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.d; name = all.d; path = dlisp/predefs/all.d; sourceTree = "<group>"; };
+		A6BBDA130964399E00284115 /* dlisp.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = dlisp.d; path = dlisp/dlisp.d; sourceTree = "<group>"; };
+		A6BBDA1909643A0D00284115 /* states.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = states.d; path = dlisp/states.d; sourceTree = "<group>"; };
+		A6BBDA3B09643E0000284115 /* evalhelpers.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = evalhelpers.d; path = dlisp/evalhelpers.d; sourceTree = "<group>"; };
+		A6C0FE1708F7BC7700E1AFA9 /* dle.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; path = dle.d; sourceTree = "<group>"; };
+		A6C0FE1A08F7BCDE00E1AFA9 /* concell.d */ = {isa = PBXFileReference; explicitFileType = sourcecode.d; fileEncoding = 4; name = concell.d; path = dlisp/concell.d; sourceTree = "<group>"; };
+		A6C0FE3108F7C87200E1AFA9 /* concellhelpers.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = concellhelpers.d; path = dlisp/concellhelpers.d; sourceTree = "<group>"; };
+		A6C0FECF08F7E47500E1AFA9 /* evaluator.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = evaluator.d; path = dlisp/evaluator.d; sourceTree = "<group>"; };
+		A6C0FFD308F8574C00E1AFA9 /* parser.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.d; name = parser.d; path = dlisp/parser.d; sourceTree = "<group>"; };
+		A6C954B6091E2C05008A9009 /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CHANGES; sourceTree = SOURCE_ROOT; };
+		A6C954B7091E2C05008A9009 /* README */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = README; sourceTree = SOURCE_ROOT; };
+		A6EB250F092FD4F800B9B02D /* paintmap.lisp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = paintmap.lisp; sourceTree = "<group>"; };
+		A6EB2510092FD4F800B9B02D /* paintmap_data.lisp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = paintmap_data.lisp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A674EF5208F976A30059A2ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* dLISP */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6A0FF2B0290797F04C91782 /* Documentation */,
+				A6EB250E092FD4F800B9B02D /* testcases */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = dLISP;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				A6C0FE5C08F7D23C00E1AFA9 /* dlisp */,
+				A6C0FE1708F7BC7700E1AFA9 /* dle.d */,
+				A674EF4E08F9755D0059A2ED /* tlisp.d */,
+				A6BB2D6F0927913400A8CE47 /* system.lisp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FB20486AB0100D96B5E /* dLISP */,
+				A674EF5408F976A30059A2ED /* tlisp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A6BBD9320962E77600284115 /* predefs */ = {
+			isa = PBXGroup;
+			children = (
+				A6BBD9F2096433BE00284115 /* all.d */,
+				A6BBD9300962E76B00284115 /* core.d */,
+				A6BBD9570962E9DD00284115 /* variables.d */,
+				A6BBD96C0962EB6A00284115 /* lists.d */,
+				A6BBD9870962ECC500284115 /* control.d */,
+				A6B44CAD0966AE7A00375C67 /* loopcontrol.d */,
+				A6BBD9BD0962F23B00284115 /* boolean.d */,
+				A6BBD9980962ED8D00284115 /* numeric.d */,
+				A6BBD9A90962EF9500284115 /* compare.d */,
+				A6BBD9B50962F0F600284115 /* stream.d */,
+				A6B44B8F0965D64000375C67 /* strings.d */,
+			);
+			name = predefs;
+			sourceTree = "<group>";
+		};
+		A6C0FE5C08F7D23C00E1AFA9 /* dlisp */ = {
+			isa = PBXGroup;
+			children = (
+				A6BBD9320962E77600284115 /* predefs */,
+				A6C0FE1A08F7BCDE00E1AFA9 /* concell.d */,
+				A6C0FE3108F7C87200E1AFA9 /* concellhelpers.d */,
+				A6C0FECF08F7E47500E1AFA9 /* evaluator.d */,
+				A6BBDA3B09643E0000284115 /* evalhelpers.d */,
+				A6C0FFD308F8574C00E1AFA9 /* parser.d */,
+				A6BB9F86090247D800A055FF /* environment.d */,
+				A6BBDA1909643A0D00284115 /* states.d */,
+				A6BBDA130964399E00284115 /* dlisp.d */,
+				A6B449280965B0C900375C67 /* types.d */,
+			);
+			name = dlisp;
+			sourceTree = "<group>";
+		};
+		A6EB250E092FD4F800B9B02D /* testcases */ = {
+			isa = PBXGroup;
+			children = (
+				A60058A109A726370075C7C3 /* validateparse.lisp */,
+				A6EB250F092FD4F800B9B02D /* paintmap.lisp */,
+				A6EB2510092FD4F800B9B02D /* paintmap_data.lisp */,
+				A602162909307DBE008D7FAD /* validate.lisp */,
+			);
+			path = testcases;
+			sourceTree = "<group>";
+		};
+		C6A0FF2B0290797F04C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				A6C954B6091E2C05008A9009 /* CHANGES */,
+				A6C954B7091E2C05008A9009 /* README */,
+				A6B518330947663E00BF2128 /* tutorial.txt */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		A674EF5008F976A30059A2ED /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DD76FA90486AB0100D96B5E /* dLISP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6BBD85E0962BD6900284115 /* Build configuration list for PBXNativeTarget "dLISP" */;
+			buildPhases = (
+				8DD76FAB0486AB0100D96B5E /* Sources */,
+				8DD76FAD0486AB0100D96B5E /* Frameworks */,
+				8DD76FAF0486AB0100D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+				A6C0FE1C08F7C5E000E1AFA9 /* PBXBuildRule */,
+			);
+			buildSettings = {
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = dLISP;
+			};
+			dependencies = (
+			);
+			name = dLISP;
+			productInstallPath = "$(HOME)/bin";
+			productName = dLISP;
+			productReference = 8DD76FB20486AB0100D96B5E /* dLISP */;
+			productType = "com.apple.product-type.tool";
+		};
+		A674EF5308F976A30059A2ED /* tlisp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6BBD8620962BD6900284115 /* Build configuration list for PBXNativeTarget "tlisp" */;
+			buildPhases = (
+				A674EF5008F976A30059A2ED /* Headers */,
+				A674EF5108F976A30059A2ED /* Sources */,
+				A674EF5208F976A30059A2ED /* Frameworks */,
+			);
+			buildRules = (
+				A674EF5508F976AC0059A2ED /* PBXBuildRule */,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = tlisp;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			dependencies = (
+			);
+			name = tlisp;
+			productName = tlisp;
+			productReference = A674EF5408F976A30059A2ED /* tlisp.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = A6BBD8660962BD6900284115 /* Build configuration list for PBXProject "dLISP" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				014CEA520018CE5811CA2923 /* Development */,
+				014CEA530018CE5811CA2923 /* Deployment */,
+			);
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* dLISP */;
+			projectDirPath = "";
+			targets = (
+				8DD76FA90486AB0100D96B5E /* dLISP */,
+				A674EF5308F976A30059A2ED /* tlisp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76FAB0486AB0100D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6BBDA140964399E00284115 /* dlisp.d in Sources */,
+				A6BBDA1A09643A0D00284115 /* states.d in Sources */,
+				A6BBD9310962E76B00284115 /* core.d in Sources */,
+				A6BBD9580962E9DD00284115 /* variables.d in Sources */,
+				A6BBD96D0962EB6A00284115 /* lists.d in Sources */,
+				A6BBD9880962ECC500284115 /* control.d in Sources */,
+				A6BBD9990962ED8D00284115 /* numeric.d in Sources */,
+				A6BBD9AA0962EF9500284115 /* compare.d in Sources */,
+				A6BBD9B60962F0F600284115 /* stream.d in Sources */,
+				A6BBD9BE0962F23B00284115 /* boolean.d in Sources */,
+				A6BBDA3C09643E0000284115 /* evalhelpers.d in Sources */,
+				A6C0FE1B08F7BCDE00E1AFA9 /* concell.d in Sources */,
+				A6C0FE3208F7C87200E1AFA9 /* concellhelpers.d in Sources */,
+				A6C0FE1808F7BC7700E1AFA9 /* dle.d in Sources */,
+				A6B449290965B0C900375C67 /* types.d in Sources */,
+				A6BB9F88090247D800A055FF /* environment.d in Sources */,
+				A6BBD9F3096433BE00284115 /* all.d in Sources */,
+				A6B44A810965C40E00375C67 /* evaluator.d in Sources */,
+				A6B44A820965C41400375C67 /* parser.d in Sources */,
+				A6B44B900965D64000375C67 /* strings.d in Sources */,
+				A6B44CAE0966AE7A00375C67 /* loopcontrol.d in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A674EF5108F976A30059A2ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A6BBD85F0962BD6900284115 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DEBUGGING_SYMBOLS = default;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = dLISP;
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		A6BBD8600962BD6900284115 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_ENABLE_TRIGRAPHS = YES;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_CFLAGS = "-finline-functions";
+				PREBINDING = NO;
+				PRODUCT_NAME = dLISP;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		A6BBD8610962BD6900284115 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = dLISP;
+			};
+			name = Default;
+		};
+		A6BBD8630962BD6900284115 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_DEBUGGING_SYMBOLS = default;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = tlisp;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		A6BBD8640962BD6900284115 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_PASCAL_STRINGS = NO;
+				GCC_ENABLE_TRIGRAPHS = YES;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-finline-functions";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = tlisp;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		A6BBD8650962BD6900284115 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = tlisp;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		A6BBD8670962BD6900284115 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_TRIGRAPHS = YES;
+			};
+			name = Development;
+		};
+		A6BBD8680962BD6900284115 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_TRIGRAPHS = YES;
+			};
+			name = Deployment;
+		};
+		A6BBD8690962BD6900284115 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_TRIGRAPHS = YES;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A6BBD85E0962BD6900284115 /* Build configuration list for PBXNativeTarget "dLISP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6BBD85F0962BD6900284115 /* Development */,
+				A6BBD8600962BD6900284115 /* Deployment */,
+				A6BBD8610962BD6900284115 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		A6BBD8620962BD6900284115 /* Build configuration list for PBXNativeTarget "tlisp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6BBD8630962BD6900284115 /* Development */,
+				A6BBD8640962BD6900284115 /* Deployment */,
+				A6BBD8650962BD6900284115 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		A6BBD8660962BD6900284115 /* Build configuration list for PBXProject "dLISP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6BBD8670962BD6900284115 /* Development */,
+				A6BBD8680962BD6900284115 /* Deployment */,
+				A6BBD8690962BD6900284115 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
