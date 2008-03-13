@@ -1,0 +1,372 @@
+2006-02-12 -- Fredrik Olsson
+  Added list functions: distinct, union, intersect, difference, sort and map.
+  Added numeric function: min, max, avg and med. These are written in lisp in
+  system.lisp, thew tiny speed gain of rewriting in D is not worth the trouble.
+  
+  Promoted functions and macros as first class atoms. This means you can do
+  some pretty neat stuff using function, map and and your own functions by
+  just passing around functions as variables. Think of it as function pointers
+  on steroids :).
+  So lets get a sorted list of the greatest numbers in a list of lists:
+  (sort 
+    (map
+      '((6 2) (-4 5) (1 3)) 
+      (function (a) 
+        (funcall max a))) ;; Change for min, avg, or med if you like
+    <)
+  
+  Added binding of int, real and char[] from D code. So now you can make your
+  D code variables visible from dlisp, and write to them as well.
+  You bind variables, like you bind new predefined function, by calling 
+  bindValue() with a symbol name, and a pointer to a int, real or char[].
+  
+  In dle I now bind input-count (Number of inputs), input-prompt (duh?), and 
+  input-string (untouched input string). Well, no need to change any of them
+  in reality only input-prompt is useful to write to.
+  
+  (put input-prompt "input: ")
+  Yes, you use put to write to bound values, set just unbinds the value and
+  sets a normal symbol.
+  
+  Perheps I should add the posibility to bind streams as well, so that people
+  can redirect *std-in*, and the likes?
+  
+  
+2005-01-01 -- Fredrik Olsson
+  Putting into nil now raises an EvalState.
+  
+  Rewrote README, to more accerutaly reflect the current state of dLISP.
+
+
+2005-12-31 -- Fredrik Olsson
+  Delayed evaluation of macro expansion until after new scope, otherwise 
+  locals to the macro shadows bindings visible to the macro callees scope.
+  For example (let ((a 1)) (inc a)) did not work since the argument a of
+  the macro inc shadowed the local varoable a declared by the let.
+  
+  Copy-list has been renamed to copy. Copy can now copy any kind of cell and
+  for list give an optional max count if only a limited count of elements is
+  wanted.
+  
+  Added more string and list function. For getting subranges of strings and
+  lists. Also changed append to *NOT* copy the source lists, this is the
+  total opposite of what Common Lisp does. But it is a major speed saver,
+  and in the cases where keeping the original list is of importance, copy
+  exists. 
+
+  Added loop constructs with while and until, works quite allot like Common
+  Lisps do, but with more clear syntax.
+  
+  Added '`' and ',' syntax, makes macros allot shorter and easier to write.
+  Example:
+    (defmacro inc (a &optional (d 1)) (list '+ a d))
+    (defmacro inc (a &optional (d 1)) `(+ ,a ,d))
+  Well not much shorter in this one, but imagine a ten-line macro and you get
+  the point.
+  
+  With new back quote syntax do, dorange, dotimes and dolist macros was 
+  implemented in system.lisp. Do is quite useless unless inside a block form
+  with return form exit, as it is just a infinite loop otherwise. As loops
+  should be used extensively they have been reimplemented in D, but here is
+  the original dorange just to prove it is very usable even for creating new
+  "language elements":
+    (defmacro dorange (args &rest forms) 
+      `(let ((,(first args) ,(second args)))
+         (while (<= ,(first args) ,(third args))
+           (funcall 'progn 
+             (append
+               (copy ',forms) 
+               '((set ,(first args) (inc ,(first args)))))))))
+
+  Length has been renamed to elements, and length rewritten to get length of
+  strings. 
+
+
+2005-12-30 -- Fredrik Olsson
+  Finalized the objectification, so now you basicaly only have two classes 
+  and thir instances to worry about.
+  
+  Environment - An instance handes global and locally bound variables, defined
+  functions, macros, bound predefined functions and soon bound variables from
+  calling code. Methods to note:
+    bindPredef - Binds a function pointer to a symbol.
+    isBound - Check is named symbol is bound.
+    unbind - Unbind value (variable/function/etc) of named symbol. Only unbind
+      global variables, behavior for unbindning local variables is and will
+      allways be undefined.
+    [] - Not methods really :), but use the indexer to read and write the
+      value of named bound symbols.
+    pushScope - Add one local scope (Works like a stack).
+    addLocal - Add local variable to current scope, adding variables to global
+      scope is an error.
+    popScope - Subtract one scope and free all local variables of scope.
+  
+  DLisp - An instance takes an Environment instance as constructor parameter.
+  Methods to note:
+    versionString - Get version as a string including size of cell in bytes.
+    parse - Parse string or Stream and return a Cell-tree.
+    eval - Evaluate a Cell and return resulting Cell-tree.
+    parseEvalPrint - Repeatedly parse and print a source string or Stream,
+      print all result to stdout or optionally just be silent (Nice for 
+      loading system.lisp).
+  
+  A small Example app:
+    import dlisp.dlisp;
+    import dlisp.predefs.all;
+    int main(char[][]args) {
+      DLisp dlisp = new DLisp(addAllToEnvironment(new Environment));
+      Cell cell = dlisp.parseEvalPrint("(set fourty 40) (+ fourty 2)");
+      return cell.intValue;
+    }
+  
+  Nothing fancy, but you get the idea. For proper use, adding try..catch for
+  eventual errors or your or my ( :) ) part is nice.
+  
+  RunTimeException has been renamed DLispState, and all Exceptions have been
+  renamed to States, this is more in line with Common Lisp and makes it eay to
+  single out errors caused by the run-time from other errors.
+  
+
+2005-12-29 -- Fredrik Olsson
+  Renamed global to environment. Objectified the parser/evaluator, and each
+  instance can share a single environment, or use one each.
+  
+
+2005-12-28 -- Fredrik Olsson
+  Split evalpredefs into several smaller files. Could be possible to add only
+  the predefined functions needed for each application very easy.
+  
+  Princ has been removed as a predefined function and added to system.lisp
+  where it belongs.
+  
+  Parsed cells retain their row and column in source, and this is now also
+  printed when exceptions are thrown. So now you can debug _much_ better.
+  The source file is not retained, mainly because the parser function do not
+  care, I am thinking of fixing this as well but have no good and future proof
+  plan yet.
+  
+  Added parse as a sister function for eval, so now you can parse strings or
+  streams into cells, ready to be evaluated or whatever you like.
+  
+  Upgraded Xcode project from 2.0 to 2.2 compatible, hence the name change
+  from .xcode to xcodeproj.
+
+  
+2005-12-19 -- Fredrik Olsson
+  As there is no point in aiming for 100% Common Lisp compatibility I think I
+  should not give the illusion thereof. Predefined functions have therefore 
+  been renamed to be easier to understand for beginners, and more to the point
+  what they do, aliases to the Common Lisp names are kept where functionality
+  is compatible.
+  
+  Added the stream type, for now only for text-files, and standard in/out/error.
+  The standard streams are accessable from the global variables *std-in*, 
+  *std-out* and *std-err*. And they can be redirected of course. And then some
+  predefined functions for working with said streams. An example:
+  (set sout (open "test.txt"))
+  (write sout "Hello World!" *ln* 1 2 3 4) ;; *ln* is a line feed.
+  (close sout)
+  (set sin (open "test.txt"))
+  (read-line sin) ;; => "Hello World!"
+  (read-int sin)  ;; => 1
+  (read-line sin) ;; => " 2 3 4"
+  (read-line sin) ;; => NIL
+  (defun read-all (s) 
+    (let ((line (read-line s))) 
+      (when line 
+        (append (list line) (read-all s)))))
+  (read-all (open "test.txt")) ;; => ("Hello World "1 2 3 4")
+
+  
+2005-12-07 -- Fredrik Olsson
+  Added when and unless, much usefull as they have implicit progn and in 4 out
+  of five you never use the else part of an if anyway. Also added boundp to
+  check if a symbol is bound to a variable.
+  
+  And begun writing a Lisp tutorial, good thing I did because I found out that
+  I hade put the arguments in the wrong order for the second to tenth
+  functions.
+  
+
+2005-12-06 -- Fredrik Olsson
+  Changes float to real (still named float fromt he point of view of lisp),
+  to allow float to hold any int/fixnum.
+  
+  Rehashes global variables after load. No-one expects disc access to be
+  blindingly fast anyway, and it gives a fresh hash after loading system.lisp.
+  
+  newBool() returns a constant symbol for true, instead of allocating a new one
+  for every call. Can this become a problem when doing setf on a place holding 
+  a float? Need testcases for this.
+  
+  Sends original form-list to newFunc instead of allocating a new cons. Not
+  much but if someone ever thought of the idea to use lambda functions in an
+  iteration then it will safe much.
+
+  
+2005-12-04 -- Fredrik Olsson
+  Rewrote argument handling of interpreted functions to allow for &optional
+  and &rest. This should make it mighty more easy to implement more complex
+  functionality in system.lisp. Added the macros incf and decf as an example
+  in system.lisp.
+  
+  Added block with return-from, and tagbody with go. Solved actual jumps in the
+  recursive-intensive interpreter with throw and catch. So added finally around
+  all bindings of locals to ensure correct unwindong as well.
+  
+  Corrected cond so that the conditionals have implicit progn, not just a
+  single form.
+  
+  Added nil as global variable that resolves to NIL, solves some potential
+  problems when constructing forms for evaluation dynamicaly.
+  
+  Predfined macros report that they actually are macros now as well. Perhaps
+  special forms, and special operators should be mentioned as well?
+  
+  
+2005-11-24 -- Fredrik Olsson
+  Implemented macro expansion. So defmacro works, for example;
+  (defmacro inc (x) (list 'setq x (list '1+ x))), called with
+  (inc (car foo)) will be expanded as:
+  (setq (car foo) (1+ (car foo))), and then this resulting form will be
+  evaluated as it should be.
+  
+  I also renamed form to func, as it has been somewhat misleading, form is
+  the general name for any list that is meant to be evaluated, such as symbols,
+  compound forms, or self-evaluating object. Functions are only a subset, and
+  this is now correctly reflected.
+  
+  I also fixed a small bug that incorrectly reported unexpeced symbol in
+  parse stream on (load "file.lisp"), if file had trailing white spaces.
+  
+  
+2005-11-20 -- Fredrik Olsson
+  Rewrote evalArgs to return Cell*[], a good decition. A typical run at
+  paintmap is now:
+  > (time (dfs (list initial-state)))
+  ; Evaluation took: 4.933 seconds.
+  ;   8017 conses and 18893 atoms in 735kb allocated.
+  Going from 15meg to 735k is not bad :).
+  
+  Added validate.lisp with testcases for build-in functions to validate that
+  they yield expected results. So far setq, setf, quote, lambda and eval are
+  validated. 
+  
+  Better add test-cases for all fuctions as a few anomalities have been found.
+  I use CMUCL from http://www.cons.org/cmucl/ and the LISP Hyper Spec at 
+  http://www.lispworks.com/documentation/HyperSpec/Front/X_Symbol.htm to
+  validate beghaviour.
+  
+
+2005-11-19 -- Fredrik Olsson
+  Bugfixes to many functions, mostly allowing for nil input and correctly 
+  returning nil as result.
+  
+  Added time so the performance can now be checked. The test case paintmap.lisp
+  that is provided gives this result when run:
+  > (load "../testcases/paintmap.lisp")
+  > (load "../testcases/paintmap_data.lisp")
+  > (time (dfs (list initial-state)))
+  ; Evaluation took: 6.452 seconds.
+  ;   529814 conses and 18893 atoms in 15003kb allocated.
+  
+  Not that bad for 100% interpreted lisp.
+  
+  
+2005-11-13 -- Fredrik Olsson
+  I have added an assignment from University as a test-case, when it pareses and
+  evaluates as it should then dlisp is ready for prime time :).
+  http://aio.nocrew.org/assignments/artificial_intelligence/paint_your_neighbours.pdf
+  
+  The code is added the testcases directorey as paintmap_data.lisp and 
+  paintmap.lisp. Use (load "foo.lisp") to load them. Use (dfs initial-state) to
+  run.
+  
+  It will throw an exception when evaluating (cdr country) in the function
+  has-color. It is probably a bug in evalArgs().
+  
+  * More bug-fixes to parser
+    - '_' is a legal char for symbols.
+    - isNumeric replaces with a try/catch arount toInt() and toFloat().
+  * Added program-flow functions
+    - progn, cond, let
+  * Added boolean functions
+    - not, and, or
+  * Added comparision functions
+    - =, /=, <, <=, >, >=
+  * Added list functions
+    list, assoc, copy-list, append
+  * Added test functions
+    - eq, equal, null, endp
+    
+  Also added system.lisp, that is loaded on start. It is used to implement many
+  functions that I have not yet bothered (or should I even) to implement in D.
+  
+
+2005-11-12 -- Fredrik Olsson
+  * Symbols are now all uppercased.
+  * Rewrote parser slightly
+    - isNumeric() gives unexpected results, otherwise 1+ symbol should be legal
+    - Dotted list does not terminate parent list anymore ((1 . 2) 3) gave
+      ((1 . 2)) before.
+  * Added FIRST and LAST functions.
+  * Rewrote and renamed numArgs() to listLen() to better indicate current use.
+  
+
+2005-11-06 -- Fredrik Olsson
+ * Completed evalArguments as evalArgs
+ * Rewrote evalpredefs.d to use evalArgs (much shorter)
+ 
+The evaluator should now be stable and usable enough for anyone to add forms.
+Basically a unified argument evaluator has been added, that takes the expected
+arguments as a regexp-lookalike string, the args and optionally a dynamic
+array of ints with counts of variadic arguments.
+
+The formatstring use one character per argument, arguments are evaluated unless
+prefixed with ' (quoted), groupd of arguments can be put in parantesis, and an 
+optional count can be added.
+Available argument types are:
+  '.' - anything
+  'b' - something Boolean 
+  'i', 'f', 'n' - Integer, Float, Numeric
+  's' - String
+  'y', 'a', 'c' - sYmbol, Atom, Concell
+  'l' - List (concell and nil)
+  'o' - fOrm (build-in or defined)
+
+Available counts are
+  ? - zero or one
+  * - zero or more
+  + - one or more
+  
+One example:
+  SETQ "('y.)+" - One or more pairs of one symbol and one "whetever evaluates
+  to anything".
+  
+
+2005-10-16 -- Fredrik Olsson
+ * Bug-fixed string parsing, as a bonus even single atoms can be parsed.
+ * cellToString can now handle circular lists "...") is printed instead.
+
+This works without loop-of-infinity:
+(setq foo '(1 2 3))
+(setf (cdr (cdr foo)) foo) => (1 2 1 ...)
+(nth 42 foo) => 1
+
+
+2005-10-16 -- Fredrik Olsson
+ * Rewrote variable handling to use Globals class in dlisp.global.
+ * Initial attempt at unified argument handler, need lots of work.
+ * Added trace and untrace, as build-in forms and at evaluation time.
+ * Add build-in forms:
+   + car, cdr, cons; for rudimentary list handling.
+   + if, atom, issym, isnum, iscons; for rudimentary conditionals.
+   + princ; quite useless, string parsing is broken.
+
+These works as expected now:
+(defun inclist (a) (if (iscons a) (cons (+ (car a) 1) (inclist (cdr a))) nil))
+(inclist '(1 2 3)) => (2 3 4)
+
+(defun fac (a) (if a (+ a (fac (- a 1))) 0))
+(fac 5) => 15
+

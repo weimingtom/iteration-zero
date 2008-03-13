@@ -64,7 +64,7 @@ class TestState : IGameState
         // FUGLY
         view.sceneMode();
         view.drawHighlight(x,y);
-        writefln ("Looking at (%f %f)", view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
+//         writefln ("Looking at (%f %f)", view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
         view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
         gui.text = [ "tile:" ~ tileprotoname ];
     }
