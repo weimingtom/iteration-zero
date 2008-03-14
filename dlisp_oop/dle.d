@@ -29,6 +29,7 @@ import std.cstream;
 import dlisp.concell;
 import dlisp.dlisp;
 import dlisp.predefs.all;
+import dlisp.bind;
 
 Cell* print(DLisp dlisp, Cell* cell)
 {
@@ -39,11 +40,24 @@ Cell* print(DLisp dlisp, Cell* cell)
     return nil;
 }
 
+class Test
+{
+  mixin BoundClass!("Test");
+
+  void print1()
+  {
+      writefln("PRINT-!");
+  }
+
+  mixin BoundMethod!("HELLO",print1);
+  mixin BoundMethod!("HELLO2",print1);
+
+}
+
 int main(char[][] args) {
   DLisp dlisp = new DLisp(addAllToEnvironment(new Environment()));
   
-  Cell* cell = dlisp.parseEvalPrint(`(LOAD "system.lisp" T)`, true);//"
-//  cell = dlisp.parseEvalPrint(`(read-eval-print-loop)`, true);
+  Cell* cell = dlisp.parseEvalPrint(`(LOAD "system.lisp" T)`, true);
 
 
   int inputcount = 0;
@@ -59,9 +73,14 @@ int main(char[][] args) {
   dlisp.environment.bindValue("*input-string*", &input);
   dlisp.environment.bindValue("*result-prompt*", &inputprompt);
   
+  Test.bindClass(dlisp.environment);
+
   dout.writeLine(dlisp.versionString());
 
-  dlisp.eval(dlisp.parse("(load \"testcases/validate.lisp\")"));//"
+  foreach(string filename; args[1..$])
+  {
+    dlisp.eval(dlisp.parse("(load \"" ~ filename ~ "\")"));
+  }
 
   while(1) {
     dout.writeString(inputprompt);

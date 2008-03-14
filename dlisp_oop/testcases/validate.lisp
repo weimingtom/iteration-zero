@@ -52,7 +52,8 @@
 (if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
 (if (equal a 42) "OK defmacro4" "NOK defmacro4")
 
-(create-object name)
+(setq name (create-object))
+
 (set-attr name 'repl
   (lambda (self &rest args)
     (print self)
@@ -62,5 +63,6 @@
   (lambda (self) (print "WOHOO")))
 
 (repl name "YO")
+
 
 

@@ -154,8 +154,3 @@ public class Environment {
   }
     
 }
-
-public Environment addToEnvironment(Environment environment) {
-  environment = new Environment();
-  return environment;//KB
-}

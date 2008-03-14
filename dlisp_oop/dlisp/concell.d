@@ -27,6 +27,7 @@ module dlisp.concell;
 private {
   import std.string;
   import std.stream;
+  import std.boxer;
   
   import dlisp.types;
   import dlisp.dlisp;
@@ -70,6 +71,7 @@ public {
           }
           struct {
             Cell*[char[]] table; // ctOBJECT
+            Box instance;
           }
           PredefFunc func;  // ctPREDEF
         }
