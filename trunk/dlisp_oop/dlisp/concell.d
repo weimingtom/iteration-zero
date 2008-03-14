@@ -28,7 +28,7 @@ private {
   import std.string;
   import std.stream;
   
-  import dlisp.types;  
+  import dlisp.types;
   import dlisp.dlisp;
 }
 
@@ -212,18 +212,7 @@ public {
     cell.ismacro = ismacro;
     return cell;
   }
-  
-  Cell* newObject(char[] name, Cell* type) {
-    atomcount++;
 
-    name = toupper(name);
-    Cell* cell = new Cell;
-    cell.cellType = CellType.ctOBJECT;
-    cell.name = name;
-    if( type is null ) type = cell;
-    cell.table["*TYPE*"] = type;
-    return cell;
-  }
 }
 
 protected {

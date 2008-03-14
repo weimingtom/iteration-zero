@@ -67,6 +67,18 @@ public template Evaluator() {
             return newStr(*cell.pstrValue);        
         }
       }
+
+      // MAYBE WE NEED TO DISPATCH?
+      Cell* method = null;
+      if( cell.car && cell.cdr && cell.cdr.car && environment.isBound(cell.cdr.car.name)  )
+      {
+         if (isObject(environment[cell.cdr.car.name]))
+         {
+            method = getAttribute(environment[cell.cdr.car.name],cell.car.name);
+//             writefln ("OBJECT:", cell.car.name, cellToString(cell.cdr.car), "METHOD:", cellToString(method));
+         }
+      }
+
       if (cell.cellType == CellType.ctSYM) {
         if (environment.isBound(cell.name)) {
           Cell* temp = environment[cell.name];
@@ -76,10 +88,20 @@ public template Evaluator() {
             return temp;
           }
         } else {
+//           writefln ("METHOD:", cell.name, cellToString(method));
           throw new UnboundSymbolState("Unbound symbol: " ~ cell.name, cell.pos); 
         }
       }
-      Cell* func = eval(cell.car);
+
+      Cell* func;
+
+      // DISPATCH
+      if( isFunc(method) )
+      {
+        func = method;
+      } else {
+        func = eval(cell.car);
+      }
       char[] name = cell.car.name;
       switch (func.cellType) {
         case CellType.ctFUNC:

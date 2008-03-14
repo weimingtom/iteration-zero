@@ -52,63 +52,15 @@
 (if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
 (if (equal a 42) "OK defmacro4" "NOK defmacro4")
 
+(create-object name)
+(set-attr name 'repl
+  (lambda (self &rest args)
+    (print self)
+    (print args)))
 
-(defclass standard-object)
-(defclass *instance-type*)
-;;;
-;;; OBJECTS
-(if (isobject *type*) "OK object1" "NOK object1")
-(if (not (isobject nil)) "OK object2" "NOK object2")
-(if (isobject (type-of *type*)) "OK object3" "NOK object3")
-(if (isobject standard-object) "OK object4" "NOK object4")
+(set-attr name 'print
+  (lambda (self) (print "WOHOO")))
 
-
-(defun get-method (object name)
-    (if (has-attr object name)
-        (get-attr object name)
-        (if (isobject (get-attr object 'superclass))
-            (get-method (get-attr object 'superclass) name))))
-
-(defun call-method (object name &rest args)
-    (funcall (get-method object name) (cons object args)))
+(repl name "YO")
 
 
-(defclass A standard-object)
-
-(defmacro defgeneric (function-name)
-    `(defun ,function-name (object &rest args)
-        (funcall (get-method object ',function-name) (cons object args))))
-
-;; (set-attr standard-object 'repr (lambda (x) x))
-
-
-(defun printl (&rest args)
-    (map print (cons (elements args) args)))
-
-;; (funcall printl (cons "738468736" (list "734678264!")))
-
-(defmacro defgeneric (function-name)
-    `(defun ,function-name (object &rest args)
-        (funcall (get-method object ',function-name) (cons object args))))
-
-(defmacro defmethod (class method-name signature body)
-    `(set-attr ,class ',method-name
-        (lambda ,(cons 'self signature)
-            ,body)))
-
-(defmethod standard-object print-l  (x &rest args)
-        (progn 
-            (print "print-l-method")
-            (print self)
-            (print x)
-            (print args)))
-
-(defgeneric make-instance)
-
-(defmethod standard-object make-instance ()
-    (progn 
-        (defclass *unnamed-instance* self)
-        (set-attr *unnamed-instance* '*TYPE* *INSTANCE-TYPE*)
-        *unnamed-instance*))
-
-(make-instance standard-object)
