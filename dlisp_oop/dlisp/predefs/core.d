@@ -196,7 +196,7 @@ public Environment addToEnvironment(Environment environment) {
   environment.bindPredef("eval", &evalEval,"(EVAL <arg>); Execute <arg>.");
   environment.bindPredef("funcall", &evalFunCall,"(EVALFUN <func> <list>); Execute function or macro <func> with arguments in <list>.");
   environment.bindPredef("parse", &evalParse,"(PARSE <str>|<stream>); Parse and return the string <str> or the string in stream <stream>, as lisp program.");
-  environment.bindPredef("quote", &evalQuote, "(QUOTE <sym>); Quotes symbol <sym>, equivalent to \"'<sym>\".", true);//'
+  environment.bindPredef("quote", &evalQuote, "(QUOTE <sym>); Quotes symbol <sym>, equivalent to \"'<sym>\".", true);
   environment.bindPredef("back-quote", &evalBack_Quote); 
   environment.bindPredef("comma-quote", &evalComma_Quote); 
   environment.bindPredef("function", &evalFunction, "(FUNCTION (<arg> ...) <body>); Returns unnamed function with arguments <arg> and body <body>.", true);

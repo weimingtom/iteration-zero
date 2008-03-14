@@ -30,12 +30,7 @@ private {
 
   import dlisp.evalhelpers;
   import dlisp.dlisp;
-}
-
-private {
-    Cell* typeType = null;
-    Cell* classType = null;
-    Cell* instanceType = null;
+  import dlisp.oopextension;
 }
 
 public {
@@ -58,62 +53,33 @@ public {
         }
     }
 
-    Cell* newClass(char[] name, Cell* superclass = null)
-    {
-        Cell* cell = newObject(name,classType);
-        if( superclass )
-        {
-            writefln ("SUPERCLASS of %s is %s",cellToString(cell),cellToString(superclass));
-            cell.table["SUPERCLASS"] = superclass;
-            assert(cell.table["SUPERCLASS"].table["*TYPE*"] == classType);
-        }
-        return cell;
-    }
-
-    Cell* evalTypeOf(DLisp dlisp, Cell* cell)
-    {
-        Cell* cells[] = evalArgs(dlisp,"O",cell.cdr);
-        if( isObject(cells[0]) )
-        {
-            return cells[0].table["*TYPE*"];
-        }
-        return nil;
-    }
-
-    Cell* evalDefClass(DLisp dlisp, Cell* cell)
+    Cell* evalCreateObject(DLisp dlisp, Cell* cell)
     {
 
         Cell* cells[] = evalArgs(dlisp,"'yO?",cell.cdr);
         if( cells.length == 1 )
             cells ~= null;
-        cell = newClass(cells[0].name,cells[1]);
+        cell = newObject(cells[0].name,cells[1]);
         dlisp.environment.addLocal(cell.name,cell);
         return cell;
     }
 
-    Cell* evalCreateInstance(DLisp dlisp, Cell* cell)
+    Cell* evalGetMethod(DLisp dlisp, Cell* cell)
     {
 
-        Cell* cells[] = evalArgs(dlisp,"'yO?",cell.cdr);
-        if( cells.length == 1 )
-            cells ~= null;
-        cell = newClass(cells[0].name,cells[1]);
-        dlisp.environment.addLocal(cell.name,cell);
-        return cell;
+        Cell* cells[] = evalArgs(dlisp,"Oy",cell.cdr);
+        return getAttribute(cells[0],cells[1].name);
     }
 
     Cell* evalGetAttr(DLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs(dlisp,"Oy.?",cell.cdr);
-        if( cells[1].name in cells[0].table )
-        {
-            return cells[0].table[cells[1].name];
-        }
-        if( cells.length == 3 )
+        Cell* attr = getAttribute(cells[0],cells[1].name);
+        if( attr is null && cells.length == 3 )
         {
             return cells[2];
         }
-        return nil;
+        return attr;
     }
 
     Cell* evalSetAttr(DLisp dlisp, Cell* cell)
@@ -126,7 +92,7 @@ public {
     Cell* evalHasAttr(DLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs (dlisp, "Oy", cell.cdr);
-        if((cells[1].name in cells[0].table) !is null)
+        if( getAttribute(cells[0], cells[1].name) !is null)
             return newSym("T");
         return nil;
     }
@@ -134,15 +100,11 @@ public {
 }
 
 public Environment addToEnvironment(Environment environment) {
-    environment["*TYPE*"] = typeType = newObject("*TYPE*", null);
-    environment["*CLASS-TYPE*"] = classType = newObject("*CLASS-TYPE*", environment["*TYPE*"]);
-    environment["*INSTANCE-TYPE*"] = classType = newObject("*INSTANCE-TYPE*", environment["*TYPE*"]);
+    environment.bindPredef("get-attr", &evalGetAttr, "(GET-ATTR <object> <sym>); Return attr of <objects>");
+    environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> <sym> <value>); Set attr of <objects>");
+    environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> <sym>); Return whether <objects> has attr");
 
-    environment.bindPredef("type-of", &evalTypeOf, "(TYPE-OF <object>); Return <objects>s type");
-    environment.bindPredef("get-attr", &evalGetAttr, "(GET-ATTR <object> attr); Return attr of <objects>");
-    environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> attr value); Set attr of <objects>");
-    environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> attr); Return whether <objects> has attr");
-
-    environment.bindPredef("defclass", &evalDefClass, "(DEFCLASS <sym> [<superclass>]); Define a new class.");
+    environment.bindPredef("create-object", &evalCreateObject, "(CREATE-OBJECT <sym> [<superclass>]); Creates a new Object.");
+    environment.bindPredef("get-method", &evalGetMethod, "(GET-METHOD <object> <sym>); Get unbound method.");
     return environment;
 }

@@ -27,6 +27,7 @@ module dlisp.dlisp;
 public {
   import dlisp.concell;
   import dlisp.concellhelpers;
+  import dlisp.oopextension;
   import dlisp.environment;
   import dlisp.states;
 }
