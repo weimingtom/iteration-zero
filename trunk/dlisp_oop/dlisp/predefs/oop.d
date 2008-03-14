@@ -34,34 +34,12 @@ private {
 }
 
 public {
-    struct BoundClass
-    {
-        char[] name;
-        char[] superclass;
-    
-        static BoundClass opApply(char[] name,char[] superclass="*object-class*")
-        {
-            BoundClass cls;
-            cls.name = name;
-            cls.superclass = superclass;
-            return cls;
-        }
-    
-        void addToEnvironment(Environment environment)
-        {
-            
-        }
-    }
 
     Cell* evalCreateObject(DLisp dlisp, Cell* cell)
     {
-
-        Cell* cells[] = evalArgs(dlisp,"'yO?",cell.cdr);
-        if( cells.length == 1 )
-            cells ~= null;
-        cell = newObject(cells[0].name,cells[1]);
-        dlisp.environment.addLocal(cell.name,cell);
-        return cell;
+        if( cell.cdr )
+          return newObject("Unnamed object",dlisp.eval(cell.cdr));
+        return newObject("Unnamed object");
     }
 
     Cell* evalGetMethod(DLisp dlisp, Cell* cell)
@@ -104,7 +82,7 @@ public Environment addToEnvironment(Environment environment) {
     environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> <sym> <value>); Set attr of <objects>");
     environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> <sym>); Return whether <objects> has attr");
 
-    environment.bindPredef("create-object", &evalCreateObject, "(CREATE-OBJECT <sym> [<superclass>]); Creates a new Object.");
+    environment.bindPredef("create-object", &evalCreateObject, "(CREATE-OBJECT [<superclass>]); Creates a new Object.");
     environment.bindPredef("get-method", &evalGetMethod, "(GET-METHOD <object> <sym>); Get unbound method.");
     return environment;
 }
