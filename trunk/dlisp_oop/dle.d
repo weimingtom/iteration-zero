@@ -42,6 +42,8 @@ Cell* print(DLisp dlisp, Cell* cell)
 
 class Test
 {
+  string _name;
+
   mixin BoundClass!("Test");
 
   void print1()
@@ -49,8 +51,23 @@ class Test
       writefln("PRINT-!");
   }
 
+  void setXYZ(int x, int y)
+  {
+      writefln("PRINT-INT",x,y);
+  }
+
+  void setName(string n) { _name = n; }
+
+  string getName()
+  {
+    return _name;
+  }
+
   mixin BoundMethod!("HELLO",print1);
-  mixin BoundMethod!("HELLO2",print1);
+  mixin BoundMethod!("PRINT-INT",setXYZ);
+  mixin BoundMethod!("WHO-AM-I",getName);
+  mixin BoundMethod!("I-AM",setName);
+  mixin BoundMethod!(setName);
 
 }
 
