@@ -26,10 +26,16 @@ module dlisp.bind;
 
 public {
   import dlisp.dlisp;
+  import dlisp.evalhelpers : evalArgs;
   import std.string;
+  import std.stdio : writefln;
 
   import std.boxer;
   import std.traits : ReturnType, ParameterTypeTuple;
+}
+
+T Construct(T,A...)(A a) {
+  return new T(a);
 }
 
 template FunParams(alias f)
@@ -69,6 +75,11 @@ template InvokeMethod(alias func)
   }
 }
 
+template InvokeConstructor(string classname,alias func)
+{
+  const InvokeConstructor = classname ~ " instance = new " ~ classname ~ "("~ FunParams!(func) ~");";
+}
+
 template HasReturnType(alias func)
 {
   const HasReturnType = !is(ReturnType!(func) == void);
@@ -84,46 +95,60 @@ template BindReturnValue(alias func)
 
 template BoxArguments(T ...)
 {
+  const BoxArguments = BoxArgumentsImpl!(0,T);
+}
+
+template BoxArgumentsImpl(int n, T ...)
+{
   static if( T.length == 0)
-    const BoxArguments = "";
+    const BoxArgumentsImpl = "";
   else static if( T.length == 1 )
-    const BoxArguments = "nextarg;" ~ BoxArgument!(T[0]);
+    const BoxArgumentsImpl = BoxArgument!(n,T[0]);
   else
-    const BoxArguments = "nextarg;" ~ BoxArgument!(T[0]) ~ BoxArguments!(T[1..$]);
+    const BoxArgumentsImpl = BoxArgument!(n,T[0]) ~ BoxArgumentsImpl!(n+1,T[1..$]);
+}
+
+template CArg(int n)
+{
+  const CArg = "cargs[" ~ n.stringof ~ "]";
 }
 
 template AddArgument(string argvalue)
 { 
-    const AddArgument ="args~=" ~ argvalue ~ ";";
+    const AddArgument = "args ~=" ~ argvalue ~ ";";
 }
 
-template CheckArgument(string checkfun)
+template CheckArgument(int n, string checkfun)
 {
     const CheckArgument = 
-      "if( !" ~ checkfun ~ "(arg_car) ) { "
+      "if( !" ~ checkfun ~ "("~ CArg!(n) ~") ) { "
         ~ "throw new ArgumentState(\"Excepted " ~ checkfun ~ "\",cell.pos);"
         ~ "}";
 }
 
-template BoxArgument(T : int)
+template BoxArgument(int n, T : int)
 {
-  const BoxArgument = CheckArgument!("isInt") ~ AddArgument!("box(arg_car.intValue)");
+  const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
 }
 
-template BoxArgument(T : long)
+template BoxArgument(int n, T : long)
 {
-  const BoxArgument = CheckArgument!("isInt") ~ AddArgument!("box(arg_car.intValue)");
+  const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
 }
 
-template BoxArgument(T : string)
+template BoxArgument(int n, T : string)
 {
-  const BoxArgument = CheckArgument!("isString") ~ AddArgument!("box(arg_car.strValue)");
+  const BoxArgument = CheckArgument!(n,"isString") ~ AddArgument!("box(" ~ CArg!(n) ~ ".strValue)");
 }
 
-template BoxArgument(T)
+template BoxArgument(int n, T)
 {
-  pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY BIND THIS: " ~ T.stringof);
-  static assert(0);
+  static if( IsBoundClass!(T) ) {
+    const BoxArgument =  CheckArgument!(n,T.stringof ~ ".isInstance") ~ AddArgument!(CArg!(n) ~ ".instance");
+  } else {
+    pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY BIND THIS: " ~ T.stringof);
+    static assert(0);
+  }
 }
 
 template BoxReturnValue(T : int)
@@ -148,26 +173,65 @@ template BoxReturnValue(T : string)
 
 template BoxReturnValue(T)
 {
-  pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY WRAP RETURN TYPE: " ~ T.stringof);
-  static assert(0);
+  static if ( IsBoundClass!(T) ) {
+    const BoxReturnValue = "return return_value.wrap(dlisp);"; 
+  } else {
+    pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY WRAP RETURN TYPE: " ~ T.stringof);
+    static assert(0);
+  }
 }
 
-template BoundClass(string classname)
+template BindClass(string classname)
 {
   private Cell* _instanceCell;
 
   private static Cell* _classCell;
   private static Cell*[string] _methods;
+  private static typeof(this) function(DLisp,Cell*) _constructor;
 
   static void bindClass(Environment environment)
   {
       environment[classname] = getClass();
   }
 
-  static typeof(this) createInstance(Cell* cell)
+  static bool isInstance(Cell* cell)
   {
-    typeof(this) instance = new typeof(this);
-    instance._instanceCell = cell;
+    if( cell is null )
+      return false;
+    return cell.instance.unboxable(typeid(typeof(this)));
+  }
+
+  static Cell* wrapInstance(DLisp dlisp, typeof(this) instance)
+  {
+    if( instance._instanceCell )
+      return instance._instanceCell;
+    Cell* object = newObject("INSTANCE OF CLASS " ~ toupper(classname),getClass());
+    object.instance = box(instance);
+    return object;
+  }
+
+  Cell* wrap(DLisp dlisp)
+  {
+    return typeof(this).wrapInstance(dlisp,this);
+  }
+
+  static typeof(this) createInstance(DLisp dlisp,Cell* object, Cell* cell)
+  {
+    typeof(this) instance;
+
+    writefln("CONSTRUCTOR ARGS: %s",cellToString(cell.cdr));
+    if( cell.cdr is null )
+    {
+      static if (is(typeof( Construct!(typeof(this))))) {
+        instance = Construct!(typeof(this));
+      } else {
+        throw new ArgumentState("No default constructor given for " ~ classname,cell.pos);
+      }
+    } else {
+      instance = _constructor(dlisp, cell);
+    }
+
+    instance._instanceCell = object;
     return instance;
   }
 
@@ -178,17 +242,17 @@ template BoundClass(string classname)
 
   static Cell* getClass()
   {
-    static Cell* makeInstance(DLisp dlisp, Cell*)
+    static Cell* makeInstance(DLisp dlisp, Cell* cell)
     {
       Cell* object = newObject("INSTANCE OF CLASS " ~ toupper(classname),getClass());
-      object.instance = box(createInstance(object));
+      object.instance = box(createInstance(dlisp, object, cell));
       return object;
     }
 
     if( _classCell is null )
     {
       _classCell = newObject(classname);
-      _classCell.table["MAKE-INSTANCE"] = newPredef("MAKE-INSTANCE",toDelegate(&makeInstance),"CREATE AN INSTANCE OF " ~ toupper(classname));
+      _classCell.table["MAKE-INSTANCE"] = newPredef("MAKE-INSTANCE",toDelegate(&makeInstance),"CREATES AN INSTANCE OF " ~ toupper(classname));
       foreach(string name, Cell* method; _methods)
       {
         _classCell.table[name] = method;
@@ -198,7 +262,66 @@ template BoundClass(string classname)
   }
 }
 
-template BoundMethod(string name,alias func)
+template IsBoundClass(T)
+{
+  const IsBoundClass = is( typeof( T.bindClass ) );
+}
+
+unittest {
+  //
+  // Internal compiler error with GDC :(
+  //
+
+  class UTest1 {
+//     mixin BindClass!("UTest");
+  }
+  class UTest2 { }
+
+  // static assert(  IsBoundClass!(UTest1) );
+  static assert( !IsBoundClass!(UTest2) );
+}
+
+// Inclomplete Constructor Wrapper
+template BindConstructor(T)
+{
+    static this()
+    {
+      
+
+      static typeof(this) initWrapper(DLisp dlisp, Cell* cell)
+      {
+        T func;
+//         pragma(msg,T.stringof);
+        
+        writefln ("CONSTRUCTOR: %s ARGS: %s", T.stringof, cellToString(cell.cdr.cdr));
+
+        if(ParameterTypeTuple!(func).length > listLen(cell.cdr.cdr))
+        {
+          return null;
+        }
+
+        if(ParameterTypeTuple!(func).length < listLen(cell.cdr.cdr))
+        {
+          return null;
+        }
+
+        Cell*[] cargs = evalArgs(dlisp,cell.cdr.cdr);
+
+        Box[] args;
+        try {
+          mixin(BoxArguments!(ParameterTypeTuple!(func)));
+        } catch (ErrorState e) {
+          return null;
+        }
+        mixin(InvokeConstructor!("Test",func));
+        return instance;
+      }
+
+      _constructor = &initWrapper;
+    }
+}
+
+template BindMethod(string name,alias func)
 {
 //     pragma(msg,name);
     static this()
@@ -210,24 +333,16 @@ template BoundMethod(string name,alias func)
 
 //         writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
 
-        if(ParameterTypeTuple!(func).length > listLen(cell.cdr.cdr))
+        Cell*[] cargs = evalArgs(dlisp,cell.cdr.cdr);
+
+        if(ParameterTypeTuple!(func).length > cargs.length)
         {
           throw new ArgumentState("Function " ~ name ~ " got too few arguments.",cell.pos);
         }
 
-        if(ParameterTypeTuple!(func).length < listLen(cell.cdr.cdr))
+        if(ParameterTypeTuple!(func).length < cargs.length)
         {
           throw new ArgumentState("Function " ~ name ~ " got too many arguments.",cell.pos);
-        }
-
-        Cell* arg_cons = cell.cdr.cdr;
-        Cell* arg_car = null;
-
-        void nextarg()
-        {
-          assert(arg_cons);
-          arg_car = dlisp.eval(arg_cons.car);
-          arg_cons = arg_cons.cdr;
         }
 
         Box[] args;
@@ -240,11 +355,11 @@ template BoundMethod(string name,alias func)
         return null;
       }
 
-      _methods[name] = newPredef(name,toDelegate(&methodWrapper),"Autogenerated unbound function.");
+      _methods[name] = newPredef(name,toDelegate(&methodWrapper),"auto-generated unbound method.");
     }
 }
 
-string _lispify(string name)
+string Lispify(string name)
 {
   string new_name;
   for(int i= 1; i != name.length; ++i)
@@ -256,7 +371,17 @@ string _lispify(string name)
   return toupper(new_name);
 }
 
-template BoundMethod(alias func)
+template BindMethod(alias func)
 {
-  mixin BoundMethod!(_lispify(MethodName!(func)),func);
+  mixin BindMethod!(Lispify(MethodName!(func)),func);
+}
+
+template BindMethods(T ...)
+{
+  static if (T.length == 1) {
+    mixin BindMethod!(T[0]);
+  } else {
+    mixin BindMethod!(T[0]);
+    mixin BindMethods!(T[1..$]);
+  }
 }
