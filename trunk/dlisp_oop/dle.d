@@ -44,11 +44,23 @@ class Test
 {
   string _name;
 
-  mixin BoundClass!("Test");
+
+//   this() {}
+  this(string n) {writefln("PRINT-!",n);}
+
 
   void print1()
   {
       writefln("PRINT-!");
+  }
+
+  Test returnMe()
+  {
+    return this;
+  }
+
+  void acceptMe(Test t)
+  {
   }
 
   void setXYZ(int x, int y)
@@ -63,11 +75,9 @@ class Test
     return _name;
   }
 
-  mixin BoundMethod!("HELLO",print1);
-  mixin BoundMethod!("PRINT-INT",setXYZ);
-  mixin BoundMethod!("WHO-AM-I",getName);
-  mixin BoundMethod!("I-AM",setName);
-  mixin BoundMethod!(setName);
+  mixin BindClass!("Test");
+  mixin BindConstructor!(Test function(string));
+  mixin BindMethods!(setName,print1,getName,setXYZ,returnMe,acceptMe);
 
 }
 

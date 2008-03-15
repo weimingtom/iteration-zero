@@ -29,7 +29,18 @@ private {
 }
 
 public {
-    
+
+  Cell*[] evalArgs(DLisp dlisp, Cell* cell)
+  {
+    Cell*[] args;
+    while( cell !is null )
+    {
+      args ~= dlisp.eval(cell.car);
+      cell = cell.cdr;
+    }
+    return args;
+  }
+
   Cell*[] evalArgs(DLisp dlisp, char[] fmt, Cell* args) {
     uint[] cnts;
     return evalArgs(dlisp, fmt, args, cnts);
@@ -172,6 +183,6 @@ public {
       }
     }
     return ret;
-}
+  }
 
 }
