@@ -32,6 +32,8 @@ private {
 public template Evaluator() {
   
   public {
+    Cell*[] traceback;
+
     
     bool[char[]] tracefuncs;
     uint evalcount = 0;
@@ -53,6 +55,9 @@ public template Evaluator() {
     }
     
     Cell* eval(Cell* cell, bool leavebound = false) {
+      scope(failure)
+        traceback ~= cell;
+
       evalcount++;
       if (isAtom(cell)) {
         return cell;
@@ -200,7 +205,7 @@ public template Evaluator() {
           }
           break;
         case CellType.ctPREDEF:
-          cell = func.func(this, cell);
+            cell = func.func(this, cell);
           break;
         default:
 /*          if (allowLists == 0) {

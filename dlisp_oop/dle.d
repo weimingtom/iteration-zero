@@ -40,8 +40,10 @@ Cell* print(DLisp dlisp, Cell* cell)
     return nil;
 }
 
+
 class Test
 {
+  public:
   string _name;
 
 
@@ -81,6 +83,27 @@ class Test
 
 }
 
+int plus1(int i)
+{
+  return i + 1;
+}
+
+int a(int i, Test t)
+{
+  return i + 1;
+}
+
+Test b(int i)
+{
+  return new Test("HI");
+}
+
+class TestF : FunctionSet {
+  mixin BindFunction!("plus-1",plus1);
+  mixin BindFunctions!(a,b);
+}
+
+
 int main(char[][] args) {
   DLisp dlisp = new DLisp(addAllToEnvironment(new Environment()));
   
@@ -101,7 +124,7 @@ int main(char[][] args) {
   dlisp.environment.bindValue("*result-prompt*", &inputprompt);
   
   Test.bindClass(dlisp.environment);
-
+  TestF.bind(dlisp.environment);
   dout.writeLine(dlisp.versionString());
 
   foreach(string filename; args[1..$])
@@ -122,7 +145,8 @@ int main(char[][] args) {
         cell_ = dlisp.eval(cell_);
         dout.writeLine(resultprompt ~ cellToString(cell_));
       } catch (DLispState e) {
-        dout.writeLine("RTE: " ~ e.toString());
+        dout.writeLine("RTE: " ~ e.toString() ~ " POS: " ~ toString(e.pos.row) ~ "/" ~toString(e.pos.col));
+        dout.writeLine("STATES: " ~ join(e.stateNames," - "));
       }
     }
   }

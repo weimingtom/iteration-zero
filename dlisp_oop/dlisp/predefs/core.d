@@ -91,6 +91,13 @@ public {
     }
   }
   
+  Cell* evalTraceback(DLisp dlisp, Cell* cell) {
+      foreach(int i, Cell* tracedCell; dlisp.traceback) {
+        writefln("--FRAME #%d ------------------------------------\n%s",i,cellToString(tracedCell));
+      }
+      return nil;
+  }
+
   Cell* evalTime(DLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l", cell.cdr);
     d_time start = getUTCtime();
@@ -191,6 +198,7 @@ public Environment addToEnvironment(Environment environment) {
   environment.bindPredef("load", &evalLoad, "(LOAD <path> [<silent>]); Load, parse and execute file at <path>, supress output if <silent> is true (false is default)."); 
   environment.bindPredef("trace", &evalTrace, "(TRACE [<sym> ...]); Add trace on functions, if no symbol is given a list of currently traced functions is returned.");
   environment.bindPredef("untrace", &evalUntrace, "(UNTRACE [<sym> ...]); Remove trace from functions, if no symbols given all traces are removed.");
+  environment.bindPredef("traceback", &evalTraceback, "(TRACEBACK); Print and clear current traceback.");
   environment.bindPredef("time", &evalTime, "(TIME <form>); Evaluate and return <form>s result, and print timing information.");
 
   environment.bindPredef("eval", &evalEval,"(EVAL <arg>); Execute <arg>.");
