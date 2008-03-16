@@ -123,6 +123,22 @@ template InvokeMethod(alias func)
 }
 
 /**
+  Invoke a global function and possibly bind the return value (if any)
+  to an auto variable "return_value".
+
+  Assumes an array "Box[] args" with the correct types
+  and unboxes the contents.
+*/
+template InvokeFunction(alias func)
+{
+  static if( !HasParams!(func) ) {
+    const InvokeFunction = BindReturnValue!(func) ~ func.stringof ~ ";";
+  } else {
+    const InvokeFunction = BindReturnValue!(func) ~ MethodName!(func) ~ "("~ FunParams!(func) ~");";
+  }
+}
+
+/**
   Invoke a constructor of a class "classname" and bind the returned instance
   to a variable "instance".
 
@@ -340,11 +356,11 @@ template BindClass(string classname)
   static typeof(this) createInstance(DLisp dlisp,Cell* object, Cell* cell)
   {
     typeof(this) instance;
-    // writefln("CONSTRUCTOR ARGS: %s",cellToString(cell.cdr));
-    if( cell.cdr is null )
+    //writefln("CONSTRUCTOR ARGS: %s",cellToString(cell.cdr.cdr));
+    if( cell.cdr.cdr is null )
     {
-      static if (is(typeof( Construct!(typeof(this))))) {
-        instance = Construct!(typeof(this));
+      static if (is(typeof(new typeof(this)))) {
+        instance = new typeof(this);
       } else {
         throw new ArgumentState("No default constructor given for " ~ classname,cell.pos);
       }
@@ -397,11 +413,11 @@ unittest {
   //
 
   class UTest1 {
-//     mixin BindClass!("UTest");
+    mixin BindClass!("UTest");
   }
   class UTest2 { }
 
-  // static assert(  IsBoundClass!(UTest1) );
+  static assert(  IsBoundClass!(UTest1) );
   static assert( !IsBoundClass!(UTest2) );
 }
 
@@ -434,7 +450,7 @@ template BindConstructor(T)
         } catch (ErrorState e) {
           return null;
         }
-        mixin(InvokeConstructor!("Test",func));
+        mixin(InvokeConstructor!(ReturnType!(func).stringof,func));
         return instance;
       }
 
@@ -449,7 +465,6 @@ template BindConstructor(T)
 */
 template BindMethod(string name,alias func)
 {
-    //  pragma(msg,name);
     static this()
     {
       static Cell* methodWrapper(DLisp dlisp, Cell* cell)
@@ -460,20 +475,33 @@ template BindMethod(string name,alias func)
         // writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
 
         Cell*[] cargs = evalArgs(dlisp,cell.cdr.cdr);
+        static if( HasParams!(func) ) {
+          const int param_length = ParameterTypeTuple!(func).length;
+        } else {
+          const int param_length = 0;
+        }
 
-        if(ParameterTypeTuple!(func).length > cargs.length)
+        if(param_length > cargs.length)
         {
           throw new ArgumentState("Function " ~ name ~ " got too few arguments.",cell.pos);
         }
 
-        if(ParameterTypeTuple!(func).length < cargs.length)
+        if(param_length < cargs.length)
         {
           throw new ArgumentState("Function " ~ name ~ " got too many arguments.",cell.pos);
         }
 
-        Box[] args;
-        mixin(BoxArguments!(ParameterTypeTuple!(func)));
-        mixin(InvokeMethod!(func));
+        static if( param_length ) {
+          Box[] args;
+          mixin(BoxArguments!(ParameterTypeTuple!(func)));
+          mixin(InvokeMethod!(func));
+        } else {
+          static if( HasReturnType!(func) ){
+            mixin("auto return_value = instance." ~ func.stringof ~ ";");
+          } else {
+            mixin("instance." ~ func.stringof ~ ";");
+          }
+        }
 
         static if( HasReturnType!(func) ){
           mixin(BoxReturnValue!(ReturnType!(func)));
@@ -528,3 +556,83 @@ template BindMethods(T ...)
     mixin BindMethods!(T[1..$]);
   }
 }
+
+/**
+  Generate a function wrapper for the given function.
+  You can pass a name as first argument, that will
+  be exported to DLisp.
+*/
+template BindFunction(string name,alias func)
+{
+    //  pragma(msg,name);
+    static this()
+    {
+      static Cell* functionWrapper(DLisp dlisp, Cell* cell)
+      {
+        Cell*[] cargs = evalArgs(dlisp,cell.cdr);
+
+        if(ParameterTypeTuple!(func).length > cargs.length)
+        {
+          throw new ArgumentState("Function " ~ name ~ " got too few arguments.",cell.pos);
+        }
+
+        if(ParameterTypeTuple!(func).length < cargs.length)
+        {
+          throw new ArgumentState("Function " ~ name ~ " got too many arguments.",cell.pos);
+        }
+
+        Box[] args;
+        mixin(BoxArguments!(ParameterTypeTuple!(func)));
+        mixin(InvokeFunction!(func));
+
+        static if( HasReturnType!(func) ){
+          mixin(BoxReturnValue!(ReturnType!(func)));
+        }
+        return null;
+      }
+
+      _functions ~= newPredef(name,toDelegate(&functionWrapper),"auto-generated function.");
+    }
+}
+
+/**
+  Generate a function wrapper for the given function.
+  Automatically generates a lispy name for it.
+*/
+template BindFunction(alias func)
+{
+  mixin BindFunction!(Lispify((&func).stringof[1..$]),func);
+}
+
+/**
+  Multiple version for BindFunction
+
+  Generate a Function wrapper for the given list of Functions.
+  Automatically generates a lispy names for them.
+*/
+template BindFunctions(T ...)
+{
+  static if (T.length == 1) {
+    mixin BindFunction!(T[0]);
+  } else {
+    mixin BindFunction!(T[0]);
+    mixin BindFunctions!(T[1..$]);
+  }
+}
+
+
+class FunctionSet
+{
+  private static Cell*[] _functions;
+
+  static void bind(Environment environment)
+  {
+      foreach(Cell* cell; _functions)
+      {
+        environment[cell.name] = cell;
+      }
+  }
+}
+
+
+
