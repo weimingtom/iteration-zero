@@ -130,7 +130,7 @@ class Tile
             return false;
         }
 
-        GObject[] gobjects() { return _gobjects; }
+        GObject[] getObjects() { return _gobjects; }
 
         mixin BindClass!("C/TILE");
 }

@@ -91,7 +91,8 @@ class Level : ILevel
         dataset = new Dataset;
 
         Engine.instance.dlisp.environment.pushScope();
-        Engine.instance.dlisp.environment.addLocal("*LEVEL*", wrap(Engine.instance.dlisp));
+        bindInstance(Engine.instance.dlisp.environment,"*LEVEL*");
+
         Engine.instance.dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);//"
         Engine.instance.dlisp.environment.popScope();
     }
@@ -145,6 +146,16 @@ class Level : ILevel
         return tiles[y*width +x];
     }
 
+    GObject[] getObjects(int x, int y)
+    {
+        return tiles[y*width +x].getObjects;
+    }
+
+    GObject[] getAllObjects()
+    {
+        return gobjects;
+    }
+
     void placeTile(int x, int y, string name)
     {
         if( isValid(x,y) )
@@ -195,9 +206,20 @@ class Level : ILevel
         return cast(float)(abs(x0 - x1) + abs(y0-y1));
     }
 
+    void setName(string name_ )
+    {
+        name = name_;
+    }
+
+    string getName()
+    {
+        return name;
+    }
+
     mixin BindClass!("C/LEVEL");
     mixin BindConstructor!(Level function(string));
-    mixin BindMethods!(init,finalize,draw,isValid,placeTile,placeObject,loadDataset);
+    mixin BindMethods!(init,finalize,draw,isValid,placeTile,placeObject,loadDataset,getTile,getObjects,getAllObjects);
+    mixin BindMethods!(setName);
 }
 
 class LevelRenderer : Renderer
