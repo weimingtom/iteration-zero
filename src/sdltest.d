@@ -28,16 +28,13 @@ class TestState : IGameState
         engine = Engine.instance;
         view = new LevelRenderer;
         gui = new GuiRenderer;
-        engine.renderPipeline.add (new GridRenderer);
         engine.renderPipeline.add (view);
         engine.renderPipeline.add (gui);
     }
 
     void start()
     {
-        engine.renderPipeline["grid"].enabled = false;
-        engine.renderPipeline["level"].enabled = true;
-        engine.renderPipeline["gui"].enabled = true;
+        engine.renderPipeline.setPipeline(["level","gui"]);
 
         view.level = new Level (filename);
         view.lookAt (0, 0);

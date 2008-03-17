@@ -19,6 +19,7 @@ private {
     import dataset;
     import gobject;
     import dlisp.dlisp;
+    import dlisp.bind;
     import dlisp.predefs.all;
 }
 
@@ -64,80 +65,13 @@ private class Chunk
     }
 }
 
-private  import dlisp.evalhelpers;
-class LevelEnvironment : Environment
-{
-    Level level;
-
-    this(Level level_)
-    {
-        super();
-        level = level_;
-
-        bindDelegate("level-is-valid",&level_is_valid);
-        bindDelegate("level-init",&level_init);
-        bindDelegate("level-finish",&level_finish);
-        bindDelegate("level-place-tile",&level_place_tile);
-        bindDelegate("level-place-object",&level_place_object);
-        bindDelegate("level-load-dataset",&level_load_dataset);
-        bindValue("*level-name*", &level.name);
-    }
-
-    Cell* level_init(DLisp dlisp, Cell* cell)
-    {
-        Cell*[] args = evalArgs(dlisp, "ii", cell.cdr);
-        writefln ("init-level %d %d",args[0].intValue,args[1].intValue);
-        level.init(args[0].intValue,args[1].intValue);
-        return newSym("t");
-    }
-
-    Cell* level_finish(DLisp dlisp, Cell* cell)
-    {
-        level.finalize();
-        return newSym("t");
-    }
-
-    Cell* level_is_valid(DLisp dlisp, Cell* cell)
-    {
-        Cell*[] args = evalArgs(dlisp, "ii", cell.cdr);
-        if( !level.isValid(args[0].intValue,args[1].intValue) )
-            return nil;
-        return newSym("t");
-    }
-
-    Cell* level_load_dataset(DLisp dlisp, Cell* cell)
-    {
-        Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
-        level.loadDataset( args[0].strValue );
-        return nil;
-    }
-
-    Cell* level_place_tile(DLisp dlisp, Cell* cell)
-    {
-        Cell*[] args = evalArgs(dlisp, "iis", cell.cdr);
-        level.placeTile(args[0].intValue,args[1].intValue,args[2].strValue);
-        return nil;
-    }
-
-    Cell* level_place_object(DLisp dlisp, Cell* cell)
-    {
-        Cell*[] args = evalArgs(dlisp, "iis", cell.cdr);
-        level.placeObject(args[0].intValue,args[1].intValue,args[2].strValue);
-        return nil;
-    }
-
-}
-
 class Level : ILevel
 {
     public:
-
     string name;
     int width;
     int height;
 
-    DLisp dlisp;
-    LevelEnvironment env;
     Dataset dataset;
 
     Tile[] tiles;
@@ -156,10 +90,10 @@ class Level : ILevel
     {
         dataset = new Dataset;
 
-        env = new LevelEnvironment(this);
-        dlisp = new DLisp(addAllToEnvironment(env));
-
-        dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);//"
+        Engine.instance.dlisp.environment.pushScope();
+        Engine.instance.dlisp.environment.addLocal("*LEVEL*", wrap(Engine.instance.dlisp));
+        Engine.instance.dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);//"
+        Engine.instance.dlisp.environment.popScope();
     }
 
     void init(int w_, int h_)
@@ -260,6 +194,10 @@ class Level : ILevel
     {
         return cast(float)(abs(x0 - x1) + abs(y0-y1));
     }
+
+    mixin BindClass!("C/LEVEL");
+    mixin BindConstructor!(Level function(string));
+    mixin BindMethods!(init,finalize,draw,isValid,placeTile,placeObject,loadDataset);
 }
 
 class LevelRenderer : Renderer

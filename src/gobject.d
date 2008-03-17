@@ -10,6 +10,8 @@ private {
     import model;
     import md2;
     import sofu = Sofu.Sofu;
+
+    import dlisp.bind;
 }
 
 class MotionState
@@ -74,7 +76,10 @@ class GObject : GObjectBase, IGObject
         float _time;
 
         GObject[] _inventory;
+
     public:
+        mixin BindClass!("C/GOBJECT");
+
 
         float real_x, real_y;
         int x,y;
@@ -146,6 +151,8 @@ class GObject : GObjectBase, IGObject
 class GObjectPrototype
 {
     public:
+        mixin BindClass!("C/GOBJECT-PROTOTYPE");
+  
         char[] name;
         Model model;
 
