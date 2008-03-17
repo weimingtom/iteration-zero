@@ -14,6 +14,8 @@ private {
     import vector;
 
     import gobject;
+
+    import dlisp.bind;
 }
 
 class FaceInfo
@@ -129,6 +131,8 @@ class Tile
         }
 
         GObject[] gobjects() { return _gobjects; }
+
+        mixin BindClass!("C/TILE");
 }
 
 struct TileFace
@@ -167,6 +171,9 @@ class TilePrototype
         Tile t = new Tile(this,x,y);
         return t;
     }
+
+    mixin BindClass!("C/TILE-PROTOTYPE");
+    mixin BindMethods!(create);
 }
 
 class Dataset
@@ -213,4 +220,17 @@ class Dataset
             _objects[toUTF8(name)] = new GObjectPrototype(toUTF8(name), element.asMap());
         }
     }
+
+    TilePrototype getTilePrototype(string name)
+    {
+      return _prototypes[name];
+    }
+
+    GObjectPrototype getGObjectPrototype(string name)
+    {
+      return _objects[name];
+    }
+
+    mixin BindClass!("C/DATASET");
+    mixin BindMethods!(load,getTilePrototype,getGObjectPrototype);
 }

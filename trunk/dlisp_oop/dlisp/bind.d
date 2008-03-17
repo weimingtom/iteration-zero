@@ -412,13 +412,13 @@ unittest {
   // Internal compiler error with GDC :(
   //
 
-  class UTest1 {
+/+  static class UTest1 {
     mixin BindClass!("UTest");
   }
-  class UTest2 { }
+  static class UTest2 { }
 
   static assert(  IsBoundClass!(UTest1) );
-  static assert( !IsBoundClass!(UTest2) );
+  static assert( !IsBoundClass!(UTest2) );+/
 }
 
 // Incomplete Constructor Wrapper

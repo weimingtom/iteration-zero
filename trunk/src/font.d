@@ -7,7 +7,7 @@
 	License:       zlib/libpng license: $(LICENSE) 
 	Copyright:     ArcLib team 
 
-	Description:    
+	Description:
 		Font class renders truetype fonts. Based on Tom S.'s font rendering code.
 
     Examples:

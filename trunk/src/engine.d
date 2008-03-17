@@ -18,7 +18,9 @@ import material;
 import util;
 
 import sofu = Sofu.Sofu;
-
+import dlisp.dlisp;
+import dlisp.predefs.all;
+import dlisp.bind;
 
 interface IGameState
 {
@@ -38,6 +40,8 @@ class Engine
     static Engine _instance = null;
 
     public:
+    mixin BindClass!("C/ENGINE");
+
     static Engine instance()
     {
         assert(_instance !is null);
@@ -97,6 +101,7 @@ class Engine
 
         SDL_WM_SetCaption(toStringz("Engine"), null);
         setupGL();
+        _dlisp = new DLisp(addAllToEnvironment(new Environment));
     }
 
     // be nice and release all resources
@@ -201,6 +206,11 @@ class Engine
         return _pipeline;
     }
 
+    DLisp dlisp()
+    {
+        return _dlisp;
+    }
+
     void stop()
     {
         _running = false;
@@ -250,6 +260,9 @@ class Engine
         
         TextureManager _textureManager;
         RenderPipeline _pipeline;
+
+        DLisp _dlisp;
+
 
         void _updateStates()
         {
