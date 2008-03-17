@@ -78,9 +78,6 @@ class GObject : GObjectBase, IGObject
         GObject[] _inventory;
 
     public:
-        mixin BindClass!("C/GOBJECT");
-
-
         float real_x, real_y;
         int x,y;
 
@@ -146,6 +143,16 @@ class GObject : GObjectBase, IGObject
             }
         }
 
+        void setFacing(float f)
+        {
+          _model.facing = f;
+        }
+
+        int getX() { return x; }
+        int getY() { return y; }
+
+        mixin BindClass!("C/GOBJECT");
+        mixin BindMethods!(isBusy,startMovingTo,setFacing,getX,getY);
 }
 
 class GObjectPrototype

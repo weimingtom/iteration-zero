@@ -227,6 +227,11 @@ template BoxArgument(int n, T : long)
   const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
 }
 
+template BoxArgument(int n, T : float)
+{
+  const BoxArgument = CheckArgument!(n,"isFloat") ~ AddArgument!("box(" ~ CArg!(n) ~ ".floatValue)");
+}
+
 template BoxArgument(int n, T : string)
 {
   const BoxArgument = CheckArgument!(n,"isString") ~ AddArgument!("box(" ~ CArg!(n) ~ ".strValue)");
@@ -252,6 +257,11 @@ template BoxReturnValue(T : long)
   const BoxReturnValue = "return newInt(return_value);";
 }
 
+template BoxReturnValue(T : float)
+{
+  const BoxReturnValue = "return newFloat(return_value);";
+}
+
 template BoxReturnValue(T : bool)
 {
   const BoxReturnValue = "return newBool(return_value);";
@@ -260,6 +270,23 @@ template BoxReturnValue(T : bool)
 template BoxReturnValue(T : string)
 {
   const BoxReturnValue = "return newStr(return_value);";
+}
+
+template BoxReturnValue(T : T[])
+{
+  pragma(msg,"DLISP.BIND: Fugly array boxing.");
+  const BoxReturnValue = "
+    Cell* _cell_[];
+    foreach(typeof(return_value[0]) item; return_value)
+    {
+      Cell* next_item () {
+      auto return_value = item;
+      " ~ BoxReturnValue!(typeof(T)) ~ "
+      };
+      _cell_ ~= next_item();
+    }
+    return newList(_cell_);
+  ";
 }
 
 /**
@@ -275,7 +302,7 @@ template BoxReturnValue(T : string)
 template BoxReturnValue(T)
 {
   static if ( IsBoundClass!(T) ) {
-    const BoxReturnValue = "return return_value.wrap(dlisp);"; 
+    const BoxReturnValue = "return return_value.wrap;"; 
   } else {
     pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY WRAP RETURN TYPE: " ~ T.stringof);
     static assert(0);
@@ -332,6 +359,11 @@ template BindClass(string classname)
       environment[classname] = getClass();
   }
 
+  void bindInstance(Environment environment, string name)
+  {
+      environment[name] = wrap;
+  }
+
   static bool isInstance(Cell* cell)
   {
     if( cell is null )
@@ -339,7 +371,7 @@ template BindClass(string classname)
     return cell.instance.unboxable(typeid(typeof(this)));
   }
 
-  static Cell* wrapInstance(DLisp dlisp, typeof(this) instance)
+  static Cell* wrapInstance(typeof(this) instance)
   {
     if( instance._instanceCell )
       return instance._instanceCell;
@@ -348,9 +380,9 @@ template BindClass(string classname)
     return object;
   }
 
-  Cell* wrap(DLisp dlisp)
+  Cell* wrap()
   {
-    return typeof(this).wrapInstance(dlisp,this);
+    return typeof(this).wrapInstance(this);
   }
 
   static typeof(this) createInstance(DLisp dlisp,Cell* object, Cell* cell)

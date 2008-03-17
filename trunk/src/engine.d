@@ -102,6 +102,7 @@ class Engine
         SDL_WM_SetCaption(toStringz("Engine"), null);
         setupGL();
         _dlisp = new DLisp(addAllToEnvironment(new Environment));
+        _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);
     }
 
     // be nice and release all resources
