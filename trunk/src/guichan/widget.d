@@ -202,6 +202,8 @@ class Widget
         mWidgets.remove(this);+/
     }
 
+    abstract void draw(Graphics graphics);
+
     void drawFrame(Graphics graphics)
     {
         Color faceColor = getBaseColor;
@@ -611,21 +613,12 @@ class Widget
         fontChanged;
     }
 
-    bool widgetExists(Widget widget)
+    static bool widgetExists(Widget widget)
     {
-        bool result = false;
-
-        assert(0);
-//         std::list<Widget>::iterator iter;
-//         for (iter = mWidgets.begin(); iter != mWidgets.end(); ++iter)
-//         {
-//             if (*iter == widget)
-//             {
-//                 return true;
-//             }
-//         }
-
-        return result;
+      foreach(Widget w; mWidgets)
+        if( widget is w)
+          return true;
+      return false;
     }
 
     bool isTabInEnabled()

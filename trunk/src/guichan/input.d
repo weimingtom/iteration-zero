@@ -41,99 +41,62 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * For comments regarding functions please see the header file.
- */
+module guichan.input;
 
-module guichan.mouseinput;
+import guichan.keyinput;
+import guichan.mouseinput;
 
-class MouseInput
+/**
+  * Abstract class for providing functions for user input. 
+  *
+  * Guichan contains implementations of Input for common 
+  * libraries like the Allegro library, the HGE library, 
+  * and the SDL library. 
+  * To make Guichan usable with other libraries, an Input 
+  * class must be implemented.
+  *
+  * @see AllegroInput, HGEInput, OpenLayerInput, 
+  *      SDLInput
+  */
+class Input
 {
-  private:
-    uint mButton;
-    int mType;
-    int mX;
-    int mY;
-    int mTimeStamp;
-  
-  public:
-
-    enum
-    {
-        MOVED = 0,
-        PRESSED,
-        RELEASED,
-        WHEEL_MOVED_DOWN,
-        WHEEL_MOVED_UP
-    }
+public:
 
     /**
-      * Mouse button types.
+      * Checks if the key queue is empty, or not.
+      *
+      * @return True if the key queue is empty, 
+      *         false otherwise.
       */
-    enum
-    {
-        EMPTY = 0,
-        LEFT,
-        RIGHT,
-        MIDDLE
-    }
+    abstract bool isKeyQueueEmpty();
 
-    this(uint button, int type, int x, int y, int timeStamp)
-    {
-        mType = (type);
-        mButton = (button);
-        mTimeStamp = (timeStamp);
-        mX = (x);
-        mY = (y);
-    }
+    /**
+      * Dequeues the key input queue.
+      *
+      * @return The first key input in the key input queue.
+      */
+    abstract KeyInput dequeueKeyInput();
 
-    void setType(uint type)
-    {
-        mType = type;
-    }
+    /**
+      * Checks if the mouse queue is empyt, or not.
+      *
+      * @return True if the mouse queue is empty,
+      *         false otherwise.
+      */
+    abstract bool isMouseQueueEmpty();
 
-    uint getType() 
-    {
-        return mType;
-    }
+    /**
+      * Dequeues the mouse input queue.
+      *
+      * @return The first mouse input in the mouse input queue.
+      */
+    abstract MouseInput dequeueMouseInput();
 
-    void setButton(uint button)
-    {
-        mButton = button;
-    }
-
-    uint getButton() 
-    {
-        return mButton;
-    }
-
-    int getTimeStamp() 
-    {
-        return mTimeStamp;
-    }
-
-    void setTimeStamp(int timeStamp)
-    {
-        mTimeStamp = timeStamp;
-    }
-
-    void setX(int x)
-    {
-        mX = x;
-    }
-
-    int getX() 
-    {
-        return mX;
-    }
-
-    void setY(int y)
-    {
-        mY = y;
-    }
-
-    int getY() 
-    {
-        return mY;
-    }
+    /**
+      * Polls all exsisting input. Called when input should
+      * be polled. The function exists for compatibility reason
+      * where some libraries need to poll input at a certain
+      * logic rate.
+      */
+    abstract void _pollInput();
 }

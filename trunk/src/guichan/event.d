@@ -207,6 +207,16 @@ class MouseEvent : InputEvent
         return mY;
     }
 
+    void setX(int x)
+    {
+        mX = x;
+    }
+
+    void setY(int y)
+    {
+        mY = y;
+    }
+
     int getClickCount()
     {
         return mClickCount;
