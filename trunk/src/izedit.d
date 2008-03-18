@@ -10,10 +10,6 @@ import derelict.opengl.gl;
 
 import gui;
 
-import guichan.gui;
-import guichan.opengl.graphics;
-import guichan.sdl.input;
-
 class TestState : IGameState
 {
     public:
@@ -137,9 +133,6 @@ void main(char[][] argv)
 
     engine.addState( new TestState (argv[1]) );
     engine.start ("test");
-
-    Gui gui = new Gui;
-    gui.setGraphics( new OpenGLGraphics() );
 
     engine.mainLoop();
 }

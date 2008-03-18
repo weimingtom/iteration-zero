@@ -54,6 +54,14 @@ class Rectangle
     {
     }
 
+    this(Rectangle r)
+    {
+      x = r.x;
+      y = r.y;
+      width = r.width;
+      height = r.height;
+    }
+
     this(int x_, int y_, int width_, int height_)
     {
       x = x_;
@@ -132,6 +140,14 @@ class Rectangle
 class ClipRectangle : Rectangle
 {
     int xOffset, yOffset;
+
+    this(Rectangle other)
+    {
+        x = other.x;
+        y = other.y;
+        width = other.width;
+        height = other.height;
+    }
 
     this()
     {

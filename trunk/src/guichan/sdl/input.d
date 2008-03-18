@@ -104,6 +104,8 @@ class SDLInput : Input
         return mouseInput;
     }
 
+    void _pollInput() { }
+
     void pushInput(SDL_Event event)
     {
         KeyInput keyInput;

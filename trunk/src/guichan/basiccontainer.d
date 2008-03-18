@@ -54,9 +54,14 @@ import guichan.exception;
 import guichan.focushandler;
 import guichan.graphics;
 import guichan.mouseinput;
+import guichan.util;
 
 class BasicContainer : Widget 
 {
+    this()
+    {
+    }
+
     ~this()
     {
         clear();
@@ -64,32 +69,31 @@ class BasicContainer : Widget
 
     void moveToTop(Widget widget)
     {
-        assert(0);
-        foreach (Widget w; mWidgets)
+        foreach (int i, Widget w; mWidgets)
         {
             if (w is widget)
             {
-                // FIXME
-//                 mWidgets.erase(iter);
-//                 mWidgets.push_back(widget);
+                mWidgets[i] = mWidgets[$-1];
+                mWidgets[$-1] = w;
                 return;
             }
         }
 
-//         throw GCN_EXCEPTION("There is no such widget in this container.");
+        throw new GCN_Exception("There is no such widget in this container.");
     }
 
     override void moveToBottom(Widget widget)
     {
-        //FIXME
-/+        iter = find(mWidgets.begin(), mWidgets.end(), widget);
-
-        if (iter == mWidgets.end())
+        foreach (int i, Widget w; mWidgets)
         {
-            throw GCN_EXCEPTION("There is no such widget in this container.");
+            if (w is widget)
+            {
+                mWidgets[i] = mWidgets[0];
+                mWidgets[0] = w;
+                return;
+            }
         }
-        mWidgets.erase(iter);
-        mWidgets.push_front(widget);+/
+        throw new GCN_Exception("There is no such widget in this container.");
     }
 
     void death(Event event)
@@ -221,17 +225,15 @@ class BasicContainer : Widget
     {
         super._setFocusHandler(focusHandler);
 
-        if (mInternalFocusHandler != null)
+        if (mInternalFocusHandler !is null)
         {
             return;
         }
-        assert(0);
 
-/+        WidgetListIterator iter;
-        for (iter = mWidgets.begin(); iter != mWidgets.end(); iter++)
+        foreach(Widget widget; mWidgets)
         {
             widget._setFocusHandler(focusHandler);
-        }+/
+        }
     }
 
     void add(Widget widget)
@@ -286,32 +288,29 @@ class BasicContainer : Widget
     {
         graphics.pushClipArea(getChildrenArea);
 
-//         WidgetListIterator iter;
-//         for (iter = mWidgets.begin(); iter != mWidgets.end(); iter++)
-//         {
-//             if (widget.isVisible())
-//             {
-//                 // If the widget has a frame,
-//                 // draw it before drawing the widget
-//                 if (widget.getFrameSize() > 0)
-//                 {
-//                     Rectangle rec = widget.getDimension();
-//                     rec.x -= widget.getFrameSize();
-//                     rec.y -= widget.getFrameSize();
-//                     rec.width += 2 * widget.getFrameSize();
-//                     rec.height += 2 * widget.getFrameSize();
-//                     graphics->pushClipArea(rec);
-//                     widget.drawFrame(graphics);
-//                     graphics->popClipArea();
-//                 }
-// 
-//                 graphics->pushClipArea(widget.getDimension());
-//                 widget.draw(graphics);
-//                 graphics->popClipArea();
-//             }
-//         }
-        assert(0);
+        foreach (Widget widget; mWidgets)
+        {
+            if (widget.isVisible())
+            {
+                // If the widget has a frame,
+                // draw it before drawing the widget
+                if (widget.getFrameSize() > 0)
+                {
+                    Rectangle rec = new Rectangle(widget.getDimension());
+                    rec.x -= widget.getFrameSize();
+                    rec.y -= widget.getFrameSize();
+                    rec.width += 2 * widget.getFrameSize();
+                    rec.height += 2 * widget.getFrameSize();
+                    graphics.pushClipArea(rec);
+                    widget.drawFrame(graphics);
+                    graphics.popClipArea();
+                }
 
+                graphics.pushClipArea(new Rectangle(widget.getDimension()));
+                widget.draw(graphics);
+                graphics.popClipArea();
+            }
+        }
         graphics.popClipArea;
     }
 
@@ -376,20 +375,19 @@ class BasicContainer : Widget
                 return widget;
             }
             
-            BasicContainer basicContainer = cast(BasicContainer)(widget);
+            BasicContainer basic = cast(BasicContainer)(widget);
             
-            if (basicContainer !is null)
+            if (basic !is null)
             {
-                assert(0);
-//                 Widget widget = basicContainer.findWidgetById(id);
-                
-                if (widget !is null)
+                Widget w = basic.findWidgetById(id);
+                if (w !is null)
                 {
-                    return widget;
+                    return w;
                 }
             }
         }
-
         return null;
     }
+  protected:
+    Widget[] mWidgets;
 }
