@@ -1,4 +1,4 @@
-module sdltest;
+module izedit;
 
 import engine;
 import derelict.sdl.sdl;
@@ -11,6 +11,7 @@ import derelict.opengl.gl;
 import gui;
 
 import guichan.gui;
+import guichan.opengl.graphics;
 
 class TestState : IGameState
 {
@@ -135,6 +136,9 @@ void main(char[][] argv)
 
     engine.addState( new TestState (argv[1]) );
     engine.start ("test");
+
+    Gui gui = new Gui;
+    gui.setGraphics( new OpenGLGraphics() );
 
     engine.mainLoop();
 }

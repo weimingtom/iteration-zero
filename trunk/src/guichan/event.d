@@ -155,6 +155,14 @@ class KeyEvent: InputEvent
          */
         Key mKey;
     public:
+    /**
+      * Key event types.
+      */
+    enum
+    {
+        PRESSED = 0,
+        RELEASED
+    }
 
     this(Widget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed, uint type, bool isNumericPad,Key key)
     {
