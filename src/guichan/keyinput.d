@@ -103,6 +103,11 @@ class KeyInput
         RELEASED
     }
 
+    this()
+    {
+      mKey = new Key;
+    }
+
 
     this(Key key, uint type)
     {

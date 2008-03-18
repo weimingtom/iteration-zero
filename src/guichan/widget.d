@@ -573,7 +573,7 @@ class Widget
 
     void getAbsolutePosition(out int x, int y)
     {
-        if (getParent == null)
+        if (getParent is null)
         {
             x = mDimension.x;
             y = mDimension.y;
@@ -591,9 +591,9 @@ class Widget
 
     Font getFont()
     {
-        if (mCurrentFont == null)
+        if (mCurrentFont is null)
         {
-            if (mGlobalFont == null)
+            if (mGlobalFont is null)
             {
                 return mDefaultFont;
             }
@@ -610,7 +610,7 @@ class Widget
 
         foreach(Widget widget; mWidgets)
         {
-            if (widget.mCurrentFont == null)
+            if (widget.mCurrentFont is null)
             {
                 widget.fontChanged;
             }

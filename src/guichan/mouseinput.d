@@ -78,6 +78,10 @@ class MouseInput
         MIDDLE
     }
 
+    this()
+    {
+    }
+
     this(uint button, int type, int x, int y, int timeStamp)
     {
         mType = (type);
