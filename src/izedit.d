@@ -12,6 +12,7 @@ import gui;
 
 import guichan.gui;
 import guichan.opengl.graphics;
+import guichan.sdl.input;
 
 class TestState : IGameState
 {
