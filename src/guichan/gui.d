@@ -44,6 +44,7 @@
 module guichan.gui;
 
 import guichan.event;
+import guichan.listener;
 import guichan.mouseinput;
 import guichan.keyinput;
 import guichan.key;
@@ -988,13 +989,11 @@ protected:
 
                 mouseEvent.setX( x - widgetX );
                 mouseEvent.setY( y - widgetY );
-                                      
-                assert(0);
-//                 auto mouseListeners = widget._getMouseListeners();
-                Widget[] mouseListeners;
 
-/+                // Send the event to all mouse listeners of the widget.
-                foreach (Widget listener; mouseListeners)
+                auto mouseListeners = widget._getMouseListeners();
+
+                // Send the event to all mouse listeners of the widget.
+                foreach (MouseListener listener; mouseListeners)
                 {
                     switch (mouseEvent.getType())
                     {
@@ -1026,10 +1025,9 @@ protected:
                           listener.mouseClicked(mouseEvent);
                           break;
                       default:
-                          throw GCN_Exception("Unknown mouse event type.");
+                          throw new GCN_Exception("Unknown mouse event type.");
                     }
-                }+/
-                
+                }
                 if (toSourceOnly)
                 {
                     break;
@@ -1095,24 +1093,22 @@ protected:
 
             if (widget.isEnabled())
             {
-                assert(0);
-/+                auto keyListeners = widget._getKeyListeners();
-            
+               auto keyListeners = widget._getKeyListeners();
                 // Send the event to all key listeners of the source widget.
-                foreach (Widget listener; keyListeners)
+                foreach (KeyListener listener; keyListeners)
                 {
                     switch (keyEvent.getType())
                     {
                       case KeyEvent.PRESSED:
-                          widget.keyPressed(keyEvent);
+                          listener.keyPressed(keyEvent);
                           break;
                       case KeyEvent.RELEASED:
-                          widget.keyReleased(keyEvent);
+                          listener.keyReleased(keyEvent);
                           break;
                       default:
-                          throw GCN_Exception("Unknown key event type.");
-                    }                
-                }+/
+                          throw new GCN_Exception("Unknown key event type.");
+                    }
+                }
             }
 
             Widget swap = widget;

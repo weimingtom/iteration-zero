@@ -92,6 +92,7 @@ class KeyInput
     */ 
   bool mNumericPad;
 
+  public:
     /**
       * Key input types. This enum corresponds to the enum with event
       * types on KeyEvent for easy mapping.
@@ -102,7 +103,6 @@ class KeyInput
         RELEASED
     }
 
-  public:
 
     this(Key key, uint type)
     {

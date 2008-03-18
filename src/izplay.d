@@ -1,4 +1,4 @@
-module sdltest;
+module izplay;
 
 import engine;
 import derelict.sdl.sdl;

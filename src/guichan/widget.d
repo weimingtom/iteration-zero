@@ -48,6 +48,8 @@
 module guichan.widget;
 
 import guichan.event;
+import guichan.listener;
+import guichan.util;
 import guichan.basiccontainer;
 
 // import guichan.actionlistener;
@@ -156,6 +158,31 @@ class Widget
       * Holds the font used by the widget.
       */
     Font mCurrentFont;
+
+    /**
+    * Holds the mouse listeners of the widget.
+    */
+    MouseListener[] mMouseListeners;
+  
+    /**
+    * Holds the key listeners of the widget.
+    */
+    KeyListener[] mKeyListeners;
+  
+    /** 
+    * Holds the action listeners of the widget.
+    */
+    //  ActionListenerList mActionListeners;
+  
+    /**
+    * Holds the focus listeners of the widget.
+    */
+    FocusListener[] mFocusListeners;
+  
+    /**
+    * Holds the widget listeners of the widget.
+    */
+    WidgetListener[] mWidgetListeners;
 
     /**
       * Holds the default font used by the widget.
@@ -498,68 +525,45 @@ class Widget
         return mFocusHandler;
     }
 
-//     void addActionListener(ActionListener actionListener)
-//     {
-//         mActionListeners ~= actionListener;
-//     }
-// 
-//     void removeActionListener(ActionListener actionListener)
-//     {
-//       assert(0);
-// //         mActionListeners.remove(actionListener);
-//     }
-// 
-//     void addDeathListener(DeathListener deathListener)
-//     {
-//         mDeathListeners ~= deathListener;
-//     }
-// 
-//     void removeDeathListener(DeathListener deathListener)
-//     {
-//       assert(0);
-// //         mDeathListeners.remove(deathListener);
-//     }
-// 
-//     void addKeyListener(KeyListener keyListener)
-//     {
-//         mKeyListeners ~= keyListener;
-//     }
-// 
-//     void removeKeyListener(KeyListener keyListener)
-//     {
-//       assert(0);
-// //         mKeyListeners.remove(keyListener);
-//     }
-// 
-//     void addFocusListener(FocusListener focusListener)
-//     {
-//         mFocusListeners ~= (focusListener);
-//     }
-// 
-//     void removeFocusListener(FocusListener focusListener)
-//     {
-// //         mFocusListeners.remove(focusListener);
-//     }
-// 
-//     void addMouseListener(MouseListener mouseListener)
-//     {
-//         mMouseListeners ~= (mouseListener);
-//     }
-// 
-//     void removeMouseListener(MouseListener mouseListener)
-//     {
-// //         mMouseListeners.remove(mouseListener);
-//     }
-// 
-//     void addWidgetListener(WidgetListener widgetListener)
-//     {
-//         mWidgetListeners ~= (widgetListener);
-//     }
-// 
-//     void removeWidgetListener(WidgetListener widgetListener)
-//     {
-// //         mWidgetListeners.remove(widgetListener);
-//     }
+    void addKeyListener(KeyListener keyListener)
+    {
+        mKeyListeners ~= keyListener;
+    }
+
+    void removeKeyListener(KeyListener keyListener)
+    {
+        mKeyListeners.remove(keyListener);
+    }
+
+    void addFocusListener(FocusListener focusListener)
+    {
+        mFocusListeners ~= (focusListener);
+    }
+
+    void removeFocusListener(FocusListener focusListener)
+    {
+        mFocusListeners.remove(focusListener);
+    }
+
+    void addMouseListener(MouseListener mouseListener)
+    {
+        mMouseListeners ~= (mouseListener);
+    }
+
+    void removeMouseListener(MouseListener mouseListener)
+    {
+        mMouseListeners.remove(mouseListener);
+    }
+
+    void addWidgetListener(WidgetListener widgetListener)
+    {
+        mWidgetListeners ~= (widgetListener);
+    }
+
+    void removeWidgetListener(WidgetListener widgetListener)
+    {
+        mWidgetListeners.remove(widgetListener);
+    }
 
     void getAbsolutePosition(out int x, int y)
     {
@@ -737,7 +741,7 @@ class Widget
         return null;
     }
 
-/+    MouseListener[] _getMouseListeners()
+    MouseListener[] _getMouseListeners()
     {
         return mMouseListeners;
     }
@@ -751,7 +755,7 @@ class Widget
     {
         return mFocusListeners;
     }
-+/
+
     Rectangle getChildrenArea()
     {
         return new Rectangle(0, 0, 0, 0);
