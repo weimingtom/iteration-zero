@@ -15,11 +15,14 @@ void remove(T) (ref T[] array, T item)
 
 void remove_all(T) (ref T[] array, T item)
 {
-    foreach(int i, T t; array)
+    T t;
+    for(int i = 0; i < array.length; ++i)
     {
-      if( t is item )
+      t = array[i];
+      while( t is item && array.length)
       {
         array[i] = array[$-1];
+        t = array[i];
         array.length = array.length - 1;
       }
     }
