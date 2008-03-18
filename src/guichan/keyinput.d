@@ -50,6 +50,8 @@ import guichan.key;
 
 class KeyInput
 {
+
+  private:
   /**
     * Holds the key of the key input.
     */
@@ -90,7 +92,18 @@ class KeyInput
     */ 
   bool mNumericPad;
 
-  
+    /**
+      * Key input types. This enum corresponds to the enum with event
+      * types on KeyEvent for easy mapping.
+      */
+    enum
+    {
+        PRESSED = 0,
+        RELEASED
+    }
+
+  public:
+
     this(Key key, uint type)
     {
       mKey = (key);

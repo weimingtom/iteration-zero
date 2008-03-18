@@ -10,7 +10,7 @@ import derelict.opengl.gl;
 
 import gui;
 
-import guichan.event;
+import guichan.gui;
 
 class TestState : IGameState
 {

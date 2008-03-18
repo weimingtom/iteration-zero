@@ -65,6 +65,9 @@ class Graphics
         mFont = null;
     }
 
+    abstract void _beginDraw();
+    abstract void _endDraw();
+
     bool pushClipArea(Rectangle area)
     {
         if (mClipStack.length == 0)
