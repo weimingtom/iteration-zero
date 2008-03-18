@@ -9,6 +9,8 @@ import util;
 import derelict.opengl.gl;
 
 import gui;
+import guichan.widgets.window;
+import guichan.widgets.container;
 
 class TestState : IGameState
 {
@@ -42,6 +44,14 @@ class TestState : IGameState
         auto keys = view.level.dataset._prototypes.keys;
         tileprotoname = keys[tileproto];
         
+
+        auto topWidget = cast(Container)engine.gui.getTop;
+        auto window = new Window;
+        window.setSize( 100, 100);
+        window.setPosition( 500, 500);
+        window.setVisible(true);
+
+        topWidget.add( window );
 
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_TEXTURE_2D);

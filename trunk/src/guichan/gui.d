@@ -43,6 +43,8 @@
 
 module guichan.gui;
 
+import std.stdio;
+
 import guichan.event;
 import guichan.listener;
 import guichan.mouseinput;
@@ -423,7 +425,7 @@ protected:
             bool keyEventConsumed = false;
             
             // Send key inputs to the focused widgets
-            if (mFocusHandler.getFocused() != null)
+            if (mFocusHandler.getFocused() !is null)
             {
                 KeyEvent keyEvent = new KeyEvent(getKeyEventSource(),
                                   mShiftPressed,
@@ -499,7 +501,7 @@ protected:
                                          true);
                 }
 
-//                 mWidgetWithMouseQueue.pop_front();
+                mWidgetWithMouseQueue = mWidgetWithMouseQueue[1 .. $] ;
             }
 
             return;
@@ -563,7 +565,7 @@ protected:
         // mouse entered events if the mouse has actually entered the widget with
         // modal mouse input focus, hence we need to check if that's the case. If
         // it's not we should simply ignore to send any mouse entered events.
-        if (mFocusHandler.getModalMouseInputFocused() != null
+        if (mFocusHandler.getModalMouseInputFocused() !is null
             && widget == mFocusHandler.getModalMouseInputFocused()
             && Widget.widgetExists(widget))
         {
@@ -579,7 +581,7 @@ protected:
             }
         }
 
-        while (parent != null)
+        while (parent !is null)
         {
             parent = widget.getParent();
 
@@ -587,7 +589,7 @@ protected:
             bool widgetIsPresentInQueue = false;
             foreach(Widget w; mWidgetWithMouseQueue)
             {
-                if (w == widget)
+                if (w is widget)
                 {
                     widgetIsPresentInQueue = true;
                     break;
@@ -651,9 +653,9 @@ protected:
         int sourceWidgetX, sourceWidgetY;
         sourceWidget.getAbsolutePosition(sourceWidgetX, sourceWidgetY);
         
-		if (mFocusHandler.getModalFocused() != null
+		if (mFocusHandler.getModalFocused() !is null
             && sourceWidget.isModalFocused()
-            || mFocusHandler.getModalFocused() == null)
+            || mFocusHandler.getModalFocused() is null)
         {
             sourceWidget.requestFocus();
         }
@@ -744,9 +746,9 @@ protected:
     {
         Widget sourceWidget = getMouseEventSource(mouseInput.getX(), mouseInput.getY());
 
-        if (mFocusHandler.getDraggedWidget() != null)
+        if (mFocusHandler.getDraggedWidget() !is null)
         {
-            if (sourceWidget != mFocusHandler.getLastWidgetPressed())
+            if (sourceWidget !is mFocusHandler.getLastWidgetPressed())
             {
                 mFocusHandler.setLastWidgetPressed(null);
             }
@@ -764,7 +766,7 @@ protected:
                              mouseInput.getY());
 
         if (mouseInput.getButton() == mLastMousePressButton            
-            && mFocusHandler.getLastWidgetPressed() == sourceWidget)
+            && mFocusHandler.getLastWidgetPressed() is sourceWidget)
         {
             distributeMouseEvent(sourceWidget,
                                  MouseEvent.CLICKED,
@@ -780,7 +782,7 @@ protected:
             mClickCount = 0;
         }
 
-        if (mFocusHandler.getDraggedWidget() != null)
+        if (mFocusHandler.getDraggedWidget() !is null)
         {
             mFocusHandler.setDraggedWidget(null);
         }
@@ -797,16 +799,16 @@ protected:
     {
         // Check if modal focus has been gained by a widget.
         if ((mFocusHandler.getLastWidgetWithModalFocus() 
-                != mFocusHandler.getModalFocused())
-             && (mFocusHandler.getLastWidgetWithModalFocus() == null))
+                !is mFocusHandler.getModalFocused())
+             && (mFocusHandler.getLastWidgetWithModalFocus() is null))
         {
             handleModalFocusGained();
             mFocusHandler.setLastWidgetWithModalFocus(mFocusHandler.getModalFocused());
         }
         // Check if modal focus has been released.
         else if ((mFocusHandler.getLastWidgetWithModalFocus()
-                    != mFocusHandler.getModalFocused())
-                    && (mFocusHandler.getLastWidgetWithModalFocus() != null))
+                    !is mFocusHandler.getModalFocused())
+                    && (mFocusHandler.getLastWidgetWithModalFocus() !is null))
         {
             handleModalFocusReleased();
             mFocusHandler.setLastWidgetWithModalFocus(null);
@@ -946,14 +948,14 @@ protected:
         Widget parent = source;
         Widget widget = source;
 
-        if (mFocusHandler.getModalFocused() != null
+        if (mFocusHandler.getModalFocused() !is null
             && !widget.isModalFocused()
             && !force)
         {
             return;
         }
 
-        if (mFocusHandler.getModalMouseInputFocused() != null
+        if (mFocusHandler.getModalMouseInputFocused() !is null
             && !widget.isModalMouseInputFocused()
             && !force)
         {
@@ -971,7 +973,7 @@ protected:
                               y,
                               mClickCount);
 
-        while (parent != null)
+        while (parent !is null)
         {
             // If the widget has been removed due to input
             // cancel the distribution.
@@ -1038,10 +1040,11 @@ protected:
             Widget swap = widget;
             widget = parent;
             parent = swap.getParent();
+            
 
             // If a non modal focused widget has been reach
             // and we have modal focus cancel the distribution.
-            if (mFocusHandler.getModalFocused() != null
+            if (mFocusHandler.getModalFocused() !is null
                 && !widget.isModalFocused())
             {
                 break;
@@ -1049,7 +1052,7 @@ protected:
 
             // If a non modal mouse input focused widget has been reach
             // and we have modal mouse input focus cancel the distribution.
-            if (mFocusHandler.getModalMouseInputFocused() != null
+            if (mFocusHandler.getModalMouseInputFocused() !is null
                 && !widget.isModalMouseInputFocused())
             {
                 break;
@@ -1117,7 +1120,7 @@ protected:
 
             // If a non modal focused widget has been reach
             // and we have modal focus cancel the distribution.
-            if (mFocusHandler.getModalFocused() != null
+            if (mFocusHandler.getModalFocused() !is null
                 && !widget.isModalFocused())
             {
                 break;

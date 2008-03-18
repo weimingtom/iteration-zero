@@ -239,7 +239,6 @@ class BasicContainer : Widget
     void add(Widget widget)
     {
         mWidgets ~= widget;
-        assert(0);
 
         if (mInternalFocusHandler is null)
         {
@@ -251,7 +250,6 @@ class BasicContainer : Widget
         }
 
         widget._setParent(this);
-//         widget->addDeathListener(this);
     }
 
     void remove(Widget widget)

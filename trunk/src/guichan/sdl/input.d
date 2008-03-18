@@ -47,6 +47,8 @@
 
 module guichan.sdl.input;
 
+import std.stdio;
+
 import guichan.exception;
 import guichan.input;
 import guichan.keyinput;
@@ -108,9 +110,9 @@ class SDLInput : Input
 
     void pushInput(SDL_Event event)
     {
-        KeyInput keyInput;
-        MouseInput mouseInput;
-
+        KeyInput keyInput = new KeyInput;
+        MouseInput mouseInput = new MouseInput;
+        
         switch (event.type)
         {
             case SDL_KEYDOWN:
@@ -224,7 +226,8 @@ class SDLInput : Input
                   mMouseInWindow = true;
                 }
                 break;
-
+            default:
+                break;
         } // end switch
     }
 

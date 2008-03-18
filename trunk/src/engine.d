@@ -144,12 +144,12 @@ class Engine
         static ulong ticks = 0;
         _running = true;
         _frames = 0;
-
         while (_running) {
             // clear the screen. by default it clears to black
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw our stuff =)
             _pipeline.render();
+            (cast(OpenGLGraphics)_gui.getGraphics).setTargetPlane(xResolution,yResolution);
             _gui.draw();
             _updateStates();
             // swap the buffers, making our backbuffer the visible one
@@ -163,6 +163,7 @@ class Engine
             }
             _frames += 1;
 
+            _gui.logic();
             handleEvents();
         }
     }
@@ -185,6 +186,7 @@ class Engine
         SDL_Event event;
         // handle all SDL events that we might've received in this loop iteration
         while (_running && SDL_PollEvent(&event)) {
+            (cast(SDLInput)_gui.getInput).pushInput(event);
             switch (event.type) {
                 // user has clicked on the window's close button
                 case SDL_QUIT:
@@ -234,6 +236,11 @@ class Engine
     IGameState state()
     {
         return _currentState;
+    }
+
+    Gui gui()
+    {
+      return _gui;
     }
 
     void start(string name)

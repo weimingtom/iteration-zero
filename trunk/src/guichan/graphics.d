@@ -60,6 +60,16 @@ enum Alignment
 
 class Graphics
 {
+//     /**
+//       * Alignments for text drawing.
+//       */
+//     enum Alignment
+//     {
+//         LEFT = 0,
+//         CENTER,
+//         RIGHT
+//     }
+
     this()
     {
         mFont = null;
