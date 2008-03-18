@@ -72,7 +72,7 @@ class Graphics
     {
         if (mClipStack.length == 0)
         {
-            ClipRectangle carea;
+            ClipRectangle carea = new ClipRectangle;
             carea.x = area.x;
             carea.y = area.y;
             carea.width = area.width;
@@ -83,9 +83,8 @@ class Graphics
             return true;
         }
 
-        ClipRectangle top = mClipStack[$-1];
-        ClipRectangle carea;
-        carea = area;
+        ClipRectangle top = mClipStack[0];
+        ClipRectangle carea = new ClipRectangle(area);
         carea.xOffset = top.xOffset + carea.x;
         carea.yOffset = top.yOffset + carea.y;
         carea.x += top.xOffset;

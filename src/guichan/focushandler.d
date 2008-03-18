@@ -47,10 +47,11 @@
 
 module guichan.focushandler;
 
-// import guichan.focuslistener;
 import guichan.exception;
 import guichan.event;
 import guichan.widget;
+import guichan.util;
+import guichan.listener;
 
 class FocusHandler
 {
@@ -68,8 +69,8 @@ class FocusHandler
 
     void requestFocus(Widget widget)
     {
-        if (widget == null
-            || widget == mFocusedWidget)
+        if (widget is null
+            || widget is mFocusedWidget)
         {
             return;
         }
@@ -92,11 +93,11 @@ class FocusHandler
         
         Widget oldFocused = mFocusedWidget;
         
-        if (oldFocused != widget)
+        if (oldFocused !is widget)
         {
             mFocusedWidget = mWidgets[toBeFocusedIndex];
             
-            if (oldFocused != null)
+            if (oldFocused !is null)
             {
                 distributeFocusLostEvent(new Event(oldFocused));
             }
@@ -106,14 +107,14 @@ class FocusHandler
 
     void requestModalFocus(Widget widget)
     {
-        if (mModalFocusedWidget != null && mModalFocusedWidget != widget)
+        if (mModalFocusedWidget !is null && mModalFocusedWidget !is widget)
         {
             throw new GCN_Exception("Another widget already has modal focus.");
         }
 
         mModalFocusedWidget = widget;
 
-        if (mFocusedWidget != null 
+        if (mFocusedWidget !is null 
             && !mFocusedWidget.isModalFocused)
         {
             focusNone;
@@ -122,8 +123,8 @@ class FocusHandler
 
     void requestModalMouseInputFocus(Widget widget)
     {
-        if (mModalMouseInputFocusedWidget != null
-            && mModalMouseInputFocusedWidget != widget)
+        if (mModalMouseInputFocusedWidget !is null
+            && mModalMouseInputFocusedWidget !is widget)
         {
             throw new GCN_Exception("Another widget already has modal input focus.");
         }
@@ -133,7 +134,7 @@ class FocusHandler
 
     void releaseModalFocus(Widget widget)
     {
-        if (mModalFocusedWidget == widget)
+        if (mModalFocusedWidget is widget)
         {
             mModalFocusedWidget = null;
         }
@@ -141,7 +142,7 @@ class FocusHandler
 
     void releaseModalMouseInputFocus(Widget widget)
     {
-        if (mModalMouseInputFocusedWidget == widget)
+        if (mModalMouseInputFocusedWidget is widget)
         {
             mModalMouseInputFocusedWidget = null;
         }
@@ -168,7 +169,7 @@ class FocusHandler
         int focusedWidget = -1;
         for (i = 0; i < mWidgets.length; ++i)
         {
-            if (mWidgets[i] == mFocusedWidget)
+            if (mWidgets[i] is mFocusedWidget)
             {
                 focusedWidget = i;
             }
@@ -294,47 +295,37 @@ class FocusHandler
             mFocusedWidget = null;
         }
 
-        assert(0);
-//         WidgetIterator iter;
-// 
-//         for (iter = mWidgets.begin(); iter != mWidgets.end(); ++iter)
-//         {
-//             if ((*iter) == widget)
-//             {
-//                 mWidgets.erase(iter);
-//                 break;
-//             }
-//         }
-// 
-//         if (mDraggedWidget == widget)
-//         {
-//             mDraggedWidget = null;
-//             return;
-//         }   
-//         
-//         if (mLastWidgetWithMouse == widget)
-//         {
-//             mLastWidgetWithMouse = null;
-//             return;
-//         }
-// 
-//         if (mLastWidgetWithModalFocus == widget)
-//         {
-//             mLastWidgetWithModalFocus = null;
-//             return;
-//         }
-// 
-//         if (mLastWidgetWithModalMouseInputFocus == widget)
-//         {
-//             mLastWidgetWithModalMouseInputFocus = null;
-//             return;
-//         }
-// 
-//         if (mLastWidgetPressed == widget)
-//         {
-//             mLastWidgetPressed = null;
-//             return;
-//         }
+        mWidgets.remove_all(widget);
+
+        if (mDraggedWidget is widget)
+        {
+            mDraggedWidget = null;
+            return;
+        }
+        
+        if (mLastWidgetWithMouse is widget)
+        {
+            mLastWidgetWithMouse = null;
+            return;
+        }
+
+        if (mLastWidgetWithModalFocus is widget)
+        {
+            mLastWidgetWithModalFocus = null;
+            return;
+        }
+
+        if (mLastWidgetWithModalMouseInputFocus is widget)
+        {
+            mLastWidgetWithModalMouseInputFocus = null;
+            return;
+        }
+
+        if (mLastWidgetPressed is widget)
+        {
+            mLastWidgetPressed = null;
+            return;
+        }
     }
 
     void focusNone()
@@ -369,7 +360,7 @@ class FocusHandler
         int focusedWidget = -1;
         for (i = 0; i < cast(int)mWidgets.length; ++i)
         {
-            if (mWidgets[i] == mFocusedWidget)
+            if (mWidgets[i] is mFocusedWidget)
             {
                 focusedWidget = i;
             }
@@ -446,7 +437,7 @@ class FocusHandler
         int focusedWidget = -1;
         for (i = 0; i < cast(int)mWidgets.length; ++i)
         {
-            if (mWidgets[i] == mFocusedWidget)
+            if (mWidgets[i] is mFocusedWidget)
             {
                 focusedWidget = i;
             }
@@ -474,7 +465,7 @@ class FocusHandler
                 focusedWidget = mWidgets.length - 1;
             }
 
-            if (focusedWidget == focused)
+            if (focusedWidget is focused)
             {
                 return;
             }
@@ -507,26 +498,26 @@ class FocusHandler
     {
         Widget sourceWidget = focusEvent.getSource;
 
-//         FocusListener[] focusListeners = sourceWidget._getFocusListeners;
+        FocusListener[] focusListeners = sourceWidget._getFocusListeners;
 
         // Send the event to all focus listeners of the widget.
-//         foreach (FocusListener f; focusListeners)
-//         {
-//             f.focusLost(focusEvent);
-//         }
+        foreach (FocusListener f; focusListeners)
+        {
+            f.focusLost(focusEvent);
+        }
     }
 
     void distributeFocusGainedEvent(Event focusEvent)
     {
         Widget sourceWidget = focusEvent.getSource;
 
-//         FocusListener[] focusListeners = sourceWidget._getFocusListeners;
+        FocusListener[] focusListeners = sourceWidget._getFocusListeners;
 
         // Send the event to all focus listeners of the widget.
-//         foreach (FocusListener f; focusListeners)
-//         {
-//             f.focusGained(focusEvent);
-//         }
+        foreach (FocusListener f; focusListeners)
+        {
+            f.focusGained(focusEvent);
+        }
     }
 
     Widget getDraggedWidget()

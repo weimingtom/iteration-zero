@@ -45,19 +45,70 @@
  * For comments regarding functions please see the header file.
  */
 
-module guichan.exception;
+module guichan.widgets.container;
 
-class GCN_Exception : Exception
+import guichan.exception;
+import guichan.rectangle;
+import guichan.graphics;
+import guichan.basiccontainer;
+import guichan.widget;
+
+
+
+class Container : BasicContainer
 {
-//     private string mMessage;
 
-    this(string message = "")
+    this()
     {
-      super(message);
+        mOpaque = true;
     }
 
-/+    string getMessage()
+    void draw(Graphics graphics)
     {
-        return mMessage;
-    }+/
+        if (isOpaque())
+        {
+            graphics.setColor(getBaseColor());
+            graphics.fillRectangle(new Rectangle(0, 0, getWidth(), getHeight()));
+        }
+        drawChildren(graphics);
+    }
+
+    void setOpaque(bool opaque)
+    {
+        mOpaque = opaque;
+    }
+
+    bool isOpaque()
+    {
+        return mOpaque;
+    }
+
+    void add(Widget widget)
+    {
+        super.add(widget);
+    }
+
+    void add(Widget widget, int x, int y)
+    {
+        widget.setPosition(x, y);
+        super.add(widget);
+    }
+
+    void remove(Widget widget)
+    {
+        super.remove(widget);
+    }
+
+    void clear()
+    {
+        super.clear();
+    }
+
+    override Widget findWidgetById(string id)
+    {
+        return super.findWidgetById(id);
+    }
+
+  protected:
+    bool mOpaque;
 }

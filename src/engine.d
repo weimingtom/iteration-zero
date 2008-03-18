@@ -22,6 +22,12 @@ import dlisp.dlisp;
 import dlisp.predefs.all;
 import dlisp.bind;
 
+import guichan.gui;
+import guichan.opengl.graphics;
+import guichan.sdl.input;
+
+import guichan.widgets.container;
+
 interface IGameState
 {
     string name();
@@ -105,6 +111,11 @@ class Engine
         _dlisp = new DLisp(addAllToEnvironment(new Environment));
         _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);
         bindInstance(_dlisp.environment,"*engine*");
+
+        _gui = new Gui;
+        _gui.setGraphics( new OpenGLGraphics );
+        _gui.setInput( new SDLInput );
+        _gui.setTop( new Container );
     }
 
     // be nice and release all resources
@@ -139,6 +150,7 @@ class Engine
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw our stuff =)
             _pipeline.render();
+            _gui.draw();
             _updateStates();
             // swap the buffers, making our backbuffer the visible one
             SDL_GL_SwapBuffers();
@@ -266,6 +278,7 @@ class Engine
 
         DLisp _dlisp;
 
+        Gui _gui;
 
         void _updateStates()
         {

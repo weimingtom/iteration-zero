@@ -71,7 +71,10 @@ import guichan.mouseinput;
 
 class Widget
 {
+  private:
     static Widget[] mWidgets;
+
+  protected:
     /**
       * Holds the foreground color of the widget.
       */
@@ -194,6 +197,7 @@ class Widget
       */
     static Font mGlobalFont;
 
+    public:
 
     this()
     {
@@ -211,6 +215,8 @@ class Widget
         mTabOut = true;
         mEnabled = true;
         mCurrentFont = null;
+        mDimension = new Rectangle;
+
         mWidgets ~= this;
     }
 
@@ -454,7 +460,7 @@ class Widget
 
     bool isVisible()
     {
-        if (getParent == null)
+        if (getParent is null)
         {
             return mVisible;
         }
