@@ -41,6 +41,7 @@ module font;
 
 import std.stdio;
 import std.file;
+
 import texture;
 import memory;
 
@@ -49,6 +50,11 @@ import
 	derelict.opengl.gl,
 	derelict.freetype.ft,
 	derelict.opengl.extension.ext.blend_color;
+
+/// Use in Guichan
+import guichan.font;
+import guichan.graphics;
+
 
 /// initialize font
 void open() 
@@ -104,7 +110,7 @@ enum LCDFilter
 }
 
 /// Font class 
-class Font
+class Font : guichan.font.Font
 {
 	/// load font with path and size 
 	this(char[] fontPath, int size)
@@ -171,7 +177,7 @@ class Font
 	}
 	
 	/// width in pixels
-	float getWidth(charType)(charType[] str)
+	float getWidthF(charType)(charType[] str)
 	{
 		float max;
 		
@@ -179,9 +185,19 @@ class Font
 			max = pen[0] + g.advance[0];
 		});
 		
-		return max;
+		return cast(int)max;
 	}
-	
+	int getWidth(dstring text)
+        {
+            return cast(int)(getWidthF(text)+0.5);
+        }
+        void drawString(Graphics g, dstring text, int x, int y)
+        {
+            float[2] pos = [cast(float)x,cast(float)y];
+            float[4] color = g.getColor().toFloatVector();
+            draw ([text],pos,color);
+        }
+
 	/// draw lines at location and color
 	void draw(char[][] lines, float[2] location, float[4] color)
 	{

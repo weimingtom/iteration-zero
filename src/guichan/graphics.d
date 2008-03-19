@@ -193,9 +193,9 @@ class Graphics
         mFont = font;
     }
 
-    void drawText(string text, int x, int y, Alignment alignment)
+    void drawText(dstring text, int x, int y, Alignment alignment)
     {
-        if (mFont == null)
+        if (mFont is null)
         {
             throw new GCN_Exception("No font set.");
         }

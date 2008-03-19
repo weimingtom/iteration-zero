@@ -47,47 +47,54 @@
 
 module guichan.color;
 
-class Color
+struct Color
 {
-    int r,g,b,a;
+    int r,g,b;
+    int a = 255;
 
-    this()
+    static Color opApply()
     {
-      r = 0;
-      g = 0;
-      b = 0;
-      a = 255;
+      Color c;
+      c.r = 0;
+      c.g = 0;
+      c.b = 0;
+      c.a = 255;
+      return c;
     }
 
-    this(int color)
+    static Color opApply(int color)
     {
-      r=( (color >> 16) & 0xFF);
-      g=( (color >>  8) & 0xFF);
-      b=(  color        & 0xFF);
-      a=(255);
+      Color c;
+      c.r=( (color >> 16) & 0xFF);
+      c.g=( (color >>  8) & 0xFF);
+      c.b=(  color        & 0xFF);
+      c.a=(255);
+      return c;
     }
 
-    this(int ar, int ag, int ab, int aa)
+    static Color opApply(int ar, int ag, int ab, int aa)
     {
-      r = (ar);
-      g = (ag);
-      b = (ab);
-      a = (aa);
+      Color c;
+      c.r = (ar);
+      c.g = (ag);
+      c.b = (ab);
+      c.a = (aa);
+      return c;
     }
 
     Color opAdd(in int color)
     {
-      return this + new Color(color);
+      return *this + Color(color);
     }
 
     Color opSub(in int color)
     {
-      return this - new Color(color);
+      return *this - Color(color);
     }
 
     Color opAdd(in Color color)
     {
-        Color result =  new Color(r + color.r, g + color.g, b + color.b, 255);
+        Color result =  Color(r + color.r, g + color.g, b + color.b, 255);
         result.r = (result.r>255?255:(result.r<0?0:result.r));
         result.g = (result.g>255?255:(result.g<0?0:result.g));
         result.b = (result.b>255?255:(result.b<0?0:result.b));
@@ -96,7 +103,7 @@ class Color
 
     Color opSub(in Color color)
     {
-        Color result = new Color(r - color.r, g - color.g, b - color.b,255);
+        Color result = Color(r - color.r, g - color.g, b - color.b,255);
         result.r = (result.r>255?255:(result.r<0?0:result.r));
         result.g = (result.g>255?255:(result.g<0?0:result.g));
         result.b = (result.b>255?255:(result.b<0?0:result.b));
@@ -105,7 +112,7 @@ class Color
 
     Color opMul(float value)
     {
-        Color result = new Color(cast(int)(r * value),cast(int)(g * value),cast(int)(b * value),a);
+        Color result = Color(cast(int)(r * value),cast(int)(g * value),cast(int)(b * value),a);
 
         result.r = (result.r>255?255:(result.r<0?0:result.r));
         result.g = (result.g>255?255:(result.g<0?0:result.g));
@@ -117,6 +124,16 @@ class Color
     bool opEquals(in Color color)
     {
         return r == color.r && g == color.g && b == color.b && a == color.a;
+    }
+
+    float[] toFloatVector()
+    {
+      float[] vec;
+      vec ~= (cast(float)r)/255.0;
+      vec ~= (cast(float)g)/255.0;
+      vec ~= (cast(float)b)/255.0;
+      vec ~= (cast(float)a)/255.0;
+      return vec;
     }
 
 // 	std::ostream& operator<<(std::ostream& out,

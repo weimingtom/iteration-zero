@@ -27,6 +27,8 @@ import guichan.opengl.graphics;
 import guichan.sdl.input;
 
 import guichan.widgets.container;
+import guichan.widget;
+import font;
 
 interface IGameState
 {
@@ -119,6 +121,7 @@ class Engine
         top.setSize( xResolution, yResolution );
         top.setOpaque( false );
         _gui.setTop( top );
+        Widget.setGlobalFont( new Font("data/verdana.ttf",16) );
     }
 
     // be nice and release all resources
