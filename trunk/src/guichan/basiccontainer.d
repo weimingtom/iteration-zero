@@ -47,6 +47,8 @@
 
 module guichan.basiccontainer;
 
+import std.stdio : writefln;
+
 import guichan.widget;
 import guichan.event;
 import guichan.rectangle;
@@ -107,13 +109,13 @@ class BasicContainer : Widget
         {
             throw GCN_EXCEPTION("There is no such widget in this container.");
         }
-
-        mWidgets.erase(iter);+/
++/
+//         mWidgets.erase(iter);
     }
 
     Rectangle getChildrenArea()
     {
-        return new Rectangle(0, 0, getWidth, getHeight);
+        return Rectangle(0, 0, getWidth, getHeight);
     }
 
     void focusNext()
@@ -202,16 +204,15 @@ class BasicContainer : Widget
 
         x -= r.x;
         y -= r.y;
-        assert(0);
 
-//         WidgetListReverseIterator it;
-//         for (it = mWidgets.rbegin(); it != mWidgets.rend(); it++)
-//         {
-//             if ((*it)->isVisible() && (*it)->getDimension().isPointInRect(x, y))
-//             {
-//                 return (*it);
-//             }
-//         }
+        for (int i = mWidgets.length-1; i >= 0; --i)
+        {
+            Widget widget = mWidgets[i];
+            if (widget.isVisible() && widget.getDimension().isPointInRect(x, y))
+            {
+                return widget;
+            }
+        }
 
         return null;
     }
@@ -294,7 +295,8 @@ class BasicContainer : Widget
                 // draw it before drawing the widget
                 if (widget.getFrameSize() > 0)
                 {
-                    Rectangle rec = new Rectangle(widget.getDimension());
+                    Rectangle rec = Rectangle(widget.getDimension());
+                    writefln( "W:",rec.x,rec.x);
                     rec.x -= widget.getFrameSize();
                     rec.y -= widget.getFrameSize();
                     rec.width += 2 * widget.getFrameSize();
@@ -304,7 +306,7 @@ class BasicContainer : Widget
                     graphics.popClipArea();
                 }
 
-                graphics.pushClipArea(new Rectangle(widget.getDimension()));
+                graphics.pushClipArea(Rectangle(widget.getDimension()));
                 widget.draw(graphics);
                 graphics.popClipArea();
             }

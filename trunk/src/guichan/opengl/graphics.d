@@ -137,7 +137,7 @@ class OpenGLGraphics : Graphics
 
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-        pushClipArea(new Rectangle(0, 0, mWidth, mHeight));
+        pushClipArea(Rectangle(0, 0, mWidth, mHeight));
     }
 
     void _endDraw()
@@ -160,10 +160,10 @@ class OpenGLGraphics : Graphics
     {
         bool result = super.pushClipArea(area);
 
-        glScissor(mClipStack[0].x,
-                  mHeight - mClipStack[0].y - mClipStack[0].height,
-                  mClipStack[0].width,
-                  mClipStack[0].height);
+        glScissor(mClipStack[$-1].x,
+                  mHeight - mClipStack[$-1].y - mClipStack[$-1].height,
+                  mClipStack[$-1].width,
+                  mClipStack[$-1].height);
 
         return result;
     }
@@ -177,10 +177,10 @@ class OpenGLGraphics : Graphics
             return;
         }
 
-        glScissor(mClipStack[0].x,
-                  mHeight - mClipStack[0].y - mClipStack[0].height,
-                  mClipStack[0].width,
-                  mClipStack[0].height);
+        glScissor(mClipStack[$-1].x,
+                  mHeight - mClipStack[$-1].y - mClipStack[$-1].height,
+                  mClipStack[$-1].width,
+                  mClipStack[$-1].height);
     }
 
     void setTargetPlane(int width, int height)
@@ -209,7 +209,7 @@ class OpenGLGraphics : Graphics
             throw new GCN_Exception("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
         }
 
-        ClipRectangle top = mClipStack[0];
+        ClipRectangle top = mClipStack[$-1];
 
         dstX += top.xOffset;
         dstY += top.yOffset;
@@ -259,7 +259,7 @@ class OpenGLGraphics : Graphics
             throw new GCN_Exception("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
         }
 
-        ClipRectangle top = mClipStack[0];
+        ClipRectangle top = mClipStack[$-1];
 
         x += top.xOffset;
         y += top.yOffset;
@@ -276,7 +276,7 @@ class OpenGLGraphics : Graphics
             throw new GCN_Exception("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
         }
 
-        ClipRectangle top = mClipStack[0];
+        ClipRectangle top = mClipStack[$-1];
 
         x1 += top.xOffset;
         y1 += top.yOffset;
@@ -310,8 +310,8 @@ class OpenGLGraphics : Graphics
             throw new GCN_Exception("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
         }
 
-        ClipRectangle top = mClipStack[0];
-        
+        ClipRectangle top = mClipStack[$-1];
+
         glBegin(GL_LINE_LOOP);
         glVertex2f(rectangle.x + top.xOffset,
                    rectangle.y + top.yOffset);
@@ -331,7 +331,7 @@ class OpenGLGraphics : Graphics
             throw new GCN_Exception("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
         }
 
-        ClipRectangle top = mClipStack[0];
+        ClipRectangle top = mClipStack[$-1];
 
         glBegin(GL_QUADS);
         glVertex2i(rectangle.x + top.xOffset,

@@ -68,7 +68,7 @@ class Container : BasicContainer
         if (isOpaque())
         {
             graphics.setColor(getBaseColor());
-            graphics.fillRectangle(new Rectangle(0, 0, getWidth(), getHeight()));
+            graphics.fillRectangle(Rectangle(0, 0, getWidth(), getHeight()));
         }
         drawChildren(graphics);
     }

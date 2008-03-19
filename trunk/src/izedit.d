@@ -47,8 +47,8 @@ class TestState : IGameState
 
         auto topWidget = cast(Container)engine.gui.getTop;
         auto window = new Window;
-        window.setSize( 100, 100);
         window.setPosition( 500, 500);
+        window.setSize( 50, 100);
         window.setVisible(true);
 
         topWidget.add( window );

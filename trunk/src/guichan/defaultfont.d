@@ -66,7 +66,7 @@ class DefaultFont : Font
 
     int drawGlyph(Graphics graphics, char glyph, int x, int y)
     {
-        graphics.drawRectangle( new Rectangle(x, y, 8, 8));
+        graphics.drawRectangle( Rectangle(x, y, 8, 8));
 
         return 8;
     }
