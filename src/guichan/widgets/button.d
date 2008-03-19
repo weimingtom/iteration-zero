@@ -74,7 +74,11 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
 
       setFocusable(true);
       adjustSize();
-      setFrameSize(1);
+      setFrameSize(2);
+
+      mBackgroundColor = Color(49,53,61,255);
+      mFrameColor = Color(68,88,120,255);
+
       addMouseListener(this);
       addKeyListener(this);
       addFocusListener(this);
@@ -88,22 +92,25 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
       */
     this(dstring caption)
     {
-        super();
+      super();
 
-        mCaption = caption;
-        mHasMouse = false;
-        mKeyPressed = false;
-        mMousePressed = false;
-        mAlignment = Alignment.CENTER;
-        mSpacing = 4;
+      mCaption = caption;
+      mHasMouse = false;
+      mKeyPressed = false;
+      mMousePressed = false;
+      mAlignment = Alignment.CENTER;
+      mSpacing = 4;
 
-        setFocusable(true);
-        adjustSize();
-        setFrameSize(1);
+      setFocusable(true);
+      adjustSize();
+      setFrameSize(2);
 
-        addMouseListener(this);
-        addKeyListener(this);
-        addFocusListener(this);
+      setBackgroundColor( Color(49,53,61,255) );
+      setFrameColor( Color(68,88,120,255) );
+
+      addMouseListener(this);
+      addKeyListener(this);
+      addFocusListener(this);
     }
 
 
@@ -183,8 +190,8 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
       */
     void adjustSize()
     {
-        setWidth(getFont().getWidth(mCaption) + 2*mSpacing);
-        setHeight(getFont().getHeight() + 2*mSpacing);
+        setWidth(getFont().getWidth(mCaption) + 2*mSpacing + 2*mFrameSize);
+        setHeight(getFont().getHeight() + 3*mSpacing + 2*mFrameSize);
     }
 
 
@@ -192,42 +199,36 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
 
    void draw(Graphics graphics)
    {
-        Color faceColor = getFrameColor();
-        Color highlightColor, shadowColor;
-        int alpha = getFrameColor().a;
-
+//         Color faceColor = getFrameColor();
+//         Color shadowColor;
+//         int alpha = getFrameColor().a;
         if (isPressed())
         {
-            faceColor = faceColor - 0x303030;
-            faceColor.a = alpha;
-            highlightColor = faceColor - 0x303030;
-            highlightColor.a = alpha;
-            shadowColor = faceColor + 0x303030;
-            shadowColor.a = alpha;
         }
         else
         {
-            highlightColor = faceColor + 0x303030;
-            highlightColor.a = alpha;
-            shadowColor = faceColor - 0x303030;
-            shadowColor.a = alpha;
         }
 
-        graphics.setColor(faceColor);
-        graphics.fillRectangle(Rectangle(1, 1, getDimension().width-1, getHeight() - 1));
+        graphics.setColor(getFrameColor());
 
-        graphics.setColor(highlightColor);
-        graphics.drawLine(0, 0, getWidth() - 1, 0);
-        graphics.drawLine(0, 1, 0, getHeight() - 1);
+        if( isFocused() )
+        {
+          graphics.setColor(getSelectionColor());
+        }
 
-        graphics.setColor(shadowColor);
+        graphics.fillRectangle(Rectangle(0, 0, getWidth(), getHeight()));
+
+        graphics.setColor(getBackgroundColor());
+        graphics.fillRectangle(Rectangle(getFrameSize, getFrameSize, getWidth()-getFrameSize*2, getHeight()-getFrameSize*2));
+
+/+        graphics.setColor(shadowColor);
         graphics.drawLine(getWidth() - 1, 1, getWidth() - 1, getHeight() - 1);
         graphics.drawLine(1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
-
++/
         graphics.setColor(getForegroundColor());
 
         int textX;
-        int textY = getHeight() / 2 - getFont().getHeight() / 2;
+        int textY = getHeight() - getFont().getHeight() - getFrameSize() - mSpacing;
 
         switch (getAlignment())
         {
@@ -256,8 +257,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
 
             if (isFocused())
             {
-                graphics.drawRectangle(Rectangle(2, 2, getWidth() - 4,
-                                                  getHeight() - 4));
+//                 graphics.drawRectangle(Rectangle(2, 2, getWidth() - 4, getHeight() - 4));
             }
         }
     }
@@ -304,27 +304,29 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
 
     void mouseEntered(MouseEvent mouseEvent)
     {
-        writefln("mouseEntered");
+//         writefln("mouseEntered");
         mHasMouse = true;
     }
 
     void mouseExited(MouseEvent mouseEvent)
     {
-        writefln("mouseExited");
+//         writefln("mouseExited");
         mHasMouse = false;
     }
 
 
     void mouseDragged(MouseEvent mouseEvent)
     {
-        writefln("mouseDragged");
+//         writefln("mouseDragged");
         mouseEvent.consume();
     }
 
-    void mouseClicked(MouseEvent mouseEvent){        writefln("mouseClicked");
-}
-    void mouseMoved(MouseEvent mouseEvent){        writefln("mouseMoved");
-}
+    void mouseClicked(MouseEvent mouseEvent){
+//       writefln("mouseClicked");
+    }
+    void mouseMoved(MouseEvent mouseEvent){        
+//       writefln("mouseMoved");
+    }
     void mouseWheelMovedDown(MouseEvent mouseEvent){}
     void mouseWheelMovedUp(MouseEvent mouseEvent){}
 

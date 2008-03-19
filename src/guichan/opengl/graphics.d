@@ -322,9 +322,9 @@ class OpenGLGraphics : Graphics
         glBegin(GL_LINE_LOOP);
         glVertex2f(rectangle.x + top.xOffset,
                    rectangle.y + top.yOffset);
-        glVertex2f(rectangle.x + rectangle.width + top.xOffset - 1.0f,
-                   rectangle.y + top.yOffset + 0.375f);
-        glVertex2f(rectangle.x + rectangle.width + top.xOffset - 1.0f,
+        glVertex2f(rectangle.x + rectangle.width + top.xOffset,
+                   rectangle.y + top.yOffset);
+        glVertex2f(rectangle.x + rectangle.width + top.xOffset,
                    rectangle.y + rectangle.height + top.yOffset);
         glVertex2f(rectangle.x + top.xOffset,
                    rectangle.y + rectangle.height + top.yOffset);
@@ -361,8 +361,9 @@ class OpenGLGraphics : Graphics
 
         if (mAlpha)
         {
-            glEnable(GL_BLEND);
-        }
+          glEnable(GL_BLEND);
+        } else
+          glDisable(GL_BLEND);
     }
 
     Color getColor()

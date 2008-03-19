@@ -461,6 +461,7 @@ class Font
 			
 			// disable color material and restore blend func to what it usually is 
 			glDisable(GL_COLOR_MATERIAL);
+                        glDisable(GL_TEXTURE_2D);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
 			return PrintResult.OK;
