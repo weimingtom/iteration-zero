@@ -57,6 +57,7 @@ import guichan.focushandler;
 import guichan.exception;
 import guichan.rectangle;
 
+private import guichan.util;
 
 /**
   * @mainpage
@@ -519,7 +520,7 @@ protected:
                 // exists anymore it should be removed from the queue.
                 if (!Widget.widgetExists(widget))
                 {
-                    mWidgetWithMouseQueue[i+1 .. $] = mWidgetWithMouseQueue[i .. $];
+                    mWidgetWithMouseQueue.remove_index(i);
                     break;
                 }
                 else
@@ -542,7 +543,7 @@ protected:
                                              true);                                       
                         mClickCount = 1;
                         mLastMousePressTimeStamp = 0;
-                        mWidgetWithMouseQueue[i+1 .. $] = mWidgetWithMouseQueue[i .. $];
+                        mWidgetWithMouseQueue.remove_index(i);
                         break;
                     }
                 }
