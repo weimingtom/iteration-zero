@@ -115,7 +115,10 @@ class Engine
         _gui = new Gui;
         _gui.setGraphics( new OpenGLGraphics );
         _gui.setInput( new SDLInput );
-        _gui.setTop( new Container );
+        Container top = new Container;
+        top.setSize( xResolution, yResolution );
+        top.setOpaque( false );
+        _gui.setTop( top );
     }
 
     // be nice and release all resources
@@ -135,7 +138,7 @@ class Engine
     void setupGL() {
         EXTBlendColor.load ("GL_EXT_blend_color");
         ARBTextureNonPowerOfTwo.load ("GL_ARB_texture_non_power_of_two");
-
+        glViewport(0, 0, xResolution, yResolution);
         glEnable (GL_DEPTH_TEST);
     }
 

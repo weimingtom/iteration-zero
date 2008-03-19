@@ -47,35 +47,33 @@
 
 module guichan.rectangle;
 
-class Rectangle
+struct Rectangle
 {
     int x,y,width,height;
-    this()
+    static Rectangle opCall()
     {
+      Rectangle rect;
+      return rect;
     }
 
-    this(Rectangle r)
+    static Rectangle opCall(Rectangle r)
     {
-      x = r.x;
-      y = r.y;
-      width = r.width;
-      height = r.height;
+      return Rectangle(r.x,r.y,r.width,r.height);
     }
 
-    this(int x_, int y_, int width_, int height_)
+    static Rectangle opCall(int x_, int y_, int width_, int height_)
     {
-      x = x_;
-      y = y_;
-      width = width_;
-      height = height_;
+      Rectangle rect;
+      return rect.set(x_,y_,width_,height_);
     }
 
-    void setAll(int x_, int y_, int width_, int height_)
+    Rectangle set(int x_, int y_, int width_, int height_)
     {
         x = x_;
         y = y_;
         width = width_;
         height = height_;
+        return *this;
     }
 
     bool isIntersecting(in Rectangle rectangle)
@@ -137,31 +135,26 @@ class Rectangle
 //     }
 }
 
-class ClipRectangle : Rectangle
+struct ClipRectangle
 {
+    int x,y,width,height;
     int xOffset, yOffset;
 
-    this(Rectangle other)
+    static ClipRectangle opCall(Rectangle other)
     {
-        x = other.x;
-        y = other.y;
-        width = other.width;
-        height = other.height;
+        return ClipRectangle(other.x,other.y,other.width,other.height,0,0);
     }
 
-    this()
+    static ClipRectangle opCall()
     {
-        x = y = width = height = xOffset = yOffset  = 0;
+        ClipRectangle crect;
+        return crect;
     }
 
-    this(int x_, int y_, int width_, int height_, int xOffset_, int yOffset_)
+    static ClipRectangle opCall(int x_, int y_, int width_, int height_, int xOffset_, int yOffset_)
     {
-        x = x_;
-        y = y_;
-        width = width_;
-        height = height_;
-        xOffset = xOffset_;
-        yOffset = yOffset_;
+        ClipRectangle crect;
+        return crect.set( x_,  y_,  width_,  height_,  xOffset_,  yOffset_);
     }
 
     ClipRectangle opAssign(in Rectangle other)
@@ -170,6 +163,63 @@ class ClipRectangle : Rectangle
         y = other.y;
         width = other.width;
         height = other.height;
-        return this;
+        return *this;
+    }
+
+    ClipRectangle set(int x_, int y_, int width_, int height_, int xOffset_, int yOffset_)
+    {
+        x = x_;
+        y = y_;
+        width = width_;
+        height = height_;
+        xOffset = xOffset_;
+        yOffset = yOffset_;
+        return *this;
+    }
+
+    bool isIntersecting(T) (in T rectangle)
+    {
+        int x_ = x;
+        int y_ = y;
+        int width_ = width;
+        int height_ = height;
+
+        x_ -= rectangle.x;
+        y_ -= rectangle.y;
+
+        if (x_ < 0)
+        {
+            width_ += x_;
+            x_ = 0;
+        }
+        else if (x_ + width_ > rectangle.width)
+        {
+            width_ = rectangle.width - x_;
+        }
+
+        if (y_ < 0)
+        {
+            height_ += y_;
+            y_ = 0;
+        }
+        else if (y_ + height_ > rectangle.height)
+        {
+            height_ = rectangle.height - y_;
+        }
+
+        if (width_ <= 0 || height_ <= 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool isPointInRect(int x_, int y_)
+    {
+        return x_ >= x
+            && y_ >= y
+            && x_ < x + width
+            && y_ < y + height;
     }
 }

@@ -139,21 +139,21 @@ class Window : Container, MouseListener
         shadowColor = faceColor - 0x303030;
         shadowColor.a = alpha;
 
-        Rectangle d = new Rectangle(getChildrenArea());
+        Rectangle d = Rectangle(getChildrenArea());
 
         // Fill the background around the content
         graphics.setColor(faceColor);
         // Fill top
-        graphics.fillRectangle(new Rectangle(0,0,getWidth(),d.y - 1));
+        graphics.fillRectangle(Rectangle(0,0,getWidth(),d.y - 1));
         // Fill left
-        graphics.fillRectangle(new Rectangle(0,d.y - 1, d.x - 1, getHeight() - d.y + 1));
+        graphics.fillRectangle(Rectangle(0,d.y - 1, d.x - 1, getHeight() - d.y + 1));
         // Fill right
-        graphics.fillRectangle(new Rectangle(d.x + d.width + 1,
+        graphics.fillRectangle(Rectangle(d.x + d.width + 1,
                                           d.y - 1,
                                           getWidth() - d.x - d.width - 1,
                                           getHeight() - d.y + 1));
         // Fill bottom
-        graphics.fillRectangle(new Rectangle(d.x - 1,
+        graphics.fillRectangle(Rectangle(d.x - 1,
                                           d.y + d.height + 1,
                                           d.width + 2,
                                           getHeight() - d.height - d.y - 1));
@@ -219,7 +219,7 @@ class Window : Container, MouseListener
 
         graphics.setColor(getForegroundColor());
         graphics.setFont(getFont());
-        graphics.pushClipArea(new Rectangle(0, 0, getWidth(), getTitleBarHeight() - 1));
+        graphics.pushClipArea(Rectangle(0, 0, getWidth(), getTitleBarHeight() - 1));
         graphics.drawText(getCaption(), textX, textY, getAlignment());
         graphics.popClipArea();
     }
@@ -265,7 +265,7 @@ class Window : Container, MouseListener
 
     Rectangle getChildrenArea()
     {
-        return new Rectangle(getPadding(),
+        return Rectangle(getPadding(),
                          getTitleBarHeight(),
                          getWidth() - getPadding() * 2,
                          getHeight() - getPadding() - getTitleBarHeight());

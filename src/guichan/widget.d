@@ -201,9 +201,9 @@ class Widget
 
     this()
     {
-        mForegroundColor = new Color(0x000000);
-        mBackgroundColor = new Color(0xffffff);
-        mBaseColor = new Color(0x808090);
+        mForegroundColor = new Color(0xffffff);
+        mBackgroundColor = new Color(0x000000);
+        mBaseColor = new Color(0x202020);
         mSelectionColor = new Color(0xc3d9ff);
         mFocusHandler = null;
         mInternalFocusHandler = null;
@@ -215,7 +215,6 @@ class Widget
         mTabOut = true;
         mEnabled = true;
         mCurrentFont = null;
-        mDimension = new Rectangle;
 
         mWidgets ~= this;
     }
@@ -229,10 +228,10 @@ class Widget
             Event event(this);
             widget.death(event);
         }
-
++/
         _setFocusHandler(null);
 
-        mWidgets.remove(this);+/
+        mWidgets.remove(this);
     }
 
     abstract void draw(Graphics graphics);
@@ -328,7 +327,6 @@ class Widget
         Rectangle newDimension = mDimension;
         newDimension.x = x;
         newDimension.y = y;
-        
         setDimension(newDimension);
     }
 
@@ -656,7 +654,6 @@ class Widget
         Rectangle newDimension = mDimension;
         newDimension.width = width;
         newDimension.height = height;
-
         setDimension(newDimension);
     }
 
@@ -764,7 +761,7 @@ class Widget
 
     Rectangle getChildrenArea()
     {
-        return new Rectangle(0, 0, 0, 0);
+        return Rectangle(0, 0, 0, 0);
     }
 
     FocusHandler _getInternalFocusHandler()
