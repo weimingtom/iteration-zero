@@ -21,7 +21,7 @@ class GuiRenderer : Renderer
 
     void render()
     {
-        glMatrixMode(GL_PROJECTION);
+        /+glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0, engine.xResolution, engine.yResolution, 0, -100, 100);
 
@@ -35,7 +35,7 @@ class GuiRenderer : Renderer
             glVertex2f(engine.xResolution-2,engine.yResolution-2);
             glVertex2f(1,engine.yResolution-2);
         glEnd();
-
-        sfont.draw(text,[10.0f,10.0f],[1.0f,1.0f,1.0f,1.f]);
+/+
+        sfont.draw(tex+/t,[10.0f,10.0f],[1.0f,1.0f,1.0f,1.f]);+/
     }
 }

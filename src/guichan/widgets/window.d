@@ -66,7 +66,7 @@ class Window : Container, MouseListener
         mMoved = false;
         setFrameSize(1);
         setPadding(2);
-        setTitleBarHeight(16);
+        setTitleBarHeight(26);
         setAlignment(Alignment.CENTER);
         addMouseListener(this);
         setMovable(true);
@@ -79,7 +79,7 @@ class Window : Container, MouseListener
         setCaption(caption);
         setFrameSize(1);
         setPadding(2);
-        setTitleBarHeight(16);
+        setTitleBarHeight(26);
         setAlignment(Alignment.CENTER);
         addMouseListener(this);
         setMovable(true);
@@ -128,21 +128,13 @@ class Window : Container, MouseListener
 
     void draw(Graphics graphics)
     {
-        Color faceColor = getBaseColor();
-        Color highlightColor;
-        Color shadowColor;
-        int alpha = getBaseColor().a;
         int width = getWidth() + getFrameSize() * 2 - 1;
         int height = getHeight() + getFrameSize() * 2 - 1;
-        highlightColor = faceColor + 0x303030;
-        highlightColor.a = alpha;
-        shadowColor = faceColor - 0x303030;
-        shadowColor.a = alpha;
 
         Rectangle d = Rectangle(getChildrenArea());
 
         // Fill the background around the content
-        graphics.setColor(faceColor);
+        graphics.setColor(getFrameColor);
         // Fill top
         graphics.fillRectangle(Rectangle(0,0,getWidth(),d.y - 1));
         // Fill left
@@ -160,6 +152,7 @@ class Window : Container, MouseListener
 
         if (isOpaque())
         {
+            graphics.setColor(getBackgroundColor);
             graphics.fillRectangle(d);
         }
 

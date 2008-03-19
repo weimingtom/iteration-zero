@@ -62,7 +62,7 @@ struct Color
       return c;
     }
 
-    static Color opApply(int color)
+    static Color opApply(ulong color)
     {
       Color c;
       c.r=( (color >> 16) & 0xFF);
