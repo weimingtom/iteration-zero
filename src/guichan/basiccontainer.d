@@ -120,77 +120,75 @@ class BasicContainer : Widget
 
     void focusNext()
     {
-        assert(0);
-/+
-        WidgetListIterator it;
-
-        for (it = mWidgets.begin(); it != mWidgets.end(); it++)
+        int i = 0;
+        for(; i != mWidgets.length; ++i)
         {
-            if ((*it)->isFocused())
+            if (mWidgets[i].isFocused())
             {
                 break;
             }
         }
 
-        WidgetListIterator end = it;
+        int end = i;
 
-        if (it == mWidgets.end())
+        if (i == mWidgets.length)
         {
-            it = mWidgets.begin();
+            i = 0;
         }
 
-        it++;
+        i++;
 
-        for ( ; it != end; it++)
+        for ( ; i != end; i++)
         {
-            if (it == mWidgets.end())
+            if (i == mWidgets.length)
             {
-                it = mWidgets.begin();
+                i = 0;
             }
 
-            if ((*it)->isFocusable())
+            if (mWidgets[i].isFocusable())
             {
-                (*it)->requestFocus();
+                mWidgets[i].requestFocus();
                 return;
             }
-        }+/
+        }
     }
 
     void focusPrevious()
     {
-        assert(0);
-/+        WidgetListReverseIterator it;
+       int i = mWidgets.length - 1;
+       if( i <= 0 )
+          return;
 
-        for (it = mWidgets.rbegin(); it != mWidgets.rend(); it++)
+        for (; i >= 0; --i)
         {
-            if ((*it)->isFocused())
+            if (mWidgets[i].isFocused())
             {
                 break;
             }
         }
 
-        WidgetListReverseIterator end = it;
+        int end = i;
 
-        it++;
+        i--;
 
-        if (it == mWidgets.rend())
+        if (i < 0)
         {
-            it = mWidgets.rbegin();
+            i = mWidgets.length - 1;
         }
 
-        for ( ; it != end; it++)
+        for ( ; i != end; --i)
         {
-            if (it == mWidgets.rend())
+            if (i < 0)
             {
-                it = mWidgets.rbegin();
+                i = mWidgets.length-1;
             }
 
-            if ((*it)->isFocusable())
+            if (mWidgets[i].isFocusable())
             {
-                (*it)->requestFocus();
+                mWidgets[i].requestFocus();
                 return;
             }
-        }+/
+        }
     }
 
     Widget getWidgetAt(int x, int y)
@@ -255,21 +253,19 @@ class BasicContainer : Widget
 
     void remove(Widget widget)
     {
-        assert(0);
-/+        WidgetListIterator iter;
-        for (iter = mWidgets.begin(); iter != mWidgets.end(); iter++)
+        foreach(int i, Widget w; mWidgets)
         {
-            if (*iter == widget)
+            if (w is widget)
             {
-                mWidgets.erase(iter);
-                widget->_setFocusHandler(NULL);
-                widget->_setParent(NULL);
-                widget->removeDeathListener(this);
+                mWidgets.remove_all(w);
+                widget._setFocusHandler(null);
+                widget._setParent(null);
+//                 widget->removeDeathListener(this);
                 return;
             }
         }
 
-        throw GCN_EXCEPTION("There is no such widget in this container.");+/
+        throw new GCN_Exception("There is no such widget in this container.");
     }
 
     void clear()
@@ -296,7 +292,7 @@ class BasicContainer : Widget
                 if (widget.getFrameSize() > 0)
                 {
                     Rectangle rec = Rectangle(widget.getDimension());
-                    writefln( "W:",rec.x,rec.x);
+//                     writefln( "W:",rec.x,rec.x);
                     rec.x -= widget.getFrameSize();
                     rec.y -= widget.getFrameSize();
                     rec.width += 2 * widget.getFrameSize();

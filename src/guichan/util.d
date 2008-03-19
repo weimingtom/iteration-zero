@@ -13,6 +13,15 @@ void remove(T) (ref T[] array, T item)
     }
 }
 
+void remove_index(T) (ref T[] array, int index)
+{
+    for(int i=index; i < array.length-1; ++i)
+    {
+        array[i] = array[i+1];
+    }
+    array.length = array.length - 1;
+}
+
 void remove_all(T) (ref T[] array, T item)
 {
     T t;
