@@ -290,18 +290,18 @@ class BasicContainer : Widget
             {
                 // If the widget has a frame,
                 // draw it before drawing the widget
-                if (widget.getFrameSize() > 0)
-                {
-                    Rectangle rec = Rectangle(widget.getDimension());
-//                     writefln( "W:",rec.x,rec.x);
-                    rec.x -= widget.getFrameSize();
-                    rec.y -= widget.getFrameSize();
-                    rec.width += 2 * widget.getFrameSize();
-                    rec.height += 2 * widget.getFrameSize();
-                    graphics.pushClipArea(rec);
-                    widget.drawFrame(graphics);
-                    graphics.popClipArea();
-                }
+//                 if (widget.getFrameSize() > 0)
+//                 {
+//                     Rectangle rec = Rectangle(widget.getDimension());
+// //                     writefln( "W:",rec.x,rec.x);
+//                     rec.x -= widget.getFrameSize();
+//                     rec.y -= widget.getFrameSize();
+//                     rec.width += 2 * widget.getFrameSize();
+//                     rec.height += 2 * widget.getFrameSize();
+//                     graphics.pushClipArea(rec);
+//                     widget.drawFrame(graphics);
+//                     graphics.popClipArea();
+//                 }
 
                 graphics.pushClipArea(Rectangle(widget.getDimension()));
                 widget.draw(graphics);

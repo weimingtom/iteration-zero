@@ -122,27 +122,27 @@ class Window : Container, MouseListener
 
     void draw(Graphics graphics)
     {
-        int width = getWidth() + getFrameSize() * 2 - 1;
-        int height = getHeight() + getFrameSize() * 2 - 1;
+        int width = getWidth() + getFrameSize() * 2;
+        int height = getHeight() + getFrameSize() * 2;
 
         Rectangle d = Rectangle(getChildrenArea());
 
         // Fill the background around the content
         graphics.setColor(getFrameColor);
         // Fill top
-        graphics.fillRectangle(Rectangle(0,0,getWidth(),d.y - 1));
+        graphics.fillRectangle(Rectangle(0,0,width,d.y));
         // Fill left
-        graphics.fillRectangle(Rectangle(0,d.y - 1, d.x - 1, getHeight() - d.y + 1));
+        graphics.fillRectangle(Rectangle(0,d.y - 0, d.x - 1,height - d.y + 0));
         // Fill right
-        graphics.fillRectangle(Rectangle(d.x + d.width + 1,
-                                          d.y - 1,
-                                          getWidth() - d.x - d.width - 1,
-                                          getHeight() - d.y + 1));
+        graphics.fillRectangle(Rectangle(d.x + d.width,
+                                          d.y - 0,
+                                          width - d.x - d.width - 0,
+                                          height - d.y + 0));
         // Fill bottom
-        graphics.fillRectangle(Rectangle(d.x - 1,
-                                          d.y + d.height + 1,
+        graphics.fillRectangle(Rectangle(d.x - 0,
+                                          d.y + d.height + 0,
                                           d.width + 2,
-                                          getHeight() - d.height - d.y - 1));
+                                          height - d.height - d.y - 0));
 
         if (isOpaque())
         {
@@ -155,32 +155,6 @@ class Window : Container, MouseListener
         d.y -= 1;
         d.width += 2;
         d.height += 2;
-
-//         // Draw a border around the content
-//         graphics.setColor(shadowColor);
-//         // Top line
-//         graphics.drawLine(d.x,
-//                            d.y,
-//                            d.x + d.width - 2,
-//                            d.y);
-// 
-//         // Left line
-//         graphics.drawLine(d.x,
-//                            d.y + 1,
-//                            d.x,
-//                            d.y + d.height - 1);
-// 
-//         graphics.setColor(highlightColor);
-//         // Right line
-//         graphics.drawLine(d.x + d.width - 1,
-//                            d.y,
-//                            d.x + d.width - 1,
-//                            d.y + d.height - 2);
-//         // Bottom line
-//         graphics.drawLine(d.x + 1,
-//                            d.y + d.height - 1,
-//                            d.x + d.width - 1,
-//                            d.y + d.height - 1);
 
         drawChildren(graphics);
 

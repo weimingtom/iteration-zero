@@ -203,8 +203,9 @@ class Widget
     {
         mForegroundColor = Color(238,239,247);
         mBackgroundColor = Color(28,29,33,255);
-        mFrameColor = Color(68,88,120,255);
-        mSelectionColor = Color();
+        mFrameColor = Color(49,53,61,255);
+//         mColor = Color(68,88,120,255);
+        mSelectionColor = Color(146,205,207,255);
         mFocusHandler = null;
         mInternalFocusHandler = null;
         mParent = null;
@@ -238,7 +239,7 @@ class Widget
 
     void drawFrame(Graphics graphics)
     {
-        graphics.setColor(mFrameColor);
+        graphics.setColor(getFrameColor);
         uint i;
         for (i = 0; i < getFrameSize; ++i)
         {
