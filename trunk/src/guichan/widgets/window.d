@@ -169,31 +169,31 @@ class Window : Container, MouseListener
         d.width += 2;
         d.height += 2;
 
-        // Draw a border around the content
-        graphics.setColor(shadowColor);
-        // Top line
-        graphics.drawLine(d.x,
-                           d.y,
-                           d.x + d.width - 2,
-                           d.y);
-
-        // Left line
-        graphics.drawLine(d.x,
-                           d.y + 1,
-                           d.x,
-                           d.y + d.height - 1);
-
-        graphics.setColor(highlightColor);
-        // Right line
-        graphics.drawLine(d.x + d.width - 1,
-                           d.y,
-                           d.x + d.width - 1,
-                           d.y + d.height - 2);
-        // Bottom line
-        graphics.drawLine(d.x + 1,
-                           d.y + d.height - 1,
-                           d.x + d.width - 1,
-                           d.y + d.height - 1);
+//         // Draw a border around the content
+//         graphics.setColor(shadowColor);
+//         // Top line
+//         graphics.drawLine(d.x,
+//                            d.y,
+//                            d.x + d.width - 2,
+//                            d.y);
+// 
+//         // Left line
+//         graphics.drawLine(d.x,
+//                            d.y + 1,
+//                            d.x,
+//                            d.y + d.height - 1);
+// 
+//         graphics.setColor(highlightColor);
+//         // Right line
+//         graphics.drawLine(d.x + d.width - 1,
+//                            d.y,
+//                            d.x + d.width - 1,
+//                            d.y + d.height - 2);
+//         // Bottom line
+//         graphics.drawLine(d.x + 1,
+//                            d.y + d.height - 1,
+//                            d.x + d.width - 1,
+//                            d.y + d.height - 1);
 
         drawChildren(graphics);
 
