@@ -558,7 +558,7 @@ class Widget
         mWidgetListeners.remove(widgetListener);
     }
 
-    void getAbsolutePosition(out int x, int y)
+    void getAbsolutePosition(ref int x, ref int y)
     {
         if (getParent is null)
         {
