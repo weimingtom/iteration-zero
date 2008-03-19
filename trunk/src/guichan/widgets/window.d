@@ -47,17 +47,9 @@
 
 module guichan.widgets.window;
 
-import guichan.widget;
-import guichan.graphics;
-import guichan.widgets.container;
-import guichan.exception;
-import guichan.font;
-import guichan.graphics;
-import guichan.mouseinput;
-import guichan.event;
-import guichan.listener;
-import guichan.rectangle;
-import guichan.color;
+private import
+  guichan.all,
+  guichan.widgets.container;
 
 class Window : Container, MouseListener
 {
