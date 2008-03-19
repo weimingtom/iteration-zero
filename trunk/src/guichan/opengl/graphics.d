@@ -177,7 +177,7 @@ class OpenGLGraphics : Graphics
             return;
         }
 
-        glScissor(mClipStack[$-1].x,
+       glScissor(mClipStack[$-1].x,
                   mHeight - mClipStack[$-1].y - mClipStack[$-1].height,
                   mClipStack[$-1].width,
                   mClipStack[$-1].height);
@@ -284,21 +284,28 @@ class OpenGLGraphics : Graphics
         y2 += top.yOffset;
 
         glBegin(GL_LINES);
-        glVertex2f(x1 + 0.375f,
-                   y1 + 0.375f);
-        glVertex2f(x2 + 1.0f - 0.375f,
-                   y2 + 1.0f - 0.375f);
+        glVertex2f(x1,
+                   y1);
+        glVertex2f(x2,
+                   y2);
         glEnd();
 
-        glBegin(GL_POINTS);
-        glVertex2f(x2 + 1.0f - 0.375f,
-                   y2 + 1.0f - 0.375f);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glVertex2f(x1 + 0.375f,
-                   y1 + 0.375f);
-        glEnd();
+//         glBegin(GL_LINES);
+//         glVertex2f(x1 + 0.375f,
+//                    y1 + 0.375f);
+//         glVertex2f(x2 + 1.0f - 0.375f,
+//                    y2 + 1.0f - 0.375f);
+//         glEnd();
+// 
+//         glBegin(GL_POINTS);
+//         glVertex2f(x2 + 1.0f - 0.375f,
+//                    y2 + 1.0f - 0.375f);
+//         glEnd();
+// 
+//         glBegin(GL_POINTS);
+//         glVertex2f(x1 + 0.375f,
+//                    y1 + 0.375f);
+//         glEnd();
 
         
     }

@@ -69,10 +69,10 @@ class TestState : IGameState
         int clicked = SDL_GetMouseState(&x,&y) & SDL_BUTTON(1);
         view.toLevelCoords(&x,&y);
         // FUGLY
-        view.sceneMode();
-        view.drawHighlight(x,y);
+//         view.sceneMode();
+//         view.drawHighlight(x,y);
 //         writefln ("Looking at (%f %f)", view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
-        view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
+//         view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
         gui.text = [ "tile:" ~ tileprotoname ];
     }
 
@@ -109,7 +109,8 @@ class TestState : IGameState
         int x,y;
         SDL_GetMouseState(&x,&y);
         view.toLevelCoords(&x,&y);
-
+        if( !view.level.isValid(x,y))
+          return;
         if( event.type == SDL_MOUSEBUTTONUP )
         {
             if( event.button.button == SDL_BUTTON_RIGHT )

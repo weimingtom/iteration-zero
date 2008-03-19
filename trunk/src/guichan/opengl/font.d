@@ -1,5 +1,7 @@
 module guichan.opengl.font;
 
+import std.stdio : writefln;
+
 /// Use in Guichan
 import guichan.font;
 import guichan.graphics;
@@ -25,6 +27,9 @@ class OpenGLFont : guichan.font.Font
 
   void drawString(Graphics graphics, dstring text, int x, int y)
   {
+      // writefln("x,y =",x,",",y);
+      x += graphics.getCurrentClipArea.xOffset;
+      y += graphics.getCurrentClipArea.yOffset;
       float[4] color = graphics.getColor.toFloatVector;
       float[2] posi = [cast(float)x,cast(float)y];
       _realFont.draw([text],posi,color);
