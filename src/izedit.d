@@ -9,8 +9,8 @@ import util;
 import derelict.opengl.gl;
 
 import gui;
-import guichan.widgets.window;
-import guichan.widgets.container;
+
+import guichan.widgets.all;
 
 class TestState : IGameState
 {
@@ -47,9 +47,10 @@ class TestState : IGameState
 
         auto topWidget = cast(Container)engine.gui.getTop;
         auto window = new Window("Hello World!"d);
-        window.setPosition( 500, 500);
-        window.setSize( 50, 100);
-        window.setVisible(true);
+        window.setPosition (500, 500);
+        window.setSize (200, 300);
+//         window.setVisible(true);
+        window.add( new Label("Yo Label"), 20, 20);
 
         topWidget.add( window );
 
