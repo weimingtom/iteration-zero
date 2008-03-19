@@ -46,11 +46,18 @@ class TestState : IGameState
         
 
         auto topWidget = cast(Container)engine.gui.getTop;
+        topWidget.setId( "top" );
         auto window = new Window("Hello World!"d);
         window.setPosition (500, 500);
         window.setSize (200, 300);
+        window.setId( "window" );
 //         window.setVisible(true);
-        window.add( new Label("Yo Label"), 20, 20);
+        auto label = new Label("Yo Label");
+        label.setId( "label" );
+        window.add( label, 20, 20);
+        auto button = new Button("Yo Button");
+        button.setId( "button" );
+        window.add( button, 20, 40);
 
         topWidget.add( window );
 

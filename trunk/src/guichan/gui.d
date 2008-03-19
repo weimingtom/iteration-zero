@@ -946,6 +946,7 @@ protected:
                                       bool force = false,
                                       bool toSourceOnly = false)
     {
+//         writefln("distribute mouse events (%d %d)",x,y);
         Widget parent = source;
         Widget widget = source;
 
@@ -987,11 +988,14 @@ protected:
 
             if (widget.isEnabled() || force)
             {
+
                 int widgetX, widgetY;
                 widget.getAbsolutePosition(widgetX, widgetY);
 
                 mouseEvent.setX( x - widgetX );
                 mouseEvent.setY( y - widgetY );
+
+//                 writefln("distribute mouse event to widget #%s, (%d %d)",widget.getId,mouseEvent.getX,mouseEvent.getY);
 
                 auto mouseListeners = widget._getMouseListeners();
 

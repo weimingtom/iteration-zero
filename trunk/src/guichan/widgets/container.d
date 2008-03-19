@@ -60,6 +60,7 @@ class Container : BasicContainer
 
     this()
     {
+        super();
         mOpaque = true;
     }
 

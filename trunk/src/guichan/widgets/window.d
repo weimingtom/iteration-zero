@@ -55,6 +55,7 @@ class Window : Container, MouseListener
 {
     this()
     {
+        super();
         mMoved = false;
         setFrameSize(1);
         setPadding(2);
@@ -67,6 +68,7 @@ class Window : Container, MouseListener
 
     this(dstring caption)
     {
+        super();
         mMoved = false;
         setCaption(caption);
         setFrameSize(1);

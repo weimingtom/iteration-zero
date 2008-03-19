@@ -62,6 +62,7 @@ class BasicContainer : Widget
 {
     this()
     {
+        super();
     }
 
     ~this()
