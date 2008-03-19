@@ -201,10 +201,10 @@ class Widget
 
     this()
     {
-        mForegroundColor = new Color(0xffffff);
-        mBackgroundColor = new Color(0x000000);
-        mBaseColor = new Color(0x202020);
-        mSelectionColor = new Color(0xc3d9ff);
+        mForegroundColor = Color(0xffffff);
+        mBackgroundColor = Color(0x101010);
+        mBaseColor = Color(0x202020);
+        mSelectionColor = Color(0xc3d9ff);
         mFocusHandler = null;
         mInternalFocusHandler = null;
         mParent = null;
@@ -400,7 +400,7 @@ class Widget
 
     void requestFocus()
     {
-        if (mFocusHandler == null)
+        if (mFocusHandler is null)
         {
             throw new GCN_Exception("No focushandler set (did you add the widget to the gui?).");
         }
@@ -602,7 +602,7 @@ class Widget
         return mCurrentFont;
     }
 
-    void setGlobalFont(Font font)
+    static void setGlobalFont(Font font)
     {
         mGlobalFont = font;
 
@@ -669,7 +669,7 @@ class Widget
 
     void requestModalFocus()
     {
-        if (mFocusHandler == null)
+        if (mFocusHandler is null)
         {
             throw new GCN_Exception("No focushandler set (did you add the widget to the gui?).");
         }
@@ -679,7 +679,7 @@ class Widget
 
     void requestModalMouseInputFocus()
     {
-        if (mFocusHandler == null)
+        if (mFocusHandler is null)
         {
            throw new GCN_Exception("No focushandler set (did you add the widget to the gui?).");
         }
@@ -689,7 +689,7 @@ class Widget
 
     void releaseModalFocus()
     {
-        if (mFocusHandler == null)
+        if (mFocusHandler is null)
         {
             return;
         }
@@ -714,7 +714,7 @@ class Widget
           throw new GCN_Exception("No focushandler set (did you add the widget to the gui?).");
         }
 
-        if (getParent != null)
+        if (getParent !is null)
         {
             return (mFocusHandler.getModalFocused is this) 
                 || getParent.isModalFocused;
@@ -826,7 +826,7 @@ class Widget
 
     void showPart(Rectangle rectangle)
     {
-        if (mParent != null)
+        if (mParent !is null)
         {
             mParent.showWidgetPart(this, rectangle);
         }

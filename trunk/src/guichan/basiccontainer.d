@@ -351,7 +351,7 @@ class BasicContainer : Widget
 
         foreach(Widget widget; mWidgets)
         {
-            if (mInternalFocusHandler == null)
+            if (mInternalFocusHandler is null)
             {
                 widget._setFocusHandler(_getFocusHandler);
             }

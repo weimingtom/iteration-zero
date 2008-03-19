@@ -59,19 +59,19 @@ class DefaultFont : Font
         return 8;
     }
 
-    int getWidth( string text) 
+    int getWidth( dstring text) 
     {
         return 8*text.length;
     }
 
-    int drawGlyph(Graphics graphics, char glyph, int x, int y)
+    int drawGlyph(Graphics graphics, dchar glyph, int x, int y)
     {
         graphics.drawRectangle( Rectangle(x, y, 8, 8));
 
         return 8;
     }
 
-    void drawString(Graphics graphics,  string text, int x, int y)
+    void drawString(Graphics graphics,  dstring text, int x, int y)
     {
         uint i;
 
@@ -82,7 +82,7 @@ class DefaultFont : Font
         }
     }
 
-    int getStringIndexAt( string text, int x)
+    int getStringIndexAt(dstring text, int x)
     {
         if (x > cast(int)text.length * 8)
         {

@@ -395,7 +395,7 @@ class FocusHandler
 
             if (mWidgets[focusedWidget].isFocusable &&
                 mWidgets[focusedWidget].isTabInEnabled &&
-                (mModalFocusedWidget == null ||
+                (mModalFocusedWidget is null ||
                  mWidgets[focusedWidget].isModalFocused))
             {
                 done = true;

@@ -60,7 +60,7 @@ import guichan.graphics;
          * @param text The string to return the width of.
          * @return The width of a string.
          */
-        abstract int getWidth(string text);
+        abstract int getWidth(dstring text);
 
         /**
          * Gets the height of the glyphs in the font.
@@ -78,7 +78,21 @@ import guichan.graphics;
          *
          * @return A string index in a string providing an x coordinate.
          */
-        abstract int getStringIndexAt(string text, int x);
+        int getStringIndexAt(dstring text, int x, int y)
+        {
+            uint i;
+            int size = 0;
+
+            for (i = 0; i < text.length; ++i)
+            {
+                size = getWidth(text[0..i]);
+                if (size > x)
+                {
+                    return i;
+                }
+            }
+            return text.length;
+        }
 
         /**
          * Draws a string.
@@ -91,20 +105,6 @@ import guichan.graphics;
          * @param x The x coordinate where to draw the string.
          * @param y The y coordinate where to draw the string.
          */
-        abstract void drawString(Graphics graphics, string text, int x, int y);
-    int getStringIndexAt(string text, int x)
-    {
-        uint i;
-        int size = 0;
+        abstract void drawString(Graphics graphics, dstring text, int x, int y);
 
-        for (i = 0; i < text.length; ++i)
-        {
-            size = getWidth(text[0..i]);
-            if (size > x)
-            {
-                return i;
-            }
-        }
-        return text.length;
-    }
 }

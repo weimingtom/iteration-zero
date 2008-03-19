@@ -206,7 +206,7 @@ class OpenGLImage
 // 		unsigned char r = c & 0xff;
 // #endif
 
-        return new Color(r, g, b, a);
+        return Color(r, g, b, a);
     }
 
     void putPixel(int x, int y, Color color)

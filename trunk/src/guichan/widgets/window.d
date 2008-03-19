@@ -73,7 +73,7 @@ class Window : Container, MouseListener
         setOpaque(true);
     }
 
-    this(string caption)
+    this(dstring caption)
     {
         mMoved = false;
         setCaption(caption);
@@ -106,12 +106,12 @@ class Window : Container, MouseListener
         return mTitleBarHeight;
     }
 
-    void setCaption(string caption)
+    void setCaption(dstring caption)
     {
         mCaption = caption;
     }
 
-    string getCaption()
+    dstring getCaption()
     {
         return mCaption;
     }
@@ -129,8 +129,8 @@ class Window : Container, MouseListener
     void draw(Graphics graphics)
     {
         Color faceColor = getBaseColor();
-        Color highlightColor = new Color;
-        Color shadowColor = new Color;
+        Color highlightColor;
+        Color shadowColor;
         int alpha = getBaseColor().a;
         int width = getWidth() + getFrameSize() * 2 - 1;
         int height = getHeight() + getFrameSize() * 2 - 1;
@@ -196,7 +196,7 @@ class Window : Container, MouseListener
                            d.y + d.height - 1);
 
         drawChildren(graphics);
-        return;
+
         int textX;
         int textY;
 
@@ -322,7 +322,7 @@ protected:
     /**
       * Holds the caption of the window.
       */
-    string mCaption;
+    dstring mCaption;
 
     /**
       * Holds the alignment of the caption.
