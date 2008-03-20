@@ -65,9 +65,17 @@ class TestState : IGameState
         slider.setSize(100,10);
         window.add( slider, 20, 60);
 
-        auto cbox = new CheckBox("Yo Label");
+        auto cbox = new CheckBox("Checkidecheck");
         cbox.setId( "checkbox" );
         window.add( cbox, 20, 80);
+
+        auto rb1 = new RadioButton("Yo Radio 1 Ü"d,"1");
+        rb1.setId( "radio1" );
+        window.add( rb1, 20, 100);
+
+        auto rb2 = new RadioButton("Yo Radio 1 Ä"d,"1");
+        rb2.setId( "radio2" );
+        window.add( rb2, 20, 120);
 
         topWidget.add( window );
 
