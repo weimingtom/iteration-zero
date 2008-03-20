@@ -82,10 +82,14 @@ class TestState : IGameState
         rtf.setSize( 100,20 );
         window.add( rtf, 20, 140);
 
-        auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA"]));
+        auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA","uiiuiu","Llklkjluiouoiuoiuo","u","u","uizuiz"]));
         lbox.setId( "lbox" );
-        lbox.setSize(100,100);
-        window.add( lbox, 120, 20);
+        lbox.setSize(100,200);
+
+        auto sarea = new ScrollArea(lbox);
+        sarea.setSize(50,50);
+
+        window.add( sarea, 140, 20);
 
         topWidget.add( window );
 

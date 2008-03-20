@@ -9,4 +9,5 @@ public import
   guichan.widgets.checkbox,
   guichan.widgets.radiobutton,
   guichan.widgets.listbox,
-  guichan.widgets.textfield;
+  guichan.widgets.textfield,
+  guichan.widgets.scrollarea;

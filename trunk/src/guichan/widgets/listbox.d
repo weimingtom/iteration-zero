@@ -65,6 +65,8 @@ class ListModel(T) : IListModel
 
     dstring getElementAt(int i)
     {
+      assert( i >= 0 && i < data.length, "ListBox requested out-of bounds element." );
+
       static if( is( typeof(T[0]) == string) )
         return toUTF32(data[i]);
       else
@@ -325,7 +327,7 @@ public:
         // The y coordinate where we start to draw the text is
         // simply the y coordinate multiplied with the font height.
         int y = rowHeight * startRow;
-        for (i = startRow; i < startRow + numberOfRows; ++i)
+        for (i = startRow; i < /+startRow + +/numberOfRows; ++i) // Commented out startRow ... KB
         {
             if (i == mSelected)
             {
