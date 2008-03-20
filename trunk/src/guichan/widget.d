@@ -69,7 +69,7 @@ import guichan.graphics;
 import guichan.keyinput;
 import guichan.mouseinput;
 
-class Widget
+class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
 {
   private:
     static Widget[] mWidgets;
@@ -420,10 +420,6 @@ class Widget
     void moveToTop(Widget widget) { }
     void moveToBottom(Widget widget) { }
     void fontChanged() { }
-    void widgetResized(Event) { }
-    void widgetMoved(Event) { }
-    void widgetHidden(Event) { }
-    void widgetShown(Event) { }
     void widgetAction(Event) { }
     void logic() { }
 
@@ -823,4 +819,27 @@ class Widget
     }
 
     void showWidgetPart(Widget widget, Rectangle area) { }
+
+    void widgetResized(Event event) { }
+    void widgetMoved(Event event) { }
+    void widgetHidden(Event event) { }
+    void widgetShown(Event event) { }
+
+    void focusGained(Event event) { }
+    void focusLost(Event event) { }
+
+    void keyPressed(KeyEvent keyEvent) { }
+    void keyReleased(KeyEvent keyEvent) { }
+
+    void mouseEntered(MouseEvent mouseEvent) { }
+    void mouseExited(MouseEvent mouseEvent) { }
+    void mousePressed(MouseEvent mouseEvent) { }
+    void mouseReleased(MouseEvent mouseEvent) { }
+    void mouseClicked(MouseEvent mouseEvent) { }
+
+    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
+    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
+    void mouseMoved(MouseEvent mouseEvent) { }
+    void mouseDragged(MouseEvent mouseEvent) { }
+
 }
