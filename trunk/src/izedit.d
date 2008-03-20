@@ -48,8 +48,8 @@ class TestState : IGameState
         auto topWidget = cast(Container)engine.gui.getTop;
         topWidget.setId( "top" );
         auto window = new Window("Hello World!"d);
-        window.setPosition (500, 500);
-        window.setSize (200, 300);
+        window.setPosition (100, 100);
+        window.setSize (300, 300);
         window.setId( "window" );
 //         window.setVisible(true);
         auto label = new Label("Yo Label");
@@ -76,6 +76,11 @@ class TestState : IGameState
         auto rb2 = new RadioButton("Yo Radio 1 Ä"d,"1");
         rb2.setId( "radio2" );
         window.add( rb2, 20, 120);
+
+        auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA"]));
+        lbox.setId( "lbox" );
+        lbox.setSize(100,100);
+        window.add( lbox, 120, 20);
 
         topWidget.add( window );
 
