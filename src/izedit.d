@@ -55,9 +55,19 @@ class TestState : IGameState
         auto label = new Label("Yo Label");
         label.setId( "label" );
         window.add( label, 20, 20);
+
         auto button = new Button("Yo Button");
         button.setId( "button" );
         window.add( button, 20, 40);
+
+        auto slider = new Slider(0.0,100.0);
+        slider.setId( "slider" );
+        slider.setSize(100,10);
+        window.add( slider, 20, 60);
+
+        auto cbox = new CheckBox("Yo Label");
+        cbox.setId( "checkbox" );
+        window.add( cbox, 20, 80);
 
         topWidget.add( window );
 

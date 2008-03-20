@@ -76,9 +76,6 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
       adjustSize();
       setFrameSize(2);
 
-      mBackgroundColor = Color(49,53,61,255);
-      mFrameColor = Color(68,88,120,255);
-
       addMouseListener(this);
       addKeyListener(this);
       addFocusListener(this);
@@ -104,9 +101,6 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
       setFocusable(true);
       adjustSize();
       setFrameSize(2);
-
-      setBackgroundColor( Color(49,53,61,255) );
-      setFrameColor( Color(68,88,120,255) );
 
       addMouseListener(this);
       addKeyListener(this);
@@ -190,8 +184,8 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
       */
     void adjustSize()
     {
-        setWidth(getFont().getWidth(mCaption) + 2*mSpacing + 2*mFrameSize);
-        setHeight(getFont().getHeight() + 3*mSpacing + 2*mFrameSize);
+        setWidth(getFont().getWidth(mCaption) + 4*mSpacing + 2*mFrameSize);
+        setHeight(getFont().getHeight() + 2*mSpacing + 2*mFrameSize);
     }
 
 
@@ -199,36 +193,14 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
 
    void draw(Graphics graphics)
    {
-//         Color faceColor = getFrameColor();
-//         Color shadowColor;
-//         int alpha = getFrameColor().a;
-        if (isPressed())
-        {
-        }
-        else
-        {
-        }
-
         graphics.setColor(getFrameColor());
-
-        if( isFocused() )
-        {
-          graphics.setColor(getSelectionColor());
-        }
-
         graphics.fillRectangle(Rectangle(0, 0, getWidth(), getHeight()));
 
         graphics.setColor(getBackgroundColor());
         graphics.fillRectangle(Rectangle(getFrameSize, getFrameSize, getWidth()-getFrameSize*2, getHeight()-getFrameSize*2));
 
-/+        graphics.setColor(shadowColor);
-        graphics.drawLine(getWidth() - 1, 1, getWidth() - 1, getHeight() - 1);
-        graphics.drawLine(1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
-+/
-        graphics.setColor(getForegroundColor());
-
         int textX;
-        int textY = getHeight() - getFont().getHeight() - getFrameSize() - mSpacing;
+        int textY = (getHeight() - getFont().getHeight())/2 - mFrameSize;
 
         switch (getAlignment())
         {
@@ -246,6 +218,11 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
         }
 
         graphics.setFont(getFont());
+        graphics.setColor(getForegroundColor());
+        if( isFocused() )
+        {
+          graphics.setColor(getSelectionColor());
+        }
 
         if (isPressed())
         {
@@ -254,11 +231,6 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
         else
         {
             graphics.drawText(getCaption(), textX, textY, getAlignment());
-
-            if (isFocused())
-            {
-//                 graphics.drawRectangle(Rectangle(2, 2, getWidth() - 4, getHeight() - 4));
-            }
         }
     }
 
@@ -324,7 +296,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
     void mouseClicked(MouseEvent mouseEvent){
 //       writefln("mouseClicked");
     }
-    void mouseMoved(MouseEvent mouseEvent){        
+    void mouseMoved(MouseEvent mouseEvent){
 //       writefln("mouseMoved");
     }
     void mouseWheelMovedDown(MouseEvent mouseEvent){}
@@ -358,7 +330,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
         }
     }
 
-    protected:
+  protected:
     /**
       * Checks if the button is pressed. Convenient method to use
       * when overloading the draw method of the button.
@@ -377,33 +349,33 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
         }
     }
 
-        /**
-         * Holds the caption of the button.
-         */
-        dstring mCaption;
+      /**
+        * Holds the caption of the button.
+        */
+      dstring mCaption;
 
-        /**
-         * True if the mouse is ontop of the button, false otherwise.
-         */
-        bool mHasMouse;
+      /**
+        * True if the mouse is ontop of the button, false otherwise.
+        */
+      bool mHasMouse;
 
-        /**
-         * True if a key has been pressed, false otherwise.
-         */
-        bool mKeyPressed;
+      /**
+        * True if a key has been pressed, false otherwise.
+        */
+      bool mKeyPressed;
 
-        /**
-         * True if a mouse has been pressed, false otherwise.
-         */
-        bool mMousePressed;
+      /**
+        * True if a mouse has been pressed, false otherwise.
+        */
+      bool mMousePressed;
 
-        /**
-         * Holds the alignment of the caption.
-         */
-        Alignment mAlignment;
+      /**
+        * Holds the alignment of the caption.
+        */
+      Alignment mAlignment;
 
-        /**
-         * Holds the spacing between the border and the caption.
-         */
-        uint mSpacing;
+      /**
+        * Holds the spacing between the border and the caption.
+        */
+      uint mSpacing;
 }
