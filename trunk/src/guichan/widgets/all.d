@@ -8,4 +8,5 @@ public import
   guichan.widgets.slider,
   guichan.widgets.checkbox,
   guichan.widgets.radiobutton,
-  guichan.widgets.listbox;
+  guichan.widgets.listbox,
+  guichan.widgets.textfield;
