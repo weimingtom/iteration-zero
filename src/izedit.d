@@ -77,6 +77,11 @@ class TestState : IGameState
         rb2.setId( "radio2" );
         window.add( rb2, 20, 120);
 
+        auto rtf = new TextField("UÜÜÖßßß Ä"d);
+        rtf.setId( "textfield" );
+        rtf.setSize( 100,20 );
+        window.add( rtf, 20, 140);
+
         auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA"]));
         lbox.setId( "lbox" );
         lbox.setSize(100,100);

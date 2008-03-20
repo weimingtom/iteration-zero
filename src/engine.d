@@ -108,6 +108,7 @@ class Engine
         }
 
         SDL_WM_SetCaption(toStringz("Engine"), null);
+        SDL_EnableUNICODE(1);
         setupGL();
 
         _dlisp = new DLisp(addAllToEnvironment(new Environment));
