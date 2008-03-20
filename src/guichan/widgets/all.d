@@ -7,4 +7,5 @@ public import
   guichan.widgets.button,
   guichan.widgets.slider,
   guichan.widgets.checkbox,
-  guichan.widgets.radiobutton;
+  guichan.widgets.radiobutton,
+  guichan.widgets.listbox;
