@@ -3,3 +3,26 @@
 (init *level* 100 100)
 (finalize *level*)
 
+(place-object *level* 2 2 "pilot")
+
+(place-object *level* 5 2 "forktruck")
+(place-object *level* 10 2 "pallette")
+(place-object *level* 10 10 "pallette/filled")
+(place-object *level* 15 2 "barrel1")
+(place-object *level* 15 5 "barrel2")
+(place-object *level* 20 2 "box")
+(place-object *level* 20 5 "pipes")
+(place-object *level* 20 7 "rounds")
+
+
+;; (place-object *level* 20 20 "triax/wheels")
+;; (place-object *level* 10 20 "triax/hover")
+;; (place-object *level* 5 20 "triax/tracks")
+
+(place-object *level* 20 20 "turret1")
+(place-object *level* 10 20 "turret2")
+;; (place-object *level* 5 20 "fish")
+(place-object *level* 15 20 "phoenix")
+(place-object *level* 2 10 "plant1")
+(place-object *level* 2 20 "plant2")
+;; (place-object *level* 5 20 "triax/tracks")
