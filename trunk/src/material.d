@@ -73,7 +73,8 @@ public:
 
 public:
     // default constructor
-    this() { }
+    this() {
+    }
 
     // copy constructor
     this(Material src) { copy(src); }
