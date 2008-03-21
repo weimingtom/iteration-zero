@@ -5,7 +5,7 @@ public import
   guichan.widgets.window,
   guichan.widgets.label,
   guichan.widgets.button,
-  guichan.widgets.slider,
+//   guichan.widgets.slider,
   guichan.widgets.checkbox,
   guichan.widgets.radiobutton,
   guichan.widgets.listbox,
