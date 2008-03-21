@@ -10,7 +10,7 @@ import derelict.opengl.gl;
 
 import gui;
 
-class TestState : IGameState
+class LevelState : IGameState
 {
     public:
         Engine engine;
@@ -70,24 +70,6 @@ class TestState : IGameState
 
     void handleKeyEvent(SDL_Event event)
     {
-        if( event.key.type == SDL_KEYUP )
-            return;
-
-        switch(event.key.keysym.sym)
-        {
-            case '+':
-                tileproto += 1;
-                break;
-            case '-':
-                tileproto -= 1;
-                break;
-            default: break;
-        }
-        
-        auto keys = view.level.dataset._prototypes.keys;
-        if( tileproto < 0 ) tileproto = keys.length - 1;
-        if( tileproto == keys.length ) tileproto = 0;
-        tileprotoname = keys[tileproto];
     }
     void handleMouseMotionEvent(SDL_Event event) {
         int x,y;
@@ -102,14 +84,10 @@ class TestState : IGameState
 
         if( event.type == SDL_MOUSEBUTTONUP )
         {
-            if( event.button.button == SDL_BUTTON_RIGHT )
+            if( event.button.button == SDL_BUTTON_LEFT )
             {
                 if( !view.level.gobjects[0].isBusy )
                     view.level.gobjects[0].startMovingTo(x,y);
-            }
-            if( event.button.button == SDL_BUTTON_LEFT )
-            {
-                view.level.tiles[y*view.level.width + x] = view.level.dataset._prototypes[ tileprotoname ].create(x,y);
             }
 
             if( event.button.button == SDL_BUTTON_WHEELUP )
@@ -128,10 +106,16 @@ class TestState : IGameState
 
 void main(char[][] argv)
 {
+    if( argv.length < 2 )
+    {
+        writefln("usage: iz-play levelfile");
+        return;
+    }
+
     Engine engine = new Engine;
     scope(exit) delete engine;      // when we exit, perform cleanup
 
-    engine.addState( new TestState (argv[1]) );
+    engine.addState( new LevelState (argv[1]) );
     engine.start ("test");
 
     engine.mainLoop();

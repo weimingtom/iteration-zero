@@ -122,7 +122,7 @@ class Engine
         top.setSize( xResolution, yResolution );
         top.setOpaque( false );
         _gui.setTop( top );
-        Widget.setGlobalFont( new OpenGLFont("data/verdana.ttf",10) );
+        Widget.setGlobalFont( new OpenGLFont("data/fonts/vera/VeraMono.ttf",10) );
     }
 
     // be nice and release all resources

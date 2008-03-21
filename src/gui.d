@@ -16,7 +16,7 @@ class GuiRenderer : Renderer
     {
         super("gui");
         engine = Engine.instance;
-        sfont = new Font ("data/verdana.ttf",16);
+//         sfont = new Font ("data/verdana.ttf",16);
     }
 
     void render()
