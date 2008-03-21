@@ -1,0 +1,15 @@
+
+materials = ("data/test/material.dl")
+
+faces = {
+    floor = ((0 0 0  0 0 0 0 1)(0 0 0  0 0 0 0 1)(0 0 0  0 0 0 0 1)(0 0 0  0 0 0 0 1))
+}
+
+prototypes = {
+    normal = {
+        blocking = 0
+        faces = ((floor rock))
+    }
+}
+
+objects = {}

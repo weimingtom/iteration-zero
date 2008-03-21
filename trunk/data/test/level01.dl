@@ -1,2 +1,5 @@
+(load-dataset *level* "data/test/dataset.dl")
+
 (init *level* 100 100)
 (finalize *level*)
+
