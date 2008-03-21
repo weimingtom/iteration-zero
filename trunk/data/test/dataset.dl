@@ -184,15 +184,15 @@ objects = {
     }
 
 # Broken
-    plant1 = {
-        model = {
-            mesh = "data/models/clif_plant/plant1.md2"
-            rotations = ()
-            scale = .15
-            skin = "data/models/clif_plant/Hang_plant.png"
-        }
-        speed = 5
-    }
+#    plant1 = {
+#        model = {
+#            mesh = "data/models/clif_plant/plant1.md2"
+#            rotations = ()
+#            scale = .15
+#            skin = "data/models/clif_plant/Hang_plant.png"
+#        }
+#        speed = 5
+#    }
 
     plant2 = {
         model = {
@@ -204,5 +204,62 @@ objects = {
         speed = 5
     }
 
+    spider_dalek = {
+        model = {
+            mesh = "data/models/Spider_Dalek/Tris.md2"
+            pre_trans = (0 0 .5)
+            rotations = ()
+            scale = .025
+            skin = "data/models/Spider_Dalek/Spider.pcx"
+        }
+        speed = 5
+    }
+            
+
+    blade = {
+        model = {
+            mesh = "data/models/blade/tris.md2"
+            pre_trans = (0 0 0.9)
+            rotations = ()
+            scale = .04
+            skin = "data/models/blade/blade.png"
+#            skin = "data/models/blade/blade_i.pcx"
+        }
+        speed = 3
+    }
+            
+    sligg = {
+        model = {
+            mesh = "data/models/sligg/tris.md2"
+            pre_trans = (0 0 1.2)
+            rotations = ()
+            scale = .05
+            skin = "data/models/sligg/sligg.pcx"
+        }
+        speed = 5
+    }
+            
+    smasher = {
+        model = {
+            mesh = "data/models/smasher/tris.md2"
+            pre_trans = (0 0 1.2)
+            rotations = ()
+            scale = .05
+            skin = "data/models/smasher/replica.pcx"
+        }
+        speed = 5
+    }
+            
+    rena = {
+        model = {
+            mesh = "data/models/rena/tris.md2"
+            pre_trans = (0 0 1.2)
+            rotations = ()
+            scale = .05
+            skin = "data/models/rena/Rena2.pcx"
+        }
+        speed = 5
+    }
+            
 
 }

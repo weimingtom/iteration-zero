@@ -59,7 +59,7 @@ class MotionState
             }
             gobject.real_x = gobject.x + 0.5 + interpol*dx;
             gobject.real_y = gobject.y + 0.5 + interpol*dy;
-            if( dx != 0 && dy != 0 )
+            if( dx != 0 || dy != 0 )
               gobject.model.facing = atan2(cast(float)dy,cast(float)dx)*180.0/3.1415;
         }
 

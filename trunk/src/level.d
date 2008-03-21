@@ -23,48 +23,6 @@ private {
     import dlisp.predefs.all;
 }
 
-private class Chunk
-{
-    public:
-        Level level;
-        int x0,y0,w,h;
-        int uidDisplayList = 0;
-
-    this(Level level_, int x0_, int y0_, int w_, int h_)
-    {
-        level = level_;
-        x0 = x0_;
-        y0 = y0_;
-        w = w_;
-        h = h_;
-    }
-
-    void compile()
-    {
-//         uidDisplayList = glGenLists(1);
-//         if (uidDisplayList == 0)
-//             throw new Exception("Failed to create display list");
-
-//         glNewList(uidDisplayList, GL_COMPILE);
-        for(int y=y0+h-1; y >= y0; -- y)
-        {
-            for(int x=x0+w-1; x >= x0; -- x)
-            {
-                level.getTile(x,y).compile();
-            }
-        }
-//         glEndList();
-    }
-
-    void draw()
-    {
-//         if(uidDisplayList == 0)
-            compile();
-
-//         glCallList(uidDisplayList);
-    }
-}
-
 class Level : ILevel
 {
     public:
@@ -76,15 +34,6 @@ class Level : ILevel
 
     Tile[] tiles;
     GObject[] gobjects;
-
-    int chunk_width;
-    int chunk_height;
-    int xchunks;
-    int ychunks;
-    Chunk[] chunks;
-
-    int centerx;
-    int centery;
 
     this(string filename)
     {
@@ -99,16 +48,10 @@ class Level : ILevel
 
     void init(int w_, int h_)
     {
-        chunk_width  = 4;
-        chunk_height = 4;
-        width  = w_ + (chunk_width - w_ % chunk_width);
-        height = w_ + (chunk_height - h_ % chunk_height);
-
-        xchunks = width/chunk_width;
-        ychunks = height/chunk_height;
+        width  = w_;
+        height = w_;
 
         tiles.length = width*height;
-        chunks.length = xchunks * ychunks;
         writefln ("Loading Level: %s [size=(%d %d)]",name,width,height);
     }
 
@@ -119,16 +62,7 @@ class Level : ILevel
             if( tiles[i] is null )
                 tiles[i] = dataset._prototypes[defaultTile].create(i%width,i/width);
 
-        for(int x = 0; x != xchunks; ++x)
-        {
-            for(int y = 0; y != ychunks; ++y)
-            {
-                chunks[y*xchunks + x] = new Chunk (this, x*chunk_width, y*chunk_height, chunk_width, chunk_height);
-            }
-        }
         writefln ("Loading Level: %s ... finished",name);
-        centerx = width/2;
-        centery = width/2;
     }
 
     bool isValid(int x, int y)
@@ -175,32 +109,6 @@ class Level : ILevel
         return getTile (x, y). blocking;
     }
 
-    void draw()
-    {
-        int xc = centerx/chunk_width;
-        int yc = centery/chunk_height;
-
-        int dx = 5;
-        int dy = 5;
-
-        for(int x = xc - dx; x != xc +dx; ++x)
-        {
-            if( x < 0 || x >= xchunks )
-                continue;
-            for(int y = yc - dy; y != yc +dy; ++y)
-            {
-                if( y < 0 || y >= ychunks )
-                    continue;
-                chunks[y*xchunks+x].draw();
-            }
-        }
-
-        foreach(GObject gobject; gobjects)
-        {
-            gobject.draw();
-        }
-    }
-
     float distance(int x0, int y0, int x1, int y1)
     {
         return cast(float)(abs(x0 - x1) + abs(y0-y1));
@@ -218,7 +126,7 @@ class Level : ILevel
 
     mixin BindClass!("C/LEVEL");
     mixin BindConstructor!(Level function(string));
-    mixin BindMethods!(init,finalize,draw,isValid,placeTile,placeObject,loadDataset,getTile,getObjects,getAllObjects);
+    mixin BindMethods!(init,finalize,isValid,placeTile,placeObject,loadDataset,getTile,getObjects,getAllObjects);
     mixin BindMethods!(setName);
 }
 
@@ -280,14 +188,6 @@ class LevelRenderer : Renderer
             mul(&screenCoords,&viewMatrix);
             *x = cast(int)screenCoords.x;
             *y = cast(int)screenCoords.y;
-
-            /+
-            glColor4f(1,0,1,1);
-            glBegin(GL_LINES);
-                glVertex3f( look_x, look_y, 0 );       /* NE */
-                glVertex3f( x, y, 0 );       /* NW */
-            glEnd();
-            +/
         }
 
         void drawHighlight(int x, int y)
@@ -327,6 +227,14 @@ class LevelRenderer : Renderer
             glEnable(GL_TEXTURE_2D);
             if( level is null )
                 return;
-            level.draw();
+
+            for(int x = 0; x < level.width; ++x)
+                for(int y = 0; y < level.height; ++y)
+                    level.getTile(x,y).draw();
+
+            foreach(GObject gobject; level.getAllObjects())
+            {
+                gobject.draw();
+            }
         }
 }

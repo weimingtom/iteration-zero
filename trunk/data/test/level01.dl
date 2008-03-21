@@ -3,6 +3,14 @@
 (init *level* 100 100)
 (finalize *level*)
 
+(place-object *level* 3 3 "rena")
+
+(place-object *level* 3 0 "smasher")
+(place-object *level* 3 2 "sligg")
+
+
+(place-object *level* 0 0 "blade")
+(place-object *level* 1 1 "spider_dalek")
 (place-object *level* 2 2 "pilot")
 
 (place-object *level* 5 2 "forktruck")
@@ -23,6 +31,6 @@
 (place-object *level* 10 20 "turret2")
 ;; (place-object *level* 5 20 "fish")
 (place-object *level* 15 20 "phoenix")
-(place-object *level* 2 10 "plant1")
+;; (place-object *level* 2 10 "plant1")
 (place-object *level* 2 20 "plant2")
 ;; (place-object *level* 5 20 "triax/tracks")
