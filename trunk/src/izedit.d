@@ -60,10 +60,10 @@ class TestState : IGameState
         button.setId( "button" );
         window.add( button, 20, 40);
 
-        auto slider = new Slider(0.0,100.0);
-        slider.setId( "slider" );
-        slider.setSize(100,10);
-        window.add( slider, 20, 60);
+//         auto slider = new Slider(0.0,100.0);
+//         slider.setId( "slider" );
+//         slider.setSize(100,10);
+//         window.add( slider, 20, 60);
 
         auto cbox = new CheckBox("Checkidecheck");
         cbox.setId( "checkbox" );
