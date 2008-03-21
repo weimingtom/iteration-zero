@@ -172,8 +172,6 @@ class LevelRenderer : Renderer
         {
             look_x = x;
             look_y = y;
-            level.centerx = cast(int)x;
-            level.centery = cast(int)y;
         }
 
         void toLevelCoords(int* x, int* y)
