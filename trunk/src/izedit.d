@@ -8,8 +8,6 @@ import std.stdio;
 import util;
 import derelict.opengl.gl;
 
-import gui;
-
 import guichan.widgets.all;
 
 class EditState : IGameState
@@ -19,7 +17,6 @@ class EditState : IGameState
         LevelRenderer view;
         string filename;
 
-        GuiRenderer gui;
         int tileproto = 0;
         string tileprotoname;
 
@@ -29,14 +26,12 @@ class EditState : IGameState
         filename = filename_;
         engine = Engine.instance;
         view = new LevelRenderer;
-        gui = new GuiRenderer;
         engine.renderPipeline.add (view);
-        engine.renderPipeline.add (gui);
     }
 
     void start()
     {
-        engine.renderPipeline.setPipeline(["level","gui"]);
+        engine.renderPipeline.setPipeline(["level"]);
 
         view.level = new Level (filename);
         view.lookAt (0, 0);
@@ -113,7 +108,6 @@ class EditState : IGameState
 //         view.drawHighlight(x,y);
 //         writefln ("Looking at (%f %f)", view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
 //         view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
-        gui.text = [ "tile:" ~ tileprotoname ];
     }
 
     string name() { return "level"; }
