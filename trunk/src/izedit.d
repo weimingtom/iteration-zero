@@ -12,7 +12,7 @@ import gui;
 
 import guichan.widgets.all;
 
-class TestState : IGameState
+class EditState : IGameState
 {
     public:
         Engine engine;
@@ -116,7 +116,7 @@ class TestState : IGameState
         gui.text = [ "tile:" ~ tileprotoname ];
     }
 
-    string name() { return "test"; }
+    string name() { return "level"; }
 
     void handleKeyEvent(SDL_Event event)
     {
@@ -179,11 +179,18 @@ class TestState : IGameState
 
 void main(char[][] argv)
 {
+    if( argv.length < 2 )
+    {
+        writefln("usage: iz-play levelfile");
+        return;
+    }
+
+
     Engine engine = new Engine;
     scope(exit) delete engine;      // when we exit, perform cleanup
 
-    engine.addState( new TestState (argv[1]) );
-    engine.start ("test");
+    engine.addState( new EditState (argv[1]) );
+    engine.start ("level");
 
     engine.mainLoop();
 }
