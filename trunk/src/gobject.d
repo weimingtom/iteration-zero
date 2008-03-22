@@ -86,7 +86,7 @@ class GObject : GObjectBase, IGObject
         bool blocking;
 
 
-        this(ILevel level, GObjectPrototype prototype, int x_, int y_)
+        this(ILevel level = null, GObjectPrototype prototype = null, int x_ = 0, int y_ = 0)
         {
             _level = level;
             _prototype = prototype;

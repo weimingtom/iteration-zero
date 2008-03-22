@@ -2,12 +2,12 @@ module party;
 
 import dlisp.bind;
 import interfaces;
-
+import character;
 
 class Party
 {
     private:
-        ICharacter[] _members;
+        Character[] _members;
         string _currentLevel;
 
     public:

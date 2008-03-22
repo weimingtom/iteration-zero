@@ -125,6 +125,7 @@ class Level : ILevel
     string getName() {  return name; }
 
     Party getParty() { return _party; }
+    void setParty(Party p) { _party = p; }
 
     mixin BindClass!("C/LEVEL");
     mixin BindConstructor!(Level function(string));
