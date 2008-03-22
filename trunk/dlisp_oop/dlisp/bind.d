@@ -237,6 +237,11 @@ template BoxArgument(int n, T : string)
   const BoxArgument = CheckArgument!(n,"isString") ~ AddArgument!("box(" ~ CArg!(n) ~ ".strValue)");
 }
 
+template BoxArgument(int n, T : bool)
+{
+  const BoxArgument =  AddArgument!("box(isTrue(" ~ CArg!(n) ~ "))");
+}
+
 template BoxArgument(int n, T)
 {
   static if( IsBoundClass!(T) ) {

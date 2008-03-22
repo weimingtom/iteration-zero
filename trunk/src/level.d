@@ -113,7 +113,7 @@ class Level : ILevel
     {
         if( !isValid (x, y) )
             return true;
-        return getTile (x, y). blocking;
+        return getTile (x, y).isBlocking();
     }
 
     float distance(int x0, int y0, int x1, int y1)

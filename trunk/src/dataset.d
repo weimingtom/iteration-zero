@@ -51,6 +51,7 @@ class TilePrototype
     Tile create(int x, int y)
     {
         Tile t = new Tile(_mesh,x,y);
+        t.setBlocking( blocking );
         return t;
     }
 
