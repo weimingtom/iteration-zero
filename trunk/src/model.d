@@ -12,7 +12,7 @@ import dlisp.bind;
 
 class Model
 {
-private:
+protected:
     Mesh _mesh;
     float  _scale = .05;       // scale value
 
@@ -71,6 +71,11 @@ private:
     {
     }
 
+    Model clone()
+    {
+        return this;
+    }
+
     bool isAnimated() { return false; }
     final bool isStatic() { return !isAnimated(); }
 
@@ -107,7 +112,7 @@ static Model loadFromSofu(sofu.Map map)
             rots[i] = rlist.asList().value(i).toFloat();
         m.addRotation( rots );
     }
-    m.scale = map.value("scale").toFloat();
+    m.setScale( map.value("scale").toFloat() );
     m.setPreTranslation( pre_translation );
     m.setPostTranslation( post_translation );
 
@@ -122,10 +127,21 @@ class AnimatedModel : Model
         AnimationState animationState;
         Texture texture;
 
-        float scale = 1.0;
-
     ~this()
     {
+    }
+
+    Model clone()
+    {
+        AnimatedModel m = new AnimatedModel();
+        m.setMesh( animated_mesh );
+        m.texture = texture;
+        m._scale = _scale;
+        m._pre_translation[]  = _pre_translation[];
+        m._post_translation[] = _post_translation[];
+        m._rotations[] = _rotations[];
+        m._facing = _facing;
+        return m;
     }
 
     void setMesh(Mesh mesh)
@@ -158,7 +174,7 @@ class AnimatedModel : Model
         animated_mesh.setNextFrame( animationState.next_frame );
         animated_mesh.setInterpol( animationState.interpol );
 
-        animated_mesh.setScale( scale );
+        animated_mesh.setScale( _scale );
 //         animated_mesh.setFacing( facing );
 
         beginDraw(x,y,0.0f);

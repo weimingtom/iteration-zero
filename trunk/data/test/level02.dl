@@ -18,12 +18,17 @@
 
 (place-object-by-name *level* 5 5 "blade")
 
-(defun place-john ()
-    (let ((john (make-instance C/CHARACTER "John Dee")))
-        (print (get-attr (get-attr john 'parent) 'parent))
-        (set-model john (get-model *dataset* "blade"))
-        (place-object *level* 2 2 john)))
-(place-john)
+(defun create-character (name)
+    (make-instance C/CHARACTER name))
+
+(defun init-character (c model )
+    (progn 
+        (set-model c (get-model *dataset* model))
+        c))
+
+(place-object *level* 1 1 
+    (init-character (create-character "John Dee") "blade"))
+
 
 (place-tile 0 0 "wall")
 
