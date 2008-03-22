@@ -104,9 +104,9 @@ class Model
         glPopMatrix();
     }
 
-    void animate( float time )
+    void animate( float deltatime )
     {
-        animationState.curr_time = time;
+        animationState.curr_time += deltatime;
         // calculate current and next frames
         if( animationState.curr_time - animationState.old_time > (1.0 / animationState.fps) )
         {

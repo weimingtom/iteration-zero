@@ -9,7 +9,7 @@ struct AnimationState
     int     endframe;                // last frame
     int     fps;                     // frame per second for this animation
 
-    float   curr_time;               // current time
+    float   curr_time = 0.0;         // current time
     float   old_time = 0.0;          // old time
     float   interpol = 0.0;          // percent of interpolation
 

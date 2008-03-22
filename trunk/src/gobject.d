@@ -106,6 +106,7 @@ class GObject : GObjectBase, IGObject
 
         void update()
         {
+            float oldtime = _time;
             _time = SDL_GetTicks()*0.001;
             _motionState._updateMovement(_time);
             if( !_motionState.isMoving )
@@ -118,7 +119,7 @@ class GObject : GObjectBase, IGObject
                     _model.setAnimation(Md2Action.MD2_STAND);
                 }
             }
-            _model.animate(_time);
+            _model.animate(_time - oldtime);
         }
 
         void draw()
