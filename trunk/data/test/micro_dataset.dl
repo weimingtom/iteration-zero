@@ -8,12 +8,38 @@ faces = {
       (1 1 0  1 1  0 0 1)
       (0 1 0  0 1  0 0 1)
     )
+
+    roof = (
+      (0 0 1  0 0  0 0 1)
+      (1 0 1  1 0  0 0 1)
+      (1 1 1  1 1  0 0 1)
+      (0 1 1  0 1  0 0 1)
+    )
+
+    wall/sw = (
+      (0 0 0  0 0  0 0 1)
+      (0 0 1  0 1  0 0 1)
+      (0 1 1  1 1  0 0 1)
+      (0 1 0  1 0  0 0 1)
+    )
+
+    wall/se = (
+      (0 0 0  0 0  0 0 1)
+      (0 0 1  0 1  0 0 1)
+      (1 0 1  1 1  0 0 1)
+      (1 0 0  1 0  0 0 1)
+    )
 }
 
 prototypes = {
     normal = {
         blocking = 0
-        faces = ((floor rough_rock3))
+        faces = ((floor floor/mtlgrid))
+    }
+    wall = {
+        blocking = 1
+        faces = ((wall/se wall/mtlstripe)(wall/sw wall/mtlstripe)(roof floor/mtlrost))
+
     }
 
 }

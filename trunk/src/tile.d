@@ -25,7 +25,6 @@ class Tile
             _mesh.renderFrame();
             _mesh.endDraw();
         }
-
         int x() { return _x; }
         int y() { return _y; }
 

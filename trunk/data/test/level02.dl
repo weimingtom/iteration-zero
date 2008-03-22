@@ -6,3 +6,21 @@
 
 
 (place-object *level* 5 5 "blade")
+
+(place-tile *level* 0 0 "wall")
+
+(defun place-tile (x y name)
+    (place-tile *level* x y name))
+
+(defun place-wall-x (x y d name)
+    (dotimes (dx d)
+        (place-tile (+ x dx) y name)))
+
+(defun place-wall-y (x y d name)
+    (dotimes (dy d)
+        (place-tile x (+ y dy) name)))
+
+(place-wall-x 0 0 10 "wall")
+(place-wall-x 0 9 10 "wall")
+(place-wall-y 0 0 10 "wall")
+(place-wall-y 9 0 10 "wall")

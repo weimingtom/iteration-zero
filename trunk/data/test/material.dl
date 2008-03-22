@@ -1,3 +1,20 @@
+floor/mtlgrid = {
+    color = (1 .9 .9 1)
+    texture = "data/materials/nexmtl/mtl_flooring.jpg"
+}
+
+floor/mtlrost = {
+    color = (1 .9 .9 1)
+    texture = "data/materials/nexmtl/mtl_rstb.jpg"
+}
+
+wall/mtlstripe = {
+    color = (1 .9 .9 1)
+    texture = "data/materials/nexmtl/mtl_midwrn.jpg"
+}
+
+
+
 rock5b = {
     color = (1 1 1 1)
     texture = "data/materials/rock/stone5_b.tga"
