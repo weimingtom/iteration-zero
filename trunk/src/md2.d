@@ -149,7 +149,7 @@ struct Animation
     int     fps;                    // number of frames per second
 }
 
-class Md2ModelMesh : ModelMesh
+class Md2AnimatedMesh : AnimatedMesh
 {
 public:
     // constructor/destructor
@@ -290,16 +290,21 @@ public:
         // have clockwise winding
         glPushAttrib( GL_POLYGON_BIT );
         glFrontFace( GL_CW );
-    
+
         // enable backface culling
         glEnable( GL_CULL_FACE );
         glCullFace( GL_BACK );
         glColor4f( 1,1,1,1.0 );
 
-    
+        scope(exit)
+        {
+            glDisable( GL_CULL_FACE );
+            glPopAttrib();
+        }
+
         // interpolate
         interpolate( &vertexList[0] );
-    
+
         // bind model's texture
         if( texture !is null)
         {
@@ -336,27 +341,23 @@ public:
                 // parse triangle's normal (for the lighting)
                 int idx = glCommands[i+2];
                 int normal_idx = lightNormals[ idx ];
-//                 writefln ("%d %f %f %f",idx,vertexList[ idx ].x,vertexList[ idx ].y,vertexList[ idx ].z);
+                // writefln ("%d %f %f %f",idx,vertexList[ idx ].x,vertexList[ idx ].y,vertexList[ idx ].z);
 
                 glNormal3fv( &anorms[normal_idx ].x );
                 glVertex3fv( &vertexList[ idx ].x );
             }
             glEnd();
         }
-
-        // Restore
-        glDisable( GL_CULL_FACE );
-        glPopAttrib();
     }
 private:
 
     void interpolate( vector3 *vertlist )
     {
-        vector3* curr_v = &vertices[ numVertices * animationState.curr_frame ];
-        vector3* next_v = &vertices[ numVertices * animationState.next_frame ];
+        vector3* curr_v = &vertices[ numVertices * getCurrentFrame() ];
+        vector3* next_v = &vertices[ numVertices * getNextFrame() ];
 
-        float interpol = animationState.interpol;
-//         writefln ("%d %f %f",animationState.curr_frame,interpol,scale);
+        float interpol = getInterpol();
+        float scale = getScale();
 
         for( int i = 0; i < numVertices ; i++ )
         {

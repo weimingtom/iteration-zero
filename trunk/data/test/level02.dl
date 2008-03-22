@@ -1,8 +1,8 @@
-(load-dataset *level* "data/test/dataset.dl")
+(load-dataset *level* "data/test/micro_dataset.dl")
 
-(init *level* 100 100)
+(init *level* 10 10)
 (finalize *level*)
 
 
 
-(place-object *level* 20 20 "blade")
+(place-object *level* 5 5 "blade")

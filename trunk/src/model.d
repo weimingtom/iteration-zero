@@ -13,7 +13,7 @@ import md2;
 class Model
 {
     public:
-        ModelMesh mesh;
+        AnimatedMesh mesh;
         AnimationState animationState;
         Texture texture;
 
@@ -42,8 +42,12 @@ class Model
             for(int i=0; i != 4; ++i)
                 rots[i] = rlist.asList().value(i).toFloat();
             rotations ~= rots;
+            mesh.addRotation( rots );
         }
         scale = map.value("scale").toFloat();
+        mesh.setPreTranslation( pre_translation );
+        mesh.setPostTranslation( post_translation );
+
         loadSkin( map.value("skin").toString() );
     }
 
@@ -82,26 +86,20 @@ class Model
 
     void drawAt(float x, float y)
     {
-        mesh.animationState = animationState;
         mesh.texture = texture;
-        mesh.scale = scale;
 
-//           writefln ("Rendering... %f", mesh.animationState.interpol);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-            // rotate the model
-            glTranslatef(x+pre_translation[0],y+pre_translation[1],pre_translation[2]);
-            foreach(float[4] rots; rotations)
-            {
-                glRotatef(rots[0],rots[1],rots[2],rots[3]);
-            }
-            glRotatef(facing,0,0,1);
-            glTranslatef(post_translation[0],post_translation[1],post_translation[2]);
-            glScalef(1, 1, 1);
+        mesh.setCurrentFrame( animationState.curr_frame );
+        mesh.setNextFrame( animationState.next_frame );
+        mesh.setInterpol( animationState.interpol );
 
-            // render it on the screen
-            mesh.renderFrame();
-        glPopMatrix();
+        mesh.setScale( scale );
+        mesh.setFacing( facing );
+
+        mesh.beginDraw(x,y,0.0f);
+        scope(exit)
+            mesh.endDraw();
+
+        mesh.renderFrame();
     }
 
     void animate( float deltatime )
@@ -129,12 +127,12 @@ class Model
 }
 
 
-private ModelMesh[char[]] _meshes;
+private AnimatedMesh[char[]] _meshes;
 
-ModelMesh loadModel(char[] filename)
+AnimatedMesh loadModel(char[] filename)
 {
     if( filename in _meshes)
         return _meshes[filename];
-    _meshes[filename] = new Md2ModelMesh(filename);
+    _meshes[filename] = new Md2AnimatedMesh(filename);
     return _meshes[filename];
 }

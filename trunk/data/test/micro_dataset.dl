@@ -1,0 +1,32 @@
+
+materials = ("data/test/material.dl")
+
+faces = {
+    floor = (
+      (0 0 0  0 0  0 0 1)
+      (1 0 0  1 0  0 0 1)
+      (1 1 0  1 1  0 0 1)
+      (0 1 0  0 1  0 0 1)
+    )
+}
+
+prototypes = {
+    normal = {
+        blocking = 0
+        faces = ((floor rough_rock3))
+    }
+
+}
+
+objects = {
+    blade = {
+        model = {
+            mesh = "data/models/blade/tris.md2"
+            pre_trans = (0 0 0.9)
+            rotations = ()
+            scale = .04
+            skin = "data/models/blade/blade.png"
+        }
+        speed = 3
+    }
+}
