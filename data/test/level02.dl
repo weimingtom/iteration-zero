@@ -20,7 +20,7 @@
 
 (defun place-john ()
     (place-object *level* 2 2 (make-instance C/CHARACTER "John Dee")))
-;; (place-john)
+(place-john)
 
 (place-tile 0 0 "wall")
 

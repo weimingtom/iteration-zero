@@ -85,7 +85,7 @@ private template FunParamsImpl(int n, A ... )
       static if( A.length > 1 ) {
         const FunParamsImpl = FunParamsImpl!(n,A[0]) ~ "," ~ FunParamsImpl!(n+1,A[1..$]);
       } else {
-        pragma(msg,"unbox!(" ~ typeof(A[0]).stringof ~ ")(args[" ~ n.stringof ~ "])");
+//         pragma(msg,"unbox!(" ~ typeof(A[0]).stringof ~ ")(args[" ~ n.stringof ~ "])");
         const FunParamsImpl = "unbox!(" ~ typeof(A[0]).stringof~ ")(args[" ~ n.stringof ~"])";
       }
     }
