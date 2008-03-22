@@ -14,11 +14,13 @@ private {
     import vector;
 
     import modelmesh;
+    import model;
 
     import dlisp.bind;
 }
 
 public import
+    interfaces,
     gobject,
     tile;
 
@@ -59,6 +61,47 @@ class TilePrototype
     mixin BindMethods!(create);
 }
 
+class GObjectPrototype
+{
+    private:
+        string _name;
+        ObjectType _type;
+    public:
+        Model model;
+
+        bool selectable = false;
+        bool active     = false;
+        bool blocking   = true;
+
+        float speed = 1.0;
+
+        this(char[] name_, sofu.Map map)
+        {
+            _name = name_;
+            model = loadFromSofu(map.map("model"));
+
+            if( map.hasAttribute("speed") )
+                speed = map.value("speed").toFloat();
+
+            if( map.hasAttribute("blocking") )
+                blocking = map.value("blocking").toInt() == 1;
+        }
+
+        GObject create(ILevel level, int x, int y)
+        {
+            auto gobject = new GObject;
+            gobject.setModel (model);
+            gobject.setLevel (level);
+            gobject.setPosition (x,y);
+            return gobject;
+        }
+
+        string getName() { return _name; }
+        void setName(string name) { _name = name; }
+
+        mixin BindClass!("C/OBJECT-PROTOTYPE");
+        mixin BindMethods!(getName,setName);
+}
 
 class Dataset
 {
