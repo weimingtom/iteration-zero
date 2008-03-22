@@ -141,7 +141,7 @@ class GObject : GObjectBase, IGObject
             float oldtime = _time;
             _time = SDL_GetTicks()*0.001;
             _motionState._updateMovement(_time);
-            if( !_motionState.isMoving )
+            if( !_motionState.isMoving && _path !is null)
             {
                 if( _path.step )
                 {
