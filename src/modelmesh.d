@@ -105,7 +105,6 @@ struct Face
             glTexCoord2f(_texcoords[i][0],_texcoords[i][1]);
             glNormal3f(_normals[i][0],_normals[i][1],_normals[i][2]);
             glVertex3f(_vertices[i][0],_vertices[i][1],_vertices[i][2]);
-//             writefln ("[%d] ",i,_vertices[i]);
         }
     }
 }
@@ -132,10 +131,10 @@ class StaticMesh : Mesh
     void renderFrame()
     {
         glEnable(GL_TEXTURE_2D);
-        getMaterial(_material_names[0]).register();
-        getMaterial(_material_names[0]).draw();
         for(int i=0; i!=_faces.length; ++i)
         {
+            getMaterial(_material_names[i]).register();
+            getMaterial(_material_names[i]).draw();
 //             glLineWidth(2);
 //             glColor3f(0,1,0);
 //             glBegin(GL_LINE_LOOP);
