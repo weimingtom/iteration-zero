@@ -179,7 +179,7 @@ class Dataset
 
     Model getModel(string name)
     {
-      return _models[name];
+      return _models[name].clone();
     }
 
     Face getFace(string name) { return _faces[name]; }

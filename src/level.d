@@ -118,7 +118,10 @@ class Level : ILevel
     void placeObject(int x, int y, GObject gobject)
     {
         if( isValid(x,y) )
+        {
+            gobject.setPosition (x,y);
             gobjects ~= gobject;
+        }
     }
 
     bool isBlocked (int x, int y)
