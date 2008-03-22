@@ -11,7 +11,8 @@ enum Attribute
     DEX,
     END,
     INT,
-    PER
+    PER,
+    MAX_ATTR
 }
 
 class SignalObj(T ...)
@@ -81,12 +82,14 @@ interface ICharacter
     int getMaxEnergy();
     int getEnergy();
 
-//     int getArmorEff();
-//     int getShieldEff();
-// 
-//     // STATE VALUES
-//     bool isShieldOn();
-//     bool isShaded();
+    int getArmorEffect();
+    int getShieldEffect();
+    int getShaderEffect();
+
+    // STATE VALUES
+    bool isShieldActive();
+    bool isShaderActive();
+
 // 
 //     // CAPABILITIES
 //     bool canEquip(IItem item);
@@ -100,7 +103,7 @@ interface IItem
 template AttributedObject()
 {
     private:
-        Attribute[] _attributes;
+        Attribute[Attribute.MAX_ATTR] _attributes;
         float _weight;
 
         int _max_hp;
@@ -109,8 +112,14 @@ template AttributedObject()
         int _max_energy;
         int _energy;
 
-    public:
+        int _armor_effect;
+        int _shield_effect;
+        int _shader_effect;
 
+        bool _shield_on;
+        bool _shader_on;
+
+    public:
         int getAttribute(Attribute a)
         {
             return _attributes[a];
@@ -138,4 +147,11 @@ template AttributedObject()
         int getHP() { return _hp; }
         int getMaxEnergy() { return _max_energy; }
         int getEnergy() { return _energy; }
+
+        int getArmorEffect() { return _armor_effect; }
+        int getShieldEffect() { return _shield_effect; }
+        int getShaderEffect() { return _shader_effect; }
+
+        bool isShieldActive() { return _shield_on; }
+        bool isShaderActive() { return _shader_on; }
 }
