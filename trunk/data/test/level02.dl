@@ -20,6 +20,8 @@
 
 (defun place-john ()
     (let ((john (make-instance C/CHARACTER "John Dee")))
+        (print (get-attr (get-attr john 'parent) 'parent))
+        (set-model john (get-model *dataset* "blade"))
         (place-object *level* 2 2 john)))
 (place-john)
 
