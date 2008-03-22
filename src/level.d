@@ -161,6 +161,7 @@ class LevelRenderer : Renderer
             glRotatef(-45.0f, 1.0f, 0.0f, 0.0f);
             glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
             glScalef(zoom, zoom, zoom);
+            glEnable(GL_TEXTURE_2D);
 
             glTranslatef(-look_x,-look_y,0);
 
@@ -224,7 +225,6 @@ class LevelRenderer : Renderer
         void render()
         {
             sceneMode();
-            glEnable(GL_TEXTURE_2D);
             if( level is null )
                 return;
 
