@@ -19,7 +19,8 @@
 (place-object-by-name *level* 5 5 "blade")
 
 (defun place-john ()
-    (place-object *level* 2 2 (make-instance C/CHARACTER "John Dee")))
+    (let ((john (make-instance C/CHARACTER "John Dee")))
+        (place-object *level* 2 2 john)))
 (place-john)
 
 (place-tile 0 0 "wall")

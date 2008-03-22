@@ -12,7 +12,6 @@ class Character : GObject, ICharacter
     public:
         this(string name)
         {
-            super(null,0,0);
             _name = name;
         }
 

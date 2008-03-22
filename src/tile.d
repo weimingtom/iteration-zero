@@ -3,6 +3,7 @@ module tile;
 import modelmesh;
 import gobject;
 import dlisp.bind;
+import derelict.opengl.gl;
 
 class Tile
 {
@@ -25,10 +26,11 @@ class Tile
         {
             if( _mesh is null )
                 return;
-
-            _mesh.beginDraw(_x,_y,0.0);
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glTranslatef(x,y,0);
             _mesh.renderFrame();
-            _mesh.endDraw();
+            glPopMatrix();
         }
 
         int x() { return _x; }

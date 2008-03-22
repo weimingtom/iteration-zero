@@ -30,13 +30,7 @@ class Mesh
 {
     private:
         char[] _filename;
-        float  _scale = .05;       // scale value
-
-        float[3]   _pre_translation  = [0, 0, 0];
-        float[3]   _post_translation = [0, 0, 0];
-        float[4][] _rotations;
-
-        float _facing = 0.0;
+        float  _scale = .05;
 
     public:
 
@@ -50,27 +44,6 @@ class Mesh
     float getScale() { return _scale; }
     void setScale(float scale) { _scale = scale; }
 
-    void setPreTranslation(in float[3] t) { _pre_translation[] = t[]; }
-    void setPostTranslation(in float[3] t) { _post_translation[] = t[]; }
-    void addRotation(in float[4] r) { _rotations ~= r; }
-    void setFacing(float f) { _facing = f; }
-    void beginDraw(float x, float y, float z)
-    {
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glTranslatef(x+_pre_translation[0],y+_pre_translation[1],z+_pre_translation[2]);
-        foreach(float[4] rots; _rotations)
-        {
-            glRotatef(rots[0],rots[1],rots[2],rots[3]);
-        }
-        glRotatef(_facing,0,0,1);
-        glTranslatef(_post_translation[0],_post_translation[1],_post_translation[2]);
-        glScalef(1, 1, 1);
-    }
-    void endDraw()
-    {
-        glPopMatrix();
-    }
 }
 
 struct Face
