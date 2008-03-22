@@ -32,12 +32,15 @@ class GObjectBase
 
 interface IGObject
 {
+    void setLevel(ILevel l);
+    void setPosition(int x,int y);
 }
 
 interface ILevel
 {
     bool isBlocked(int x, int y);
     void loadDataset(string);
+    void placeIObject(int x, int y, IGObject o);
 }
 
 enum ObjectType
@@ -103,7 +106,8 @@ interface IItem
 template AttributedObject()
 {
     private:
-        Attribute[Attribute.MAX_ATTR] _attributes;
+        int[Attribute.MAX_ATTR] _attributes;
+
         float _weight;
 
         int _max_hp;
@@ -139,6 +143,36 @@ template AttributedObject()
         }
         int getPER() {
             return getAttribute(Attribute.PER);
+        }
+
+        void setAttribute(Attribute a,int new_value)
+        {
+            _attributes[a] = new_value;
+        }
+
+        void setSTR(int new_value)
+        {
+            setAttribute(Attribute.STR,new_value);
+        }
+
+        void setDEX(int new_value)
+        {
+            setAttribute(Attribute.DEX,new_value);
+        }
+
+        void setEND(int new_value)
+        {
+            setAttribute(Attribute.END,new_value);
+        }
+
+        void setINT(int new_value)
+        {
+            setAttribute(Attribute.INT,new_value);
+        }
+
+        void setPER(int new_value)
+        {
+            setAttribute(Attribute.PER,new_value);
         }
 
         float getWeight() { return _weight; }

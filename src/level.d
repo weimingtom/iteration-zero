@@ -115,10 +115,13 @@ class Level : ILevel
             tiles[y*width + x] = tile;
     }
 
+    void placeIObject(int x, int y, IGObject o) { placeObject(x,y,cast(GObject)o);}
+
     void placeObject(int x, int y, GObject gobject)
     {
         if( isValid(x,y) )
         {
+            gobject.setLevel(this);
             gobject.setPosition (x,y);
             gobjects ~= gobject;
         }

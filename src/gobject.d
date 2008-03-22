@@ -59,8 +59,8 @@ class MotionState
             }
             gobject.real_x = gobject.x + 0.5 + interpol*dx;
             gobject.real_y = gobject.y + 0.5 + interpol*dy;
-            if( dx != 0 || dy != 0 && gobject.model !is null)
-              gobject.model.setFacing( atan2(cast(float)dy,cast(float)dx)*180.0/3.1415 );
+            if( dx != 0 || dy != 0 && gobject.getModel !is null)
+              gobject.getModel.setFacing( atan2(cast(float)dy,cast(float)dx)*180.0/3.1415 );
         }
 
 }
@@ -148,7 +148,7 @@ class GObject : GObjectBase, IGObject
             return _motionState.isMoving;
         }
 
-        Model model() { return _model; }
+        Model getModel() { return _model; }
 
         void startMovingTo(int tx, int ty)
         {
@@ -174,6 +174,6 @@ class GObject : GObjectBase, IGObject
 
         mixin BindClass!("C/OBJECT");
         mixin BindMethods!(isBusy,startMovingTo,setFacing,getX,getY);
-        mixin BindMethods!(getInventory,addToInventory,setModel);
+        mixin BindMethods!(getInventory,addToInventory,setModel,getModel);
 }
 

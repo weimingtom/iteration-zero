@@ -14,21 +14,11 @@
     (dotimes (dy d)
         (place-tile x (+ y dy) name)))
 
-;; (create-object C/OBJECT)
+(defmacro call-method (name object &rest args)
+    `(let ((m (get-attr ,object ,name)))
+        (funcall m (cons ,object ,args))))
 
-(place-object-by-name *level* 5 5 "blade")
-
-(defun create-character (name)
-    (make-instance C/CHARACTER name))
-
-(defun init-character (c model )
-    (progn 
-        (set-model c (get-model *dataset* model))
-        c))
-
-(place-object *level* 1 1 
-    (init-character (create-character "John Dee") "blade"))
-
+;; (place-object-by-name *level* 5 5 "blade")
 
 (place-tile 0 0 "wall")
 
