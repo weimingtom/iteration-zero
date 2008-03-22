@@ -3,14 +3,8 @@
 (init *level* 10 10)
 (finalize *level*)
 
-
-
-(place-object *level* 5 5 "blade")
-
-(place-tile *level* 0 0 "wall")
-
 (defun place-tile (x y name)
-    (place-tile *level* x y name))
+    (place-tile-by-name *level* x y name))
 
 (defun place-wall-x (x y d name)
     (dotimes (dx d)
@@ -20,7 +14,19 @@
     (dotimes (dy d)
         (place-tile x (+ y dy) name)))
 
+;; (create-object C/OBJECT)
+
+(place-object-by-name *level* 5 5 "blade")
+
+(defun place-john ()
+    (place-object *level* 2 2 (make-instance C/CHARACTER "John Dee")))
+;; (place-john)
+
+(place-tile 0 0 "wall")
+
+
 (place-wall-x 0 0 10 "wall")
 (place-wall-x 0 9 10 "wall")
 (place-wall-y 0 0 10 "wall")
 (place-wall-y 9 0 10 "wall")
+

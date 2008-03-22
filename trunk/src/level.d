@@ -89,7 +89,7 @@ class Level : ILevel
 
     GObject[] getObjects(int x, int y)
     {
-        return tiles[y*width +x].getObjects;
+        return tiles[y*width +x].getObjects();
     }
 
     GObject[] getAllObjects()
@@ -97,16 +97,28 @@ class Level : ILevel
         return gobjects;
     }
 
-    void placeTile(int x, int y, string name)
+    void placeTileByName(int x, int y, string name)
     {
         if( isValid(x,y) )
             tiles[y*width + x] = dataset._prototypes[name].create(x,y);
     }
 
-    void placeObject(int x, int y, string name)
+    void placeObjectByName(int x, int y, string name)
     {
         if( isValid(x,y) )
             gobjects ~= dataset._objects[name].create (this, x, y);
+    }
+
+    void placeTile(int x, int y, Tile tile)
+    {
+        if( isValid(x,y) )
+            tiles[y*width + x] = tile;
+    }
+
+    void placeObject(int x, int y, GObject gobject)
+    {
+        if( isValid(x,y) )
+            gobjects ~= gobject;
     }
 
     bool isBlocked (int x, int y)
@@ -129,8 +141,9 @@ class Level : ILevel
 
     mixin BindClass!("C/LEVEL");
     mixin BindConstructor!(Level function(string));
-    mixin BindMethods!(init,finalize,isValid,placeTile,placeObject,loadDataset,getTile,getObjects,getAllObjects);
+    mixin BindMethods!(init,finalize,isValid,loadDataset,getTile,getObjects,getAllObjects);
     mixin BindMethods!(setName,getName,getParty);
+    mixin BindMethods!(placeTileByName,placeObjectByName,placeTile,placeObject);
 }
 
 class LevelRenderer : Renderer

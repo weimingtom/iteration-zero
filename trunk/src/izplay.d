@@ -8,21 +8,23 @@ import std.stdio;
 import util;
 import derelict.opengl.gl;
 
+import dlisp.dlisp;
+import gobject, party, character;
+
 class LevelState : IGameState
 {
     public:
         Engine engine;
+        DLisp dlisp;
         LevelRenderer view;
         string filename;
-
-        int tileproto = 0;
-        string tileprotoname;
-
 
     this(char[] filename_)
     {
         filename = filename_;
         engine = Engine.instance;
+        dlisp = engine.dlisp;
+
         view = new LevelRenderer;
         engine.renderPipeline.add (view);
     }
@@ -31,12 +33,11 @@ class LevelState : IGameState
     {
         engine.renderPipeline.setPipeline(["level"]);
 
+        GObject.bindClass(dlisp.environment);
+        Character.bindClass(dlisp.environment);
+
         view.level = new Level (filename);
         view.lookAt (0, 0);
-
-        auto keys = view.level.dataset._prototypes.keys;
-        tileprotoname = keys[tileproto];
-        
 
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_TEXTURE_2D);
