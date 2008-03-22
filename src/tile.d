@@ -11,6 +11,8 @@ class Tile
         int _x, _y;
 
         GObject[] _gobjects;
+        bool _blocking;
+
     public:
         this(StaticMesh mesh, int x_, int y_)
         {
@@ -21,18 +23,21 @@ class Tile
 
         void draw()
         {
+            if( _mesh is null )
+                return;
+
             _mesh.beginDraw(_x,_y,0.0);
             _mesh.renderFrame();
             _mesh.endDraw();
         }
+
         int x() { return _x; }
         int y() { return _y; }
 
-        bool blocking()
+        bool isBlocking()
         {
-//             if( _prototype.blocking )
-//                 return true;
-
+            if( _blocking )
+                return true;
             foreach(GObject gobject; _gobjects)
             {
                 if( gobject.blocking )
@@ -41,8 +46,11 @@ class Tile
             return false;
         }
 
+        void setBlocking(bool b) { _blocking = b; }
+
         GObject[] getObjects() { return _gobjects; }
 
         mixin BindClass!("C/TILE");
+        mixin BindMethods!(isBlocking,setBlocking);
 }
 
