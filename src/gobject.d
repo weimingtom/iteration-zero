@@ -5,7 +5,7 @@ private {
     import std.math;
     import std.stdio;
 
-    import baseClasses;
+    import interfaces;
     import path;
     import model;
     import md2;
@@ -152,14 +152,19 @@ class GObject : GObjectBase, IGObject
         int getX() { return x; }
         int getY() { return y; }
 
-        mixin BindClass!("C/GOBJECT");
+        bool isItem()
+        {
+            return false;
+        }
+
+        mixin BindClass!("C/OBJECT");
         mixin BindMethods!(isBusy,startMovingTo,setFacing,getX,getY);
 }
 
 class GObjectPrototype
 {
     public:
-        mixin BindClass!("C/GOBJECT-PROTOTYPE");
+        mixin BindClass!("C/OBJECT-PROTOTYPE");
   
         char[] name;
         Model model;

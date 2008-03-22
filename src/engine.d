@@ -112,7 +112,7 @@ class Engine
         setupGL();
 
         _dlisp = new DLisp(addAllToEnvironment(new Environment));
-        _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);
+        _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);//"
         bindInstance(_dlisp.environment,"*engine*");
 
         _gui = new Gui;
@@ -122,7 +122,7 @@ class Engine
         top.setSize( xResolution, yResolution );
         top.setOpaque( false );
         _gui.setTop( top );
-        Widget.setGlobalFont( new OpenGLFont("data/fonts/vera/VeraMono.ttf",10) );
+        Widget.setGlobalFont( new OpenGLFont("data/fonts/vera/Vera.ttf",10) );
     }
 
     // be nice and release all resources
@@ -291,7 +291,6 @@ class Engine
         RenderPipeline _pipeline;
 
         DLisp _dlisp;
-
         Gui _gui;
 
         void _updateStates()

@@ -1,6 +1,6 @@
 module path;
 
-import baseClasses;
+import interfaces;
 
 private import std.stdio;
 
