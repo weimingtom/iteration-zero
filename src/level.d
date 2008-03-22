@@ -18,6 +18,7 @@ private {
     import interfaces;
     import dataset;
     import gobject;
+    import party;
     import dlisp.dlisp;
     import dlisp.bind;
     import dlisp.predefs.all;
@@ -35,9 +36,15 @@ class Level : ILevel
     Tile[] tiles;
     GObject[] gobjects;
 
+    private:
+        Party _party;
+
+    public:
+
     this(string filename)
     {
         dataset = new Dataset;
+        _party = new Party;
 
         Engine.instance.dlisp.environment.pushScope();
         bindInstance(Engine.instance.dlisp.environment,"*LEVEL*");
@@ -114,20 +121,15 @@ class Level : ILevel
         return cast(float)(abs(x0 - x1) + abs(y0-y1));
     }
 
-    void setName(string name_ )
-    {
-        name = name_;
-    }
+    void setName(string name_ ) { name = name_; }
+    string getName() {  return name; }
 
-    string getName()
-    {
-        return name;
-    }
+    Party getParty() { return _party; }
 
     mixin BindClass!("C/LEVEL");
     mixin BindConstructor!(Level function(string));
     mixin BindMethods!(init,finalize,isValid,placeTile,placeObject,loadDataset,getTile,getObjects,getAllObjects);
-    mixin BindMethods!(setName);
+    mixin BindMethods!(setName,getName,getParty);
 }
 
 class LevelRenderer : Renderer
