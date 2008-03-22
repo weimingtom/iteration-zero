@@ -99,11 +99,6 @@ class GObject : GObjectBase, IGObject
                 _model.asAnimated().setAnimation(Md2Action.MD2_STAND);
         }
 
-        void loadModel(string filename)
-        {
-
-        }
-
         void setModel(Model model)
         {
             _model = model;
@@ -179,6 +174,6 @@ class GObject : GObjectBase, IGObject
 
         mixin BindClass!("C/OBJECT");
         mixin BindMethods!(isBusy,startMovingTo,setFacing,getX,getY);
-        mixin BindMethods!(getInventory,addToInventory);
+        mixin BindMethods!(getInventory,addToInventory,setModel);
 }
 

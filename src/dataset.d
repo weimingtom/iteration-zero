@@ -78,7 +78,7 @@ class GObjectPrototype
         this(char[] name_, sofu.Map map)
         {
             _name = name_;
-            model = loadFromSofu(map.map("model"));
+            model = Dataset.instance.getModel(map.value("model").toString());
 
             if( map.hasAttribute("speed") )
                 speed = map.value("speed").toFloat();
@@ -109,6 +109,7 @@ class Dataset
     this()
     {
         _instance = this;
+        bindInstance(Engine.instance.dlisp.environment,"*dataset*");
     }
 
     public:
@@ -116,6 +117,7 @@ class Dataset
 
         TilePrototype[string]   _prototypes;
         GObjectPrototype[string] _objects;
+        Model[string] _models;
 
     static Dataset instance()
     {
@@ -142,6 +144,13 @@ class Dataset
             _faces[toUTF8(name)] = Face(element.asList());
         }
 
+        sofu.Map modelMap = map.map("models");
+        foreach(wchar[] name, sofu.SofuObject element; modelMap)
+        {
+            writefln( "-- Loading Model Type: %s", name);
+            _models[toUTF8(name)] = loadFromSofu(element.asMap());
+        }
+
         sofu.Map protoMap = map.map("prototypes");
         foreach(wchar[] name, sofu.SofuObject element; protoMap)
         {
@@ -155,6 +164,7 @@ class Dataset
             writefln( "-- Loading Object Type: %s", name);
             _objects[toUTF8(name)] = new GObjectPrototype(toUTF8(name), element.asMap());
         }
+
     }
 
     TilePrototype getTilePrototype(string name)
@@ -167,8 +177,13 @@ class Dataset
       return _objects[name];
     }
 
+    Model getModel(string name)
+    {
+      return _models[name];
+    }
+
     Face getFace(string name) { return _faces[name]; }
 
     mixin BindClass!("C/DATASET");
-    mixin BindMethods!(load,getTilePrototype,getGObjectPrototype);
+    mixin BindMethods!(load,getTilePrototype,getGObjectPrototype,getModel);
 }

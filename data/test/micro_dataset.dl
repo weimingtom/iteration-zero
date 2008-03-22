@@ -46,13 +46,17 @@ prototypes = {
 
 objects = {
     blade = {
-        model = {
-            mesh = "data/models/blade/tris.md2"
-            pre_trans = (0 0 0.9)
-            rotations = ()
-            scale = .04
-            skin = "data/models/blade/blade.png"
-        }
+        model = blade
         speed = 3
+    }
+}
+
+models = {
+    blade = {
+        mesh = "data/models/blade/tris.md2"
+        pre_trans = (0 0 0.9)
+        rotations = ()
+        scale = .04
+        skin = "data/models/blade/blade.png"
     }
 }

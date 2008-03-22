@@ -436,6 +436,13 @@ template BindClass(string classname)
       {
         _classCell.table[name] = method;
       }
+      static if(is( typeof(this) parent == super ))
+      {
+        static if ( IsBoundClass!(parent[0]) ) {
+            pragma(msg,typeof(this).stringof ~ " -> " ~ parent.stringof);
+            _classCell.table["PARENT"] = parent[0].getClass();
+        }
+      }
     }
     return _classCell;
   }

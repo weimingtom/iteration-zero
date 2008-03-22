@@ -8,6 +8,7 @@ import engine;
 import texture;
 import modelmesh;
 import md2;
+import dlisp.bind;
 
 class Model
 {
@@ -78,6 +79,7 @@ private:
         return cast(AnimatedModel)this;
     }
 
+    mixin BindClass!("C/MODEL");
 }
 
 
