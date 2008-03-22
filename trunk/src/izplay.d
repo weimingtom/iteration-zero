@@ -10,6 +10,7 @@ import derelict.opengl.gl;
 
 import dlisp.dlisp;
 import gobject, party, character;
+import dataset;
 
 class LevelState : IGameState
 {
@@ -17,6 +18,8 @@ class LevelState : IGameState
         Engine engine;
         DLisp dlisp;
         LevelRenderer view;
+        Party party;
+        Character active;
         string filename;
 
     this(char[] filename_)
@@ -27,16 +30,29 @@ class LevelState : IGameState
 
         view = new LevelRenderer;
         engine.renderPipeline.add (view);
+
+        party = new Party;
     }
 
     void start()
     {
         engine.renderPipeline.setPipeline(["level"]);
 
+        party.bindInstance(dlisp.environment,"*party*");
         GObject.bindClass(dlisp.environment);
         Character.bindClass(dlisp.environment);
 
         view.level = new Level (filename);
+
+        dlisp.environment.pushScope();
+        dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
+        dlisp.environment.popScope();
+
+        assert( party.getSize() > 0 );
+        active = party.getActive();
+
+        party.placeInLevel( view.level, 5,5);
+
         view.lookAt (0, 0);
 
         glEnable(GL_COLOR_MATERIAL);
@@ -51,14 +67,16 @@ class LevelState : IGameState
 
     void logic()
     {
+        active = party.getActive();
+
         int x,y;
         int clicked = SDL_GetMouseState(&x,&y) & SDL_BUTTON(1);
         view.toLevelCoords(&x,&y);
         // FUGLY
         view.sceneMode();
         view.drawHighlight(x,y);
-//         writefln ("Looking at (%f %f)", view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
-        view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
+
+        view.lookAt(active.real_x,active.real_y);
     }
 
     string name() { return "test"; }
@@ -80,8 +98,8 @@ class LevelState : IGameState
         {
             if( event.button.button == SDL_BUTTON_LEFT )
             {
-                if( !view.level.gobjects[0].isBusy )
-                    view.level.gobjects[0].startMovingTo(x,y);
+                if( !active.isBusy )
+                    active.startMovingTo(x,y);
             }
 
             if( event.button.button == SDL_BUTTON_WHEELUP )

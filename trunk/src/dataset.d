@@ -148,7 +148,7 @@ class Dataset
         foreach(wchar[] name, sofu.SofuObject element; modelMap)
         {
             writefln( "-- Loading Model Type: %s", name);
-            _models[toUTF8(name)] = loadFromSofu(element.asMap());
+            _models[toUTF8(name)] = loadFromSofu(toUTF8(name),element.asMap());
         }
 
         sofu.Map protoMap = map.map("prototypes");

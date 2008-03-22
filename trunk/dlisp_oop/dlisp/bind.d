@@ -572,10 +572,17 @@ template BindMethod(string name,alias func)
 string Lispify(string name)
 {
   string new_name;
+  bool lastup = true;
   for(int i= 1; i != name.length; ++i)
   {
     if( toupper(name[i..i+1]) == name[i..i+1] )
-      new_name ~= '-';
+    {
+        if( !lastup )
+            new_name ~= '-';
+        lastup = true;
+    } else
+       lastup = false;
+
     new_name ~= name[i];
   }
   return toupper(new_name);

@@ -14,6 +14,7 @@ class Model
 {
 protected:
     Mesh _mesh;
+    string _name = "__unnamed__";
     float  _scale = .05;       // scale value
 
     float[3]   _pre_translation  = [0, 0, 0];
@@ -27,6 +28,9 @@ protected:
     this()
     {
     }
+
+    string getName() { return _name; }
+    void setName(string name) { _name = name; }
 
     float getScale() { return _scale; }
     void setScale(float scale) { _scale = scale; }
@@ -85,15 +89,17 @@ protected:
     }
 
     mixin BindClass!("C/MODEL");
+    mixin BindMethods!(getName);
 }
 
 
-static Model loadFromSofu(sofu.Map map)
+static Model loadFromSofu(string name,sofu.Map map)
 {
     float[3]   pre_translation  = [0, 0, 0];
     float[3]   post_translation = [0, 0, 0];
 
     AnimatedModel m = new AnimatedModel;
+    m.setName(name);
     m.setMesh( loadMesh(map.value("mesh").toString()) );
     m.setAnimation(Md2Action.MD2_ATTACK);
 
@@ -126,10 +132,6 @@ class AnimatedModel : Model
         AnimatedMesh animated_mesh;
         AnimationState animationState;
         Texture texture;
-
-    ~this()
-    {
-    }
 
     Model clone()
     {
