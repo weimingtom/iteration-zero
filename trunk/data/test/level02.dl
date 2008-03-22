@@ -5,4 +5,4 @@
 
 
 
-(place-object *level* 0 0 "blade")
+(place-object *level* 20 20 "blade")

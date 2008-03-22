@@ -15,7 +15,7 @@ private {
     import vector;
     import util;
 
-    import baseClasses;
+    import interfaces;
     import dataset;
     import gobject;
     import dlisp.dlisp;
