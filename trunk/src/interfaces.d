@@ -39,6 +39,27 @@ interface ILevel
     void loadDataset(string);
 }
 
+enum ObjectType
+{
+    CHARACTER,
+    ITEM,
+    SCENERY,
+    CRITTER
+}
+
+string typeToString(ObjectType t)
+{
+    switch(t)
+    {
+        case ObjectType.CHARACTER: return "character";
+        case ObjectType.ITEM: return "item";
+        case ObjectType.SCENERY: return "scenery";
+        case ObjectType.CRITTER: return "critter";
+        default:
+            return "scenery";
+    }
+}
+
 interface ICharacter
 {
     dstring getName();

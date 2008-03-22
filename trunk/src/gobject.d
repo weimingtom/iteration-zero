@@ -151,22 +151,21 @@ class GObject : GObjectBase, IGObject
 
         int getX() { return x; }
         int getY() { return y; }
-
-        bool isItem()
-        {
-            return false;
-        }
+        bool isItem() {  return false; }
+        GObject[] getInventory() { return _inventory; }
+        void addToInventory(GObject gobject)  {  _inventory ~= gobject;   }
 
         mixin BindClass!("C/OBJECT");
         mixin BindMethods!(isBusy,startMovingTo,setFacing,getX,getY);
+        mixin BindMethods!(getInventory,addToInventory);
 }
 
 class GObjectPrototype
 {
+    private:
+        string _name;
+        ObjectType _type;
     public:
-        mixin BindClass!("C/OBJECT-PROTOTYPE");
-  
-        char[] name;
         Model model;
 
         bool selectable = false;
@@ -177,7 +176,7 @@ class GObjectPrototype
 
         this(char[] name_, sofu.Map map)
         {
-            name = name_;
+            _name = name_;
             model = new Model(map.map("model"));
 
             if( map.hasAttribute("speed") )
@@ -191,4 +190,10 @@ class GObjectPrototype
         {
             return new GObject (level, this, x, y);
         }
+
+        string getName() { return _name; }
+        void setName(string name) { _name = name; }
+
+        mixin BindClass!("C/OBJECT-PROTOTYPE");
+        mixin BindMethods!(getName,setName);
 }
