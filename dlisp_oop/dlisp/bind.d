@@ -85,7 +85,8 @@ private template FunParamsImpl(int n, A ... )
       static if( A.length > 1 ) {
         const FunParamsImpl = FunParamsImpl!(n,A[0]) ~ "," ~ FunParamsImpl!(n+1,A[1..$]);
       } else {
-        const FunParamsImpl = "unbox!(" ~ A[0].stringof ~ ")(args[" ~ n.stringof ~"])";
+        pragma(msg,"unbox!(" ~ typeof(A[0]).stringof ~ ")(args[" ~ n.stringof ~ "])");
+        const FunParamsImpl = "unbox!(" ~ typeof(A[0]).stringof~ ")(args[" ~ n.stringof ~"])";
       }
     }
 }
@@ -214,7 +215,7 @@ template CheckArgument(int n, string checkfun)
     const CheckArgument = 
       "if( !" ~ checkfun ~ "("~ CArg!(n) ~") ) { "
         ~ "throw new ArgumentState(\"Excepted " ~ checkfun ~ "\",cell.pos);"
-        ~ "}";
+        ~ "}";//"
 }
 
 template BoxArgument(int n, T : int)
@@ -247,7 +248,7 @@ template BoxArgument(int n, T)
   static if( IsBoundClass!(T) ) {
     const BoxArgument =  CheckArgument!(n,T.stringof ~ ".isInstance") ~ AddArgument!(CArg!(n) ~ ".instance");
   } else {
-    pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY BIND THIS: " ~ T.stringof);
+    pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY BIND THIS: " ~ T.stringof);//"
     static assert(0);
   }
 }
@@ -279,7 +280,7 @@ template BoxReturnValue(T : string)
 
 template BoxReturnValue(T : T[])
 {
-  pragma(msg,"DLISP.BIND: Fugly array boxing.");
+  pragma(msg,"DLISP.BIND: Fugly array boxing.");//"
   const BoxReturnValue = "
     Cell* _cell_[];
     foreach(typeof(return_value[0]) item; return_value)
@@ -373,6 +374,8 @@ template BindClass(string classname)
   {
     if( cell is null )
       return false;
+    if( !isObject(cell) )
+      return false;
     return cell.instance.unboxable(typeid(typeof(this)));
   }
 
@@ -414,14 +417,16 @@ template BindClass(string classname)
     return unbox!(typeof(this))(cell.instance);
   }
 
+  static Cell* makeInstance(DLisp dlisp, Cell* cell)
+  {
+     Cell* object = newObject("INSTANCE OF CLASS " ~ toupper(classname),getClass());
+     object.instance = box(createInstance(dlisp, object, cell));
+     //writefln("CONSTRUCTED THIS: %s <-> ",cellToString(object),unbox!(typeof(this))(object.instance));
+     return object;
+  }
+
   static Cell* getClass()
   {
-    static Cell* makeInstance(DLisp dlisp, Cell* cell)
-    {
-      Cell* object = newObject("INSTANCE OF CLASS " ~ toupper(classname),getClass());
-      object.instance = box(createInstance(dlisp, object, cell));
-      return object;
-    }
 
     if( _classCell is null )
     {
@@ -449,13 +454,13 @@ unittest {
   // Internal compiler error with GDC :(
   //
 
-/+  static class UTest1 {
+  static class UTest1 {
     mixin BindClass!("UTest");
   }
   static class UTest2 { }
 
   static assert(  IsBoundClass!(UTest1) );
-  static assert( !IsBoundClass!(UTest2) );+/
+  static assert( !IsBoundClass!(UTest2) );
 }
 
 // Incomplete Constructor Wrapper

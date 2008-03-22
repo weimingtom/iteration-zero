@@ -59,7 +59,7 @@ class MotionState
             }
             gobject.real_x = gobject.x + 0.5 + interpol*dx;
             gobject.real_y = gobject.y + 0.5 + interpol*dy;
-            if( dx != 0 || dy != 0 )
+            if( dx != 0 || dy != 0 && gobject.model !is null)
               gobject.model.facing = atan2(cast(float)dy,cast(float)dx)*180.0/3.1415;
         }
 
@@ -80,28 +80,60 @@ class GObject : GObjectBase, IGObject
 
     public:
         float real_x, real_y;
-        int x,y;
+        int x = 0;
+        int y = 0;
 
-        float speed;
-        bool blocking;
+        float speed = 1;
+        bool blocking = false;
 
-
-        this(ILevel level = null, GObjectPrototype prototype = null, int x_ = 0, int y_ = 0)
+        this()
         {
-            _level = level;
+            super();
+            init(null,0,0);
+        }
+
+        this(GObjectPrototype prototype, int x_, int y_)
+        {
+            super();
+            init(prototype,x_,y_);
+        }
+
+        void init(GObjectPrototype prototype, int x_, int y_)
+        {
             _prototype = prototype;
-            _model = new Model (_prototype.model);
             _motionState = new MotionState (this);
 
-            blocking = _prototype.blocking;
-            speed = _prototype.speed;
+            if( _prototype !is null )
+            {
+                _model = new Model (_prototype.model);
+                blocking = _prototype.blocking;
+                speed = _prototype.speed;
+            }
 
             x = x_;
             y = y_;
-
-            _path = new Path (_level, x, y, x, y);
             _time = SDL_GetTicks()*0.001;
-            _model.setAnimation(Md2Action.MD2_STAND);
+        }
+
+        void setLevel(ILevel level)
+        {
+            _level = level;
+            _path = new Path (_level, x, y, x, y);
+            if( _model !is null )
+                _model.setAnimation(Md2Action.MD2_STAND);
+        }
+
+        void setModel(Model model)
+        {
+            _model = model;
+            if( _model !is null )
+                _model.setAnimation(Md2Action.MD2_STAND);
+        }
+
+        void setPosition(int x_,int y_)
+        {
+            x = x_;
+            y = y_;
         }
 
         void update()
@@ -116,16 +148,19 @@ class GObject : GObjectBase, IGObject
                     _motionState._startMovingTo(x + _path.dx, y + _path.dy, _time,1.0/speed);
                 } else
                 {
-                    _model.setAnimation(Md2Action.MD2_STAND);
+                    if( _model !is null)
+                        _model.setAnimation(Md2Action.MD2_STAND);
                 }
             }
-            _model.animate(_time - oldtime);
+            if( _model !is null)
+                _model.animate(_time - oldtime);
         }
 
         void draw()
         {
             update();
-            _model.drawAt (real_x, real_y);
+            if( _model !is null)
+                _model.drawAt (real_x, real_y);
         }
 
         bool isBusy()
@@ -147,7 +182,8 @@ class GObject : GObjectBase, IGObject
 
         void setFacing(float f)
         {
-          _model.facing = f;
+            if( _model !is null)
+                _model.facing = f;
         }
 
         int getX() { return x; }
@@ -189,7 +225,9 @@ class GObjectPrototype
 
         GObject create(ILevel level, int x, int y)
         {
-            return new GObject (level, this, x, y);
+            auto gobject = new GObject (this, x, y);
+            gobject.setLevel( level );
+            return gobject;
         }
 
         string getName() { return _name; }
