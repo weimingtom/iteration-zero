@@ -77,10 +77,11 @@ public template Evaluator() {
       Cell* method = null;
       if( cell.car && cell.cdr && cell.cdr.car && environment.isBound(cell.cdr.car.name)  )
       {
-         if (isObject(environment[cell.cdr.car.name]))
+        // Note the Hacky check for set-attr. Maybe some kind of override?
+         if (isObject(environment[cell.cdr.car.name]) && cell.car.name != "SET-ATTR")
          {
+            // writefln ("OBJECT:", cell.car.name, cellToString(cell.cdr.car), "METHOD:", cellToString(method));
             method = getAttribute(environment[cell.cdr.car.name],cell.car.name);
-//             writefln ("OBJECT:", cell.car.name, cellToString(cell.cdr.car), "METHOD:", cellToString(method));
          }
       }
 
