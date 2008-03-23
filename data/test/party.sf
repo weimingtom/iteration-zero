@@ -1,0 +1,8 @@
+name = "Submarines"
+
+members = (
+    data/test/char01.sf
+    data/test/char02.sf
+    data/test/char03.sf
+    data/test/char04.sf
+)

@@ -44,9 +44,11 @@ class LevelState : IGameState
 
         view.level = new Level (filename);
 
-        dlisp.environment.pushScope();
-        dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
-        dlisp.environment.popScope();
+//         dlisp.environment.pushScope();
+//         dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
+//         dlisp.environment.popScope();
+        party.load("data/test/party.sf");
+        writefln( "char01\n", party.get(1).toString() );
 
         assert( party.getSize() > 0 );
         active = party.getActive();

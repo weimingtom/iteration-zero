@@ -3,6 +3,7 @@ module party;
 import dlisp.bind;
 import interfaces;
 import character;
+import sofu = Sofu.Sofu;
 
 import engine;
 
@@ -16,6 +17,16 @@ class Party
     public:
         this()
         {
+        }
+
+        void load(string filename)
+        {
+            _members.length = 0;
+            auto map = sofu.loadFile(filename);
+            foreach(sofu.SofuObject charfile; map.list("members"))
+            {
+                add( Character.load(charfile.toString()) );
+            }
         }
 
         float getTotalWeight()

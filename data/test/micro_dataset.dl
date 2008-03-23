@@ -59,4 +59,12 @@ models = {
         scale = .04
         skin = "data/models/blade/blade.png"
     }
+    grey = {
+        mesh = "data/models/grey/tris.md2"
+        pre_trans = (0 0 0.9)
+        rotations = ()
+        scale = .04
+        skin = "data/models/grey/Agrey.pcx"
+    }
+
 }

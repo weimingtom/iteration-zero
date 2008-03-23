@@ -1,0 +1,14 @@
+name = "John Doo"
+model = "blade"
+
+
+attributes = {
+    STR = 10
+    DEX = 12
+    END = 10
+    INT = 11
+    PER = 18
+}
+
+
+inventory = ()
