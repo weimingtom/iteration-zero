@@ -52,9 +52,10 @@ public {
 
     Cell* getAttribute(Cell* obj, string name)
     {
+        // writefln( "get-attr: ",name);
         while( obj !is null )
         {
-            if( name in obj.table )
+            if( (name in obj.table) !is null )
                 return obj.table[name];
             obj = getParentObject(obj);
         }
