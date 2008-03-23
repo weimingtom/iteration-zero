@@ -3,6 +3,7 @@ module level;
 private {
     import std.stdio;
     import std.utf;
+    import std.math : sqrt;
     import material;
     import sofu = Sofu.Sofu;
 
@@ -158,12 +159,15 @@ class LevelRenderer : Renderer
         matrix4 projMatrix;
         matrix4 viewMatrix;
 
+        GObject _trackedObject;
+
     public:
         Level level;
 
         float zoom = 5.0;
     
-        float look_x,look_y;
+        float look_x = 0.0;
+        float look_y = 0.0;
 
         this()
         {
@@ -189,6 +193,11 @@ class LevelRenderer : Renderer
             glGetFloatv(GL_MODELVIEW_MATRIX,&viewMatrix.a00);
             invert(&projMatrix);
             invert(&viewMatrix);
+        }
+
+        void trackObject(GObject gobject)
+        {
+            _trackedObject = gobject;
         }
 
         void lookAt(float x,float y)
@@ -244,6 +253,20 @@ class LevelRenderer : Renderer
 
         void render()
         {
+            if( _trackedObject !is null )
+            {
+                float dx = look_x - _trackedObject.real_x;
+                float dy = look_y - _trackedObject.real_y;
+                float len = sqrt(dx*dx+dy*dy);
+                if( len > 1.0 )
+                {
+                    lookAt( look_x - dx/len, look_y - dy/len );
+                }
+                if( len <= 1.0 )
+                {
+                    lookAt( look_x - dx, look_y - dy );
+                }
+            }
             sceneMode();
             if( level is null )
                 return;
