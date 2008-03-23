@@ -12,6 +12,8 @@ import dlisp.dlisp;
 import gobject, party, character;
 import dataset;
 
+import turn;
+
 class LevelState : IGameState
 {
     public:
@@ -20,6 +22,7 @@ class LevelState : IGameState
         LevelRenderer view;
         Party party;
         Character active;
+        TurnManager turnManager;
         string filename;
 
     this(char[] filename_)
@@ -43,6 +46,7 @@ class LevelState : IGameState
         Character.bindClass(dlisp.environment);
 
         view.level = new Level (filename);
+        turnManager = new TurnManager(party,view.level);
 
 //         dlisp.environment.pushScope();
 //         dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
@@ -69,6 +73,7 @@ class LevelState : IGameState
 
     void logic()
     {
+        turnManager.logic();
         active = party.getActive();
 
         int x,y;
