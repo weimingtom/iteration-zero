@@ -362,8 +362,8 @@ class OpenGLGraphics : Graphics
         if (mAlpha)
         {
           glEnable(GL_BLEND);
-        } else
-          glDisable(GL_BLEND);
+        }
+//           glDisable(GL_BLEND);
     }
 
     Color getColor()

@@ -46,7 +46,6 @@ class Engine
 {
     private:
     static Engine _instance = null;
-
     public:
     mixin BindClass!("C/ENGINE");
 
@@ -107,7 +106,7 @@ class Engine
             throw new Exception("Couldn't set video-mode: " ~ to_string(SDL_GetError()));
         }
 
-        SDL_WM_SetCaption(toStringz("Engine"), null);
+        SDL_WM_SetCaption(toStringz("iteration:zero"), null);
         SDL_EnableUNICODE(1);
         setupGL();
 
@@ -122,7 +121,7 @@ class Engine
         top.setSize( xResolution, yResolution );
         top.setOpaque( false );
         _gui.setTop( top );
-        Widget.setGlobalFont( new OpenGLFont("data/fonts/vera/Vera.ttf",10) );
+        Widget.setGlobalFont( new OpenGLFont("data/fonts/7service/7the.ttf",16) );
     }
 
     // be nice and release all resources
@@ -141,7 +140,12 @@ class Engine
     */
     void setupGL() {
         EXTBlendColor.load ("GL_EXT_blend_color");
+        if( EXTBlendColor.isEnabled )
+            writefln ("GL_EXT_blend_color - ENABLED.");
         ARBTextureNonPowerOfTwo.load ("GL_ARB_texture_non_power_of_two");
+        if( ARBTextureNonPowerOfTwo.isEnabled )
+            writefln ("GL_ARB_texture_non_power_of_two - ENABLED.");
+
         glViewport(0, 0, xResolution, yResolution);
         glEnable (GL_DEPTH_TEST);
     }

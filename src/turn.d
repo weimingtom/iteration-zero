@@ -27,6 +27,11 @@ public:
         _level = level;
     }
 
+    Actor getCurrent()
+    {
+        return _current;
+    }
+
     void logic()
     {
         if( _current is null )

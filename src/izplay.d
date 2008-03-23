@@ -13,6 +13,9 @@ import gobject, party, character;
 import dataset;
 
 import turn;
+import guichan.all;
+import guichan.widgets.all;
+
 
 class LevelState : IGameState
 {
@@ -59,7 +62,52 @@ class LevelState : IGameState
 
         party.placeInLevel( view.level, 5,5);
 
-        view.lookAt (0, 0);
+        auto topWidget = cast(Container)engine.gui.getTop;
+        topWidget.setId( "top" );
+        auto window = new Window("Hello World!"d);
+        window.setPosition (100, 100);
+        window.setSize (300, 300);
+        window.setId( "window" );
+/+//         window.setVisible(true);
+        auto label = new Label("Yo Label");
+        label.setId( "label" );
+        window.add( label, 20, 20);
+
+        auto button = new Button("Yo Button");
+        button.setId( "button" );
+        window.add( button, 20, 40);
+
+//         auto slider = new Slider(0.0,100.0);
+//         slider.setId( "slider" );
+//         slider.setSize(100,10);
+//         window.add( slider, 20, 60);
+
+        auto cbox = new CheckBox("Checkidecheck");
+        cbox.setId( "checkbox" );
+        window.add( cbox, 20, 80);
+
+        auto rb1 = new RadioButton("Yo Radio 1 Ü"d,"1");
+        rb1.setId( "radio1" );
+        window.add( rb1, 20, 100);
+
+        auto rb2 = new RadioButton("Yo Radio 1 Ä"d,"1");
+        rb2.setId( "radio2" );
+        window.add( rb2, 20, 120);
+
+        auto rtf = new TextField("UÜÜÖßßß Ä"d);
+        rtf.setId( "textfield" );
+        rtf.setSize( 100,20 );
+        window.add( rtf, 20, 140);
+
+        auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA","uiiuiu","Llklkjluiouoiuoiuo","u","u","uizuiz"]));
+        lbox.setId( "lbox" );
+        lbox.setSize(100,200);
+
+        auto sarea = new ScrollArea(lbox);
+        sarea.setSize(50,50);
++/
+//         window.add( sarea, 140, 20);
+        topWidget.add( window );
 
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_TEXTURE_2D);
@@ -74,6 +122,7 @@ class LevelState : IGameState
     void logic()
     {
         turnManager.logic();
+        view.trackObject (turnManager.getCurrent());
         active = party.getActive();
 
         int x,y;
@@ -83,7 +132,6 @@ class LevelState : IGameState
         view.sceneMode();
         view.drawHighlight(x,y);
 
-        view.lookAt(active.real_x,active.real_y);
     }
 
     string name() { return "test"; }

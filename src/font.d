@@ -152,7 +152,7 @@ class Font
 			setLineGap(0);
 			
 			lcdFilter = LCDFilter.Crisp;		// we'll be using the Crisp filter by default, but it can be changed on a per-Font basis.
-// 			lcdFilter = LCDFilter.Standard;		// we'll be using the Crisp filter by default, but it can be changed on a per-Font basis.
+//			lcdFilter = LCDFilter.Standard;		// we'll be using the Crisp filter by default, but it can be changed on a per-Font basis.
 			
 			// now let's add ourselves to the fontlist 
 			fontList[nameStr] = this; 
@@ -421,7 +421,7 @@ class Font
 					glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR); glColor3f(color[3], color[3], color[3]);
 					g.texture.bind();
 					glBegin(GL_QUADS); 
-									
+					
 					glTexCoord2d(g.texCoords[0][0], g.texCoords[1][1]); glVertex2f(pen[0], pen[1]+g.size[1]); 
 					glTexCoord2d(g.texCoords[1][0], g.texCoords[1][1]); glVertex2f(pen[0] + g.size[0], pen[1]+g.size[1]); 
 					glTexCoord2d(g.texCoords[1][0], g.texCoords[0][1]); glVertex2f(pen[0] + g.size[0], pen[1]); 
