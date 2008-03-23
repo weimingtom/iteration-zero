@@ -64,9 +64,20 @@ string typeToString(ObjectType t)
     }
 }
 
+enum BodySlot
+{
+    HEAD,
+    BRAIN,
+    TORSO,
+    BACKPACK,
+    WAIST,
+    HAND,
+    FEET
+}
+
 interface ICharacter
 {
-//     dstring getName();
+    string getName();
     int getAttribute(Attribute a);
 
     // PRIMARY ATTRIBUTES
@@ -98,10 +109,21 @@ interface ICharacter
 //     bool canEquip(IItem item);
 }
 
-interface IItem
+enum ItemType
 {
+    WEAPON
 }
 
+interface IItem
+{
+    float getWeight();
+    bool canBeEquipped();
+    BodySlot getBodySlot();
+}
+
+interface IActor
+{
+}
 
 template AttributedObject()
 {
@@ -181,6 +203,9 @@ template AttributedObject()
         int getHP() { return _hp; }
         int getMaxEnergy() { return _max_energy; }
         int getEnergy() { return _energy; }
+
+        void setMaxHP(int max_hp) { _max_hp = max_hp; }
+        void setHP(int hp) { _hp = hp; }
 
         int getArmorEffect() { return _armor_effect; }
         int getShieldEffect() { return _shield_effect; }

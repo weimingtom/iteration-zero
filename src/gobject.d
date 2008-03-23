@@ -169,6 +169,7 @@ class GObject : GObjectBase, IGObject
         int getX() { return x; }
         int getY() { return y; }
         bool isItem() {  return false; }
+        bool isActor() {  return false; }
         GObject[] getInventory() { return _inventory; }
         void addToInventory(GObject gobject)  {  _inventory ~= gobject;   }
 

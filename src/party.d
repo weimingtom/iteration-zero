@@ -23,9 +23,9 @@ class Party
         {
             _members.length = 0;
             auto map = sofu.loadFile(filename);
-            foreach(sofu.SofuObject charfile; map.list("members"))
+            foreach(sofu.SofuObject charInfo; map.list("members"))
             {
-                add( Character.load(charfile.toString()) );
+                add (Character.loadFromSofu (charInfo.asMap()));
             }
         }
 
@@ -72,6 +72,16 @@ class Party
             }
         }
 
+        int opApply(int delegate(ref Character) dg)
+        {
+            int result = 0;
+            foreach(Character c; _members)
+            {
+                result = dg(c);
+                if( result ) break;
+            }
+            return result;
+        }
 
         mixin BindClass!("C/PARTY");
         mixin BindMethods!(getTotalWeight,get,remove,add,getActive,getSize);
