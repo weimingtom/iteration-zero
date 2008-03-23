@@ -136,7 +136,8 @@ class AnimatedModel : Model
     Model clone()
     {
         AnimatedModel m = new AnimatedModel();
-        m.setMesh( animated_mesh );
+        m.setName (getName());
+        m.setMesh (animated_mesh);
         m.texture = texture;
         m._scale = _scale;
         m._pre_translation[]  = _pre_translation[];

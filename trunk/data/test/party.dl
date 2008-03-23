@@ -20,7 +20,7 @@
 
 
 (setq c (create-character "John Doo"))
-(set-model c (get-model *dataset* "blade"))
-(set-attributes c 15 10 10 12 17) 
+(set-model c (get-model *dataset* "grey"))
+(set-attributes c 15 10 10 12 17)
 (add *party* c)
 
