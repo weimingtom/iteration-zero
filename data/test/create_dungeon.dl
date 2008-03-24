@@ -1,0 +1,67 @@
+
+(defun create-arena (width height)
+    (let ((arena (create-object 'arena)))
+        (set-attr arena 'width width)
+        (set-attr arena 'height height)
+        (set-attr arena 'data
+            (create-filled-list height (create-filled-list width "#")))
+        (set-attr arena 'to-string
+            (lambda (self)
+                (dotimes (i (get-attr self 'height))
+                    (print (funcall join (nth i (get-attr self 'data))) *ln*))))
+        (set-attr arena 'place
+            (lambda  (self l)
+                (set-attr self 'data
+                    (set-nth (second l)
+                        (get-attr self 'data)
+                        (set-nth (first l) (nth (second l) (get-attr self 'data)) ".")))))
+        arena))
+
+(defun create-walker (x y)
+    (let ((walker (create-object 'walker)))
+        (set-attr walker 'x x)
+        (set-attr walker 'y y)
+        (set-attr walker 'next-step
+            (lambda (self)
+                (let ((x (get-attr self 'x)) (y (get-attr self 'y)))
+                    (set-attr self 'x (+ x 1))
+                    (return (x y)))))
+        walker))
+
+
+
+(defun create-dungeon (arena walk-length walker)
+    (do 
+        (if (eq walk-length 0) return)))
+
+
+(defun create-filled-list (n filled)
+    (let ((l nil))
+        (dotimes (i n)
+            (setq l (cons filled l)))
+        l))
+
+(defun set-nth (n l item)
+    (append 
+        (reverse 
+            (rest (from (- (elements l) n) (reverse (copy l))))) 
+        (list item) 
+        (from n l)))
+
+
+(defvar *ARENA* (create-arena 80 80))
+
+(defun create-dungeon (arena walk-length walker)
+    (while (> walk-length 0)
+        (print walker *ln*)
+        (print walk-length)
+        
+        (place arena (next-step walker))
+        (set walk-length (dec walk-length))))
+
+(call-method 'next-step (create-walker 50 50))
+(create-dungeon *arena* 10 (create-walker 50 50))
+
+(to-string *arena*)
+
+
