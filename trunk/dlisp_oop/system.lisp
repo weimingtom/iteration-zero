@@ -39,7 +39,7 @@
   `(return-from nil ,a))
 
 (defmacro defvar (name &optional initial-value)
-  `(unless (isbound ,name) (set ,name ,initial-value)))
+  `(unless (boundp ',name) (set ,name ,initial-value)))
 
 (defun second (a) (nth 1 a))
 (defun third (a) (nth 2 a))
@@ -86,6 +86,17 @@
   (if (< a 0)
       (- a)
     a))
+
+(defun reverse (l)
+    "(REVERSE <list>) Returns the reverse list."
+    (if (<= (elements l) 1)
+        l
+        (append (reverse (rest l)) (list (first l)))))
+
+
+(defmacro call-method (name object &rest args)
+    `(let ((m (get-attr ,object ,name)))
+        (funcall m (cons ,object ,args))))
 
 (defun get-method (object name)
     (if (has-attr object name)
