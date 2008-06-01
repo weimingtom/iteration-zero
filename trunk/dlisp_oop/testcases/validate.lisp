@@ -52,17 +52,24 @@
 (if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
 (if (equal a 42) "OK defmacro4" "NOK defmacro4")
 
-(setq name (create-object))
 
-(set-attr name 'repl
-  (lambda (self &rest args)
-    (print self)
-    (print args)))
+;;;
+;;; CREATE-OBJECT
+(let ((name (create-object)))
+    (set-attr name 'attr1 1)
+    (print 
+        (if (equal (get-attr name 'attr1) 1)  "OK set/get-attr" "NOK set/get-attr"))
+    (set-attr name 'inc-attr1
+        (lambda (self) 
+            (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
+    (inc-attr1 name)
+    (if (equal (get-attr name 'attr1) 2)  "OK set/get-attr2" "NOK set/get-attr2"))
 
-(set-attr name 'print
-  (lambda (self) (print "WOHOO")))
+(let ((x 0))
+    (dotimes (k 10)
+        (set x (1+ x)))
+    (if (equal x 10)
+        "OK dotimes" "NOK dotimes"))
 
-(repl name "YO")
-
-
-
+;;; RETURN LAST ELEMENT
+(if (equal (dotimes (k 10) k) 9) "OK dotimes2" "NOK dotimes2")

@@ -26,6 +26,7 @@ module dlisp.evalhelpers;
 
 private {
   import dlisp.dlisp;
+  import std.stdio;
 }
 
 public {
@@ -49,6 +50,7 @@ public {
   Cell*[] evalArgs(DLisp dlisp, char[] fmt, Cell* args, out uint[] cnts) {
     // "yifscan" "'y+" 1 eller fler symboler, ingen eval."
     uint i, a, mincnt, maxcnt;
+    Cell* startarg = args;
     Cell*[] ret, tret;
     if( args is null )
     {
@@ -88,8 +90,11 @@ public {
         if (!isCons(nargs)) {
           return false;
         }
+        assert(nargs !is null);
+
         bool quoted = fmt[0] == '\'';
         Cell* cell;
+
         if (quoted) {
           fmt = fmt[1..$];
           if (fmt == "") {
@@ -99,9 +104,11 @@ public {
         } else {
           cell = dlisp.eval(nargs.car);
         }
-        nargs = nargs.cdr;
+        nargs = nargs.cdr; 
+
         switch (fmt[0]) {
           case '.':
+            // if(cell is null) return false;
             break;
           case 'b':
             if (!isBool(cell)) return false;
@@ -143,6 +150,7 @@ public {
             throw new Error("Unexpected char: " ~ fmt[0]);
             assert(0);
         }
+
         tret ~= cell;
         fmt = fmt[1..$];
       }
@@ -176,6 +184,10 @@ public {
         }
       }
       if (a < mincnt) {
+        if(args is null) {
+            throw new ArgumentState("Too short argument list.", startarg.pos);
+        }
+        assert(args.car !is null);
         throw new TypeState("Could not evaluate argument as: " ~ tfmt, args.car.pos);
       } else {
         if (mincnt != maxcnt)
