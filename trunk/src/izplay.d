@@ -15,6 +15,7 @@ import dataset;
 import turn;
 import guichan.all;
 import guichan.widgets.all;
+import guichan.event;
 
 
 class LevelState : IGameState
@@ -68,45 +69,7 @@ class LevelState : IGameState
         window.setPosition (100, 100);
         window.setSize (300, 300);
         window.setId( "window" );
-/+//         window.setVisible(true);
-        auto label = new Label("Yo Label");
-        label.setId( "label" );
-        window.add( label, 20, 20);
 
-        auto button = new Button("Yo Button");
-        button.setId( "button" );
-        window.add( button, 20, 40);
-
-//         auto slider = new Slider(0.0,100.0);
-//         slider.setId( "slider" );
-//         slider.setSize(100,10);
-//         window.add( slider, 20, 60);
-
-        auto cbox = new CheckBox("Checkidecheck");
-        cbox.setId( "checkbox" );
-        window.add( cbox, 20, 80);
-
-        auto rb1 = new RadioButton("Yo Radio 1 Ü"d,"1");
-        rb1.setId( "radio1" );
-        window.add( rb1, 20, 100);
-
-        auto rb2 = new RadioButton("Yo Radio 1 Ä"d,"1");
-        rb2.setId( "radio2" );
-        window.add( rb2, 20, 120);
-
-        auto rtf = new TextField("UÜÜÖßßß Ä"d);
-        rtf.setId( "textfield" );
-        rtf.setSize( 100,20 );
-        window.add( rtf, 20, 140);
-
-        auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA","uiiuiu","Llklkjluiouoiuoiuo","u","u","uizuiz"]));
-        lbox.setId( "lbox" );
-        lbox.setSize(100,200);
-
-        auto sarea = new ScrollArea(lbox);
-        sarea.setSize(50,50);
-+/
-//         window.add( sarea, 140, 20);
         topWidget.add( window );
 
         glEnable(GL_COLOR_MATERIAL);
@@ -136,38 +99,42 @@ class LevelState : IGameState
 
     string name() { return "test"; }
 
-    void handleKeyEvent(SDL_Event event)
-    {
-    }
-    void handleMouseMotionEvent(SDL_Event event) {
-        int x,y;
-        SDL_GetMouseState(&x,&y);
-    }
-    void handleMouseEvent(SDL_Event event)
+    void keyPressed(KeyEvent event) {}
+    void keyReleased(KeyEvent event) {}
+
+    void mouseEntered(MouseEvent mouseEvent) { }
+    void mouseExited(MouseEvent mouseEvent) { }
+    void mousePressed(MouseEvent mouseEvent) { }
+    void mouseReleased(MouseEvent mouseEvent) { }
+    void mouseClicked(MouseEvent mouseEvent)
     {
         int x,y;
         SDL_GetMouseState(&x,&y);
         view.toLevelCoords(&x,&y);
+        uint button = mouseEvent.getButton;
 
-        if( event.type == SDL_MOUSEBUTTONUP )
+        if( button == MouseEvent.LEFT )
         {
-            if( event.button.button == SDL_BUTTON_LEFT )
-            {
-                if( !active.isBusy )
-                    active.startMovingTo(x,y);
-            }
-
-            if( event.button.button == SDL_BUTTON_WHEELUP )
-            {
-               view.zoom += 0.1;
-            }
-            if( event.button.button == SDL_BUTTON_WHEELDOWN )
-            {
-                if( view.zoom > 0.21 )
-                    view.zoom -= 0.2;
-            }
+            if( !active.isBusy )
+                active.startMovingTo(x,y);
         }
     }
+
+//         if( event.button.button == SDL_BUTTON_WHEELUP )
+//         {
+//             view.zoom += 0.1;
+//         }
+//         if( event.button.button == SDL_BUTTON_WHEELDOWN )
+//         {
+//             if( view.zoom > 0.21 )
+//                 view.zoom -= 0.2;
+//         }
+//     }
+
+    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
+    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
+    void mouseMoved(MouseEvent mouseEvent) { }
+    void mouseDragged(MouseEvent mouseEvent) { }
 
 }
 
