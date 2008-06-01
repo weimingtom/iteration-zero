@@ -30,11 +30,6 @@
 
 
 
-(defun create-dungeon (arena walk-length walker)
-    (do 
-        (if (eq walk-length 0) return)))
-
-
 (defun create-filled-list (n filled)
     (let ((l nil))
         (dotimes (i n)
@@ -60,7 +55,7 @@
         (set walk-length (dec walk-length))))
 
 (call-method 'next-step (create-walker 50 50))
-(create-dungeon *arena* 10 (create-walker 50 50))
+;; (create-dungeon *arena* 10 (create-walker 50 50))
 
 (to-string *arena*)
 

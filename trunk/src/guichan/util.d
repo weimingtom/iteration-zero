@@ -33,6 +33,15 @@ void remove_index(T) (ref T[] array, uint index)
     array.length = array.length - 1;
 }
 
+void remove_range(T) (ref T[] array, int start, int end)
+{
+    for(int i= start; i < array.length-1; ++i)
+    {
+        assert(i + (end-start) < array.length);
+        array[i] = array[i +  (end-start)];
+    }
+    array.length = array.length - (end-start);
+}
 
 void remove_all(T) (ref T[] array, T item)
 {
@@ -40,13 +49,31 @@ void remove_all(T) (ref T[] array, T item)
     for(int i = 0; i < array.length; ++i)
     {
       t = array[i];
-      while( t is item && array.length)
+      while( t is item && array.length > i)
       {
         array[i] = array[$-1];
         t = array[i];
         array.length = array.length - 1;
       }
     }
+}
+
+dstring[] splitlines(dstring text)
+{
+  dstring[] result;
+  int last_i = 0;
+  for(int i=0; i != text.length; ++i)
+  {
+    if( text[i] == '\n' || text[i] == '\r' )
+    {
+      result ~= text[last_i .. i];
+      if( text.length == i + 1 )
+        return result;
+      if( (text[i] == '\n' &&  text[i+1] == '\r') || (text[i+1] == '\n' &&  text[i] == '\r') )
+        ++i;
+    }
+  }
+  return result;
 }
 
 private class A {};
