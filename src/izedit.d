@@ -9,6 +9,7 @@ import util;
 import derelict.opengl.gl;
 
 import guichan.widgets.all;
+import guichan.opengl.font;
 
 class EditState : IGameState
 {
@@ -78,13 +79,29 @@ class EditState : IGameState
         window.add( rtf, 20, 140);
 
         auto lbox = new ListBox(new ListModel!(string[])(["ALOPHA","BETA","GAMMELN","DELTA","uiiuiu","Llklkjluiouoiuoiuo","u","u","uizuiz"]));
+        lbox.setFont( new OpenGLFont("data/verdana.ttf",18));
         lbox.setId( "lbox" );
-        lbox.setSize(100,200);
 
         auto sarea = new ScrollArea(lbox);
-        sarea.setSize(50,50);
+        sarea.setSize(100,100);
 
         window.add( sarea, 140, 20);
+
+        dstring text = `
+Hi Ther, Lorem ipsum
+Und so weiter.
+
+Hi Ther, Lorem ipsum
+Und so weiter.
+
+Hi Ther, Lorem ipsum
+Und so weiter.
+
+`;
+
+        sarea = new ScrollArea(new TextBox(text));
+        sarea.setSize(100,100);
+        window.add( sarea, 140, 120);
 
         topWidget.add( window );
 
