@@ -10,6 +10,8 @@ import derelict.opengl.gl;
 
 import guichan.widgets.all;
 import guichan.opengl.font;
+import guichan.event;
+import guichan.key;
 
 class EditState : IGameState
 {
@@ -129,12 +131,9 @@ Und so weiter.
 
     string name() { return "level"; }
 
-    void handleKeyEvent(SDL_Event event)
+    void keyPressed(KeyEvent event)
     {
-        if( event.key.type == SDL_KEYUP )
-            return;
-
-        switch(event.key.keysym.sym)
+        switch(event.getKey.getValue)
         {
             case '+':
                 tileproto += 1;
@@ -144,47 +143,56 @@ Und so weiter.
                 break;
             default: break;
         }
-        
+
         auto keys = view.level.dataset._prototypes.keys;
         if( tileproto < 0 ) tileproto = keys.length - 1;
         if( tileproto == keys.length ) tileproto = 0;
         tileprotoname = keys[tileproto];
-    }
-    void handleMouseMotionEvent(SDL_Event event) {
-        int x,y;
-        SDL_GetMouseState(&x,&y);
-        
-    }
-    void handleMouseEvent(SDL_Event event)
-    {
-        int x,y;
-        SDL_GetMouseState(&x,&y);
-        view.toLevelCoords(&x,&y);
-        if( !view.level.isValid(x,y))
-          return;
-        if( event.type == SDL_MOUSEBUTTONUP )
-        {
-            if( event.button.button == SDL_BUTTON_RIGHT )
-            {
-                if( !view.level.gobjects[0].isBusy )
-                    view.level.gobjects[0].startMovingTo(x,y);
-            }
-            if( event.button.button == SDL_BUTTON_LEFT )
-            {
-                view.level.tiles[y*view.level.width + x] = view.level.dataset._prototypes[ tileprotoname ].create(x,y);
-            }
 
-            if( event.button.button == SDL_BUTTON_WHEELUP )
-            {
-               view.zoom += 0.1;
-            }
-            if( event.button.button == SDL_BUTTON_WHEELDOWN )
-            {
-                if( view.zoom > 0.21 )
-                    view.zoom -= 0.2;
-            }
-        }
     }
+    void keyReleased(KeyEvent event) {}
+
+    void mouseEntered(MouseEvent mouseEvent) { }
+    void mouseExited(MouseEvent mouseEvent) { }
+    void mousePressed(MouseEvent mouseEvent) { }
+    void mouseReleased(MouseEvent mouseEvent) { }
+    void mouseClicked(MouseEvent mouseEvent) { }
+
+    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
+    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
+    void mouseMoved(MouseEvent mouseEvent) { }
+    void mouseDragged(MouseEvent mouseEvent) { }
+
+//     void handleMouseEvent(SDL_Event event)
+//     {
+//         int x,y;
+//         SDL_GetMouseState(&x,&y);
+//         view.toLevelCoords(&x,&y);
+//         if( !view.level.isValid(x,y))
+//           return;
+//         if( event.type == SDL_MOUSEBUTTONUP )
+//         {
+//             if( event.button.button == SDL_BUTTON_RIGHT )
+//             {
+//                 if( !view.level.gobjects[0].isBusy )
+//                     view.level.gobjects[0].startMovingTo(x,y);
+//             }
+//             if( event.button.button == SDL_BUTTON_LEFT )
+//             {
+//                 view.level.tiles[y*view.level.width + x] = view.level.dataset._prototypes[ tileprotoname ].create(x,y);
+//             }
+// 
+//             if( event.button.button == SDL_BUTTON_WHEELUP )
+//             {
+//                view.zoom += 0.1;
+//             }
+//             if( event.button.button == SDL_BUTTON_WHEELDOWN )
+//             {
+//                 if( view.zoom > 0.21 )
+//                     view.zoom -= 0.2;
+//             }
+//         }
+//     }
 
 }
 

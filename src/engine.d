@@ -30,6 +30,10 @@ import guichan.sdl.input;
 import guichan.widgets.container;
 import guichan.widget;
 
+import guichan.listener;
+import guichan.event;
+import guichan.key;
+
 interface IGameState
 {
     string name();
@@ -37,10 +41,51 @@ interface IGameState
     void stop();
     void logic();
 
-    void handleKeyEvent(SDL_Event event);
-    void handleMouseMotionEvent(SDL_Event event);
-    void handleMouseEvent(SDL_Event event);
+    void keyPressed(KeyEvent event);
+    void keyReleased(KeyEvent event);
+    void mouseClicked(MouseEvent event);
 }
+
+class EventMapper : public KeyListener, public MouseListener
+{
+    void keyPressed(KeyEvent keyEvent)
+    {
+        if( keyEvent.getKey.getValue == Key.ESCAPE )
+            Engine.instance.stop;
+
+        Engine.instance.state.keyPressed(keyEvent);
+    }
+
+    void keyReleased(KeyEvent keyEvent)
+    {
+        Engine.instance.state.keyReleased(keyEvent);
+    }
+
+    void mouseEntered(MouseEvent mouseEvent) { }
+    void mouseExited(MouseEvent mouseEvent) { }
+    void mousePressed(MouseEvent mouseEvent) { }
+    void mouseReleased(MouseEvent mouseEvent) { }
+    void mouseClicked(MouseEvent mouseEvent)
+    {
+        if( !isConsumed(mouseEvent) )
+            Engine.instance.state.mouseClicked(mouseEvent);
+    }
+
+    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
+    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
+    void mouseMoved(MouseEvent mouseEvent) { }
+    void mouseDragged(MouseEvent mouseEvent) { }
+
+    bool isConsumed(MouseEvent mouseEvent)
+    {
+        auto top = Engine.instance.gui.getTop;
+        if( mouseEvent.isConsumed )
+            return true;
+        return top.getWidgetAt(mouseEvent.getX,mouseEvent.getY) !is null;
+    }
+
+}
+
 
 class Engine
 {
@@ -118,9 +163,13 @@ class Engine
         _gui.setGraphics( new OpenGLGraphics );
         _gui.setInput( new SDLInput );
         Container top = new Container;
+        _gui.setTop( top );
+        top.setFocusable(true);
+        top.requestFocus();
+        top.addKeyListener( new EventMapper );
+        top.addMouseListener( new EventMapper );
         top.setSize( xResolution, yResolution );
         top.setOpaque( false );
-        _gui.setTop( top );
         Widget.setGlobalFont( new OpenGLFont("data/fonts/7service/7the.ttf",16) );
     }
 
@@ -179,19 +228,6 @@ class Engine
         }
     }
 
-    void handleKeyEvent(SDL_Event event)
-    {
-        switch( event.key.keysym.sym )
-        {
-            case SDLK_ESCAPE:
-                _running = false;
-                break;
-
-            default:
-                break;
-        }
-    }
-
     void handleEvents()
     {
         SDL_Event event;
@@ -203,20 +239,6 @@ class Engine
                 case SDL_QUIT:
                     _running = false;
                     break;
-
-                case SDL_KEYDOWN, SDL_KEYUP:
-                    handleKeyEvent(event);
-                    state.handleKeyEvent(event);
-                    break;
-
-                case SDL_MOUSEMOTION:
-                    state.handleMouseMotionEvent(event);
-                    break;
-
-                case SDL_MOUSEBUTTONDOWN,SDL_MOUSEBUTTONUP:
-                    state.handleMouseEvent(event);
-                    break;
-
                 // by default, we do nothing => break from the switch
                 default:
                     break;
