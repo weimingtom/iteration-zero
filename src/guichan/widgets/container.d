@@ -53,7 +53,7 @@ import guichan.graphics;
 import guichan.basiccontainer;
 import guichan.widget;
 
-
+import dlisp.bind;
 
 class Container : BasicContainer
 {
@@ -109,6 +109,9 @@ class Container : BasicContainer
     {
         return super.findWidgetById(id);
     }
+
+    mixin BindClass!("Container");
+    mixin BindMethods!(add,remove);
 
   protected:
     bool mOpaque;

@@ -54,10 +54,57 @@ public {
   import dlisp.dlisp;
   import dlisp.evalhelpers : evalArgs;
   import std.string;
+  import std.utf;
   import std.stdio : writefln;
 
   import std.boxer;
   import std.traits : ReturnType, ParameterTypeTuple;
+}
+
+class Function
+{
+    public:
+        DLisp dlisp;
+        Cell* func;
+        Cell*[string] context;
+
+        mixin BindClass!("DFunction");
+
+    this(Cell* fun,DLisp dl)
+    {
+        func = fun;
+        dlisp = dl;
+        dlisp.environment.saveContext(context);
+    }
+
+    bool isValid()
+    {
+        return func !is null && dlisp !is null;
+    }
+
+    void call(T...)(T params)
+    {
+        assert( isValid );
+
+        Cell*[] cells;
+
+        cells ~= func;
+
+        foreach(param; params)
+           cells ~= boxValue(param);
+
+        dlisp.environment.pushScope();
+        dlisp.environment.loadContext(context);
+        dlisp.eval(newList(cells));
+        // Maybe save context?
+        //dlisp.environment.saveContext();
+        dlisp.environment.popScope();
+    }
+
+    Cell* boxValue(T)(T return_value)
+    {
+        mixin(BoxReturnValue!(T));
+    }
 }
 
 /**
@@ -218,6 +265,24 @@ template CheckArgument(int n, string checkfun)
         ~ "}";//"
 }
 
+template CheckArgumentAlternatives(int n, string checkfun1, string checkfun2)
+{
+    const CheckArgumentAlternatives = 
+      "if( !" ~ checkfun1 ~ "("~ CArg!(n) ~")  && !" ~ checkfun2 ~ "("~ CArg!(n) ~") ) { "
+        ~ "throw new ArgumentState(\"Excepted " ~ checkfun1 ~ " or " ~ checkfun2 ~ "\",cell.pos);"
+        ~ "}";//"
+}
+
+template BoxArgument(int n, T : Cell*)
+{
+  const BoxArgument = AddArgument!("box(" ~ CArg!(n) ~ ")");
+}
+
+template BoxArgument(int n, T : Function)
+{
+  const BoxArgument = CheckArgumentAlternatives!(n,"isFunc","isNil") ~ AddArgument!("box(new Function(" ~ CArg!(n) ~ ",dlisp))");
+}
+
 template BoxArgument(int n, T : int)
 {
   const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
@@ -238,6 +303,11 @@ template BoxArgument(int n, T : string)
   const BoxArgument = CheckArgument!(n,"isString") ~ AddArgument!("box(" ~ CArg!(n) ~ ".strValue)");
 }
 
+template BoxArgument(int n, T : dstring)
+{
+  const BoxArgument = CheckArgument!(n,"isString") ~ AddArgument!("box(toUTF32(" ~ CArg!(n) ~ ".strValue))");
+}
+
 template BoxArgument(int n, T : bool)
 {
   const BoxArgument =  AddArgument!("box(isTrue(" ~ CArg!(n) ~ "))");
@@ -251,6 +321,16 @@ template BoxArgument(int n, T)
     pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY BIND THIS: " ~ T.stringof);//"
     static assert(0);
   }
+}
+
+template BoxReturnValue(T : Cell*)
+{
+  const BoxReturnValue = "return return_value;";
+}
+
+template BoxReturnValue(T : Function)
+{
+  const BoxReturnValue = "return return_value.func;";
 }
 
 template BoxReturnValue(T : int)
@@ -276,6 +356,11 @@ template BoxReturnValue(T : bool)
 template BoxReturnValue(T : string)
 {
   const BoxReturnValue = "return newStr(return_value);";
+}
+
+template BoxReturnValue(T : dstring)
+{
+  const BoxReturnValue = "return newStr(toUTF8(return_value));";
 }
 
 template BoxReturnValue(T : T[])
@@ -425,6 +510,22 @@ template BindClass(string classname)
      return object;
   }
 
+  static Cell* castToClass(DLisp dlisp, Cell* cell)
+  {
+    Cell* cells[] = evalArgs(dlisp,"OO",cell.cdr);
+     if( !isInstance(cells[1]) )
+        throw new ArgumentState("Can not cast " ~ cellToString(cells[1]),cell.pos);
+     return wrapInstance(getInstance(cells[1]));
+  }
+
+  static Cell* canCastToClass(DLisp dlisp, Cell* cell)
+  {
+    Cell* cells[] = evalArgs(dlisp,"OO",cell.cdr);
+     if( !isInstance(cells[1]) )
+        return null;
+     return newSym("T");
+  }
+
   static Cell* getClass()
   {
 
@@ -432,6 +533,9 @@ template BindClass(string classname)
     {
       _classCell = newObject(classname);
       _classCell.table["MAKE-INSTANCE"] = newPredef("MAKE-INSTANCE",toDelegate(&makeInstance),"CREATES AN INSTANCE OF " ~ toupper(classname));
+      _classCell.table["CAST"] = newPredef("CAST",toDelegate(&castToClass),"CASTS INTO AN INSTANCE OF " ~ toupper(classname));
+      _classCell.table["IS-INSTANCE"] = newPredef("IS-INSTANCE",toDelegate(&canCastToClass),"CAN BE CAST INTO AN INSTANCE OF " ~ toupper(classname));
+
       foreach(string name, Cell* method; _methods)
       {
         _classCell.table[name] = method;
@@ -439,7 +543,7 @@ template BindClass(string classname)
       static if(is( typeof(this) parent == super ))
       {
         static if ( IsBoundClass!(parent[0]) ) {
-            pragma(msg,typeof(this).stringof ~ " -> " ~ parent.stringof);
+            pragma(msg,"DLISP.BIND: " ~ typeof(this).stringof ~ " -> " ~ parent.stringof);
             _classCell.table["PARENT"] = parent[0].getClass();
         }
       }
@@ -507,6 +611,43 @@ template BindConstructor(T)
     }
 }
 
+template BindHandler(string settername, string gettername, string fname, alias func)
+{
+    mixin("private Function m__" ~ settername ~ ";");
+    mixin("public " ~ ReturnType!(func).stringof ~ " " ~ settername ~ "(Function cb) { m__" ~ settername ~ " = cb; }");
+    mixin("public Function " ~ gettername ~ "() { return m__" ~ settername ~ "; }");
+
+    mixin("private void " ~ fname ~ "(T ...)(T params) {"
+            " if(m__" ~ settername ~ " !is null && m__" ~ settername ~ ".isValid) m__" ~ settername ~ ".call(params);}");
+
+    mixin("mixin BindMethod!(" ~ settername ~ ");");
+    mixin("mixin BindMethod!(" ~ gettername ~ ");");
+}
+
+template BindHandler(alias func)
+{
+    mixin BindHandler!("on_" ~ MethodName!(func)[1..$] ~ "",
+                       "get_" ~ MethodName!(func)[1..$] ~ "Handler",
+                       MethodName!(func)[1..$] ~ "Callback",
+                       func);
+}
+
+/**
+  Multiple version for BindHandlers
+
+  Generate a method wrapper for the given list of methods.
+  Automatically generates a lispy names for them.
+*/
+template BindHandlers(T ...)
+{
+  static if (T.length == 1) {
+    mixin BindHandler!(T[0]);
+  } else {
+    mixin BindHandler!(T[0]);
+    mixin BindHandlers!(T[1..$]);
+  }
+}
+
 /**
   Generate a method wrapper for the given method.
   You can pass a name as first argument, that will
@@ -516,12 +657,13 @@ template BindMethod(string name,alias func)
 {
     static this()
     {
+      writefln("DLISP.BIND: method %s of class %s",toupper(name), toupper(typeof(this).stringof) );
       static Cell* methodWrapper(DLisp dlisp, Cell* cell)
       {
         Cell* objectCell = cell.cdr.car;
         auto instance = getInstance(dlisp.eval(objectCell));
 
-        // writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
+//         writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
 
         Cell*[] cargs = evalArgs(dlisp,cell.cdr.cdr);
         static if( HasParams!(func) ) {
@@ -557,8 +699,8 @@ template BindMethod(string name,alias func)
         }
         return null;
       }
-
-      _methods[name] = newPredef(name,toDelegate(&methodWrapper),"auto-generated unbound method.");
+//       writefln(name);
+      _methods[toupper(name)] = newPredef(name,toDelegate(&methodWrapper),"auto-generated unbound method.");
     }
 }
 
@@ -582,8 +724,8 @@ string Lispify(string name)
         lastup = true;
     } else
        lastup = false;
-
-    new_name ~= name[i];
+    if( name[i] != '_' )
+        new_name ~= name[i];
   }
   return toupper(new_name);
 }

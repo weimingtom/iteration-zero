@@ -50,6 +50,8 @@ module guichan.event;
 import guichan.widget;
 import guichan.key;
 
+import dlisp.bind;
+
 class Event
 {
     private Widget mSource;
@@ -63,6 +65,8 @@ class Event
     {
         return mSource;
     }
+
+    mixin BindClass!("Event");
 }
 
 class InputEvent : Event
@@ -135,6 +139,8 @@ class InputEvent : Event
     {
         return mIsConsumed;
     }
+
+    mixin BindClass!("InputEvent");
 }
 
 class KeyEvent: InputEvent
@@ -186,6 +192,8 @@ class KeyEvent: InputEvent
     {
         return mKey;
     }
+
+    mixin BindClass!("KeyEvent");
 }
 
 class MouseEvent : InputEvent
@@ -263,6 +271,8 @@ class MouseEvent : InputEvent
         MIDDLE
     }
 
+    mixin BindClass!("MouseEvent");
+
     protected:
         /**
          * Holds the type of the mouse event.
@@ -306,6 +316,8 @@ class ActionEvent : Event
     {
         return mId;
     }
+
+    mixin BindClass!("ActionEvent");
 }
 
 class SelectionEvent : Event

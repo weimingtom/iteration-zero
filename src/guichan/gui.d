@@ -57,6 +57,8 @@ import guichan.focushandler;
 import guichan.exception;
 import guichan.rectangle;
 
+import dlisp.bind;
+
 private import guichan.util;
 
 /**
@@ -90,6 +92,8 @@ private import guichan.util;
 class Gui
 {
 public:
+
+    mixin BindClass!("Gui");
 
     /**
       * Constructor.
@@ -346,6 +350,9 @@ public:
       * @since 0.5.0
       */
 //     virtual void removeGlobalKeyListener(KeyListener* keyListener);
+
+
+    mixin BindMethods!(getTop);
 
 protected:
     /**
