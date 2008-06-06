@@ -22,6 +22,7 @@ import dlisp.dlisp;
 import dlisp.predefs.all;
 import dlisp.bind;
 
+import guichan.all;
 import guichan.gui;
 import guichan.opengl.graphics;
 import guichan.opengl.font;
@@ -33,18 +34,7 @@ import guichan.widget;
 import guichan.listener;
 import guichan.event;
 import guichan.key;
-
-interface IGameState
-{
-    string name();
-    void start();
-    void stop();
-    void logic();
-
-    void keyPressed(KeyEvent event);
-    void keyReleased(KeyEvent event);
-    void mouseClicked(MouseEvent event);
-}
+import gamestate;
 
 class EventMapper : public KeyListener, public MouseListener
 {
@@ -159,6 +149,9 @@ class Engine
         _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);//"
         bindInstance(_dlisp.environment,"*engine*");
 
+        bindGuichan(_dlisp.environment);
+//         BasicContainer.bindClass(_dlisp.environment);
+
         _gui = new Gui;
         _gui.setGraphics( new OpenGLGraphics );
         _gui.setInput( new SDLInput );
@@ -225,6 +218,8 @@ class Engine
 
             _gui.logic();
             handleEvents();
+            if( _logic_cb && _logic_cb.isValid )
+                _logic_cb.call(_frames);
         }
     }
 
@@ -266,7 +261,7 @@ class Engine
         _running = false;
     }
 
-    IGameState state()
+    GameState state()
     {
         return _currentState;
     }
@@ -281,7 +276,7 @@ class Engine
         _nextState = _states[name];
     }
 
-    void addState(IGameState state_)
+    void addState(GameState state_)
     {
         assert( state_ !is null );
         assert( (state_.name in _states) is null );
@@ -290,6 +285,12 @@ class Engine
 
     int   xResolution () { return _xResolution; }
     int   yResolution () { return _yResolution; }
+
+    void setLogicHandler(Function f) { _logic_cb = f; }
+
+    mixin BindMethods!(xResolution,yResolution);
+    mixin BindMethods!(setLogicHandler);
+    mixin BindMethod!("get-gui",gui);
 
     private {
         // horizontal and vertical screen resolution
@@ -309,15 +310,17 @@ class Engine
         long _frames;
         bit _running;
 
-        IGameState[string] _states;
-        IGameState _currentState;
-        IGameState _nextState;
+        GameState[string] _states;
+        GameState _currentState;
+        GameState _nextState;
         
         TextureManager _textureManager;
         RenderPipeline _pipeline;
 
         DLisp _dlisp;
         Gui _gui;
+
+        Function _logic_cb;
 
         void _updateStates()
         {

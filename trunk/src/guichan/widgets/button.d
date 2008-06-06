@@ -46,6 +46,7 @@ module guichan.widgets.button;
 import std.stdio : writefln;
 
 private import guichan.all;
+private import dlisp.bind;
 
 /**
   * An implementation of a regular clickable button. A button is capable of
@@ -56,9 +57,11 @@ private import guichan.all;
   *
   * @see ImageButton
   */
-class Button : Widget, MouseListener, KeyListener, FocusListener
+class Button : Widget
 {
   public:
+    mixin BindClass!("Button");
+
     /**
       *Constructor.
       */
@@ -242,7 +245,6 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
         mMousePressed = false;
         mKeyPressed = false;
     }
-    void focusGained(Event event){}
 
     // Inherited from MouseListener
 
@@ -253,6 +255,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
             mMousePressed = true;
             mouseEvent.consume();
         }
+        super.mousePressed(mouseEvent);
     }
 
 
@@ -271,6 +274,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
             mMousePressed = false;
             mouseEvent.consume();
         }
+        super.mouseReleased(mouseEvent);
     }
 
 
@@ -278,12 +282,14 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
     {
 //         writefln("mouseEntered");
         mHasMouse = true;
+        super.mouseEntered(mouseEvent);
     }
 
     void mouseExited(MouseEvent mouseEvent)
     {
 //         writefln("mouseExited");
         mHasMouse = false;
+        super.mouseExited(mouseEvent);
     }
 
 
@@ -291,16 +297,8 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
     {
 //         writefln("mouseDragged");
         mouseEvent.consume();
+        super.mouseDragged(mouseEvent);
     }
-
-    void mouseClicked(MouseEvent mouseEvent){
-//       writefln("mouseClicked");
-    }
-    void mouseMoved(MouseEvent mouseEvent){
-//       writefln("mouseMoved");
-    }
-    void mouseWheelMovedDown(MouseEvent mouseEvent){}
-    void mouseWheelMovedUp(MouseEvent mouseEvent){}
 
     // Inherited from KeyListener
 
@@ -314,6 +312,7 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
             mKeyPressed = true;
             keyEvent.consume();
         }
+        super.keyPressed(keyEvent);
     }
 
     void keyReleased(KeyEvent keyEvent)
@@ -328,7 +327,10 @@ class Button : Widget, MouseListener, KeyListener, FocusListener
             distributeActionEvent();
             keyEvent.consume();
         }
+        super.keyReleased(keyEvent);
     }
+
+    mixin BindMethods!(setCaption, getCaption);
 
   protected:
     /**

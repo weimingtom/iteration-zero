@@ -69,6 +69,8 @@ import guichan.graphics;
 import guichan.keyinput;
 import guichan.mouseinput;
 
+import dlisp.bind;
+
 class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
 {
   private:
@@ -222,14 +224,6 @@ class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
 
     ~this()
     {
-/+        DeathListenerIterator iter;
-
-        for (iter = mDeathListeners.begin(); iter != mDeathListeners.end(); ++iter)
-        {
-            Event event(this);
-            widget.death(event);
-        }
-+/
         _setFocusHandler(null);
 
         mWidgets.remove(this);
@@ -820,26 +814,39 @@ class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
 
     void showWidgetPart(Widget widget, Rectangle area) { }
 
-    void widgetResized(Event event) { }
-    void widgetMoved(Event event) { }
-    void widgetHidden(Event event) { }
-    void widgetShown(Event event) { }
+    void widgetResized(Event event) { widgetResizedCallback(event); }
 
-    void focusGained(Event event) { }
-    void focusLost(Event event) { }
+    void widgetMoved(Event event) { widgetMovedCallback(event); }
+    void widgetHidden(Event event) { widgetHiddenCallback(event);  }
+    void widgetShown(Event event) {  widgetShownCallback(event);  }
 
-    void keyPressed(KeyEvent keyEvent) { }
-    void keyReleased(KeyEvent keyEvent) { }
+    void focusGained(Event event) { focusGainedCallback(event); }
+    void focusLost(Event event) { focusLostCallback(event);  }
 
-    void mouseEntered(MouseEvent mouseEvent) { }
-    void mouseExited(MouseEvent mouseEvent) { }
-    void mousePressed(MouseEvent mouseEvent) { }
-    void mouseReleased(MouseEvent mouseEvent) { }
-    void mouseClicked(MouseEvent mouseEvent) { }
+    void keyPressed(KeyEvent keyEvent) { keyPressedCallback(keyEvent); }
+    void keyReleased(KeyEvent keyEvent) { keyReleasedCallback(keyEvent);  }
 
-    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
-    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
-    void mouseMoved(MouseEvent mouseEvent) { }
-    void mouseDragged(MouseEvent mouseEvent) { }
+    void mouseEntered(MouseEvent mouseEvent) { mouseEnteredCallback(mouseEvent); }
 
+    void mouseExited(MouseEvent mouseEvent) { mouseExitedCallback(mouseEvent); }
+    void mousePressed(MouseEvent mouseEvent) { mousePressedCallback(mouseEvent); }
+    void mouseReleased(MouseEvent mouseEvent) { mouseReleasedCallback(mouseEvent); }
+    void mouseClicked(MouseEvent mouseEvent) { mouseClickedCallback(mouseEvent); }
+
+    void mouseWheelMovedUp(MouseEvent mouseEvent) { mouseWheelMovedUpCallback(mouseEvent); }
+    void mouseWheelMovedDown(MouseEvent mouseEvent) { mouseWheelMovedDownCallback(mouseEvent); }
+    void mouseMoved(MouseEvent mouseEvent) { mouseMovedCallback(mouseEvent); }
+    void mouseDragged(MouseEvent mouseEvent) { mouseDraggedCallback(mouseEvent); }
+
+    mixin BindClass!("Widget");
+    mixin BindMethods!(getId,getParent);
+    mixin BindMethods!(getX,getY,getWidth,getHeight);
+    mixin BindMethods!(setX,setY,setWidth,setHeight);
+    mixin BindMethods!(setPosition,setSize);
+
+    mixin BindHandlers!(widgetResized,widgetMoved,widgetHidden,widgetShown);
+    mixin BindHandlers!(keyPressed,keyReleased);
+    mixin BindHandlers!(focusGained,focusLost);
+    mixin BindHandlers!(mouseEntered,mouseExited,mousePressed,mouseReleased,mouseClicked);
+    mixin BindHandlers!(mouseWheelMovedUp,mouseWheelMovedDown,mouseMoved,mouseDragged);
 }

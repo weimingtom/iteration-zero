@@ -58,7 +58,9 @@ import guichan.graphics;
 import guichan.mouseinput;
 import guichan.util;
 
-class BasicContainer : Widget 
+import dlisp.bind;
+
+class BasicContainer : public Widget 
 {
     this()
     {
@@ -385,6 +387,9 @@ class BasicContainer : Widget
         }
         return null;
     }
+
+    mixin BindClass!("BasicContainer");
+
   protected:
     Widget[] mWidgets;
 }

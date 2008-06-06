@@ -184,7 +184,11 @@ public {
       return cell.cellType == CellType.ctSYM;
     }
   }
-  
+
+  bool isNil(Cell* cell) {
+    return !cell;
+  }
+
   bool isInt(Cell* cell) {
     if (!cell) {
       return false;

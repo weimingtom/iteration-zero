@@ -13,7 +13,9 @@ import guichan.opengl.font;
 import guichan.event;
 import guichan.key;
 
-class EditState : IGameState
+import gamestate;
+
+class EditState : GameState
 {
     public:
         Engine engine;
@@ -150,18 +152,7 @@ Und so weiter.
         tileprotoname = keys[tileproto];
 
     }
-    void keyReleased(KeyEvent event) {}
 
-    void mouseEntered(MouseEvent mouseEvent) { }
-    void mouseExited(MouseEvent mouseEvent) { }
-    void mousePressed(MouseEvent mouseEvent) { }
-    void mouseReleased(MouseEvent mouseEvent) { }
-    void mouseClicked(MouseEvent mouseEvent) { }
-
-    void mouseWheelMovedUp(MouseEvent mouseEvent) { }
-    void mouseWheelMovedDown(MouseEvent mouseEvent) { }
-    void mouseMoved(MouseEvent mouseEvent) { }
-    void mouseDragged(MouseEvent mouseEvent) { }
 
 //     void handleMouseEvent(SDL_Event event)
 //     {

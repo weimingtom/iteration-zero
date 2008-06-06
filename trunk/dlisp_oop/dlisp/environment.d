@@ -117,7 +117,30 @@ public class Environment {
       }
       _globals[key] = value;
     }
-    
+
+    bool isLocal(string key)
+    {
+//         writefln("FIXME");
+        return true;
+    }
+
+    void saveContext(ref Cell*[string] ctxt)
+    {
+        foreach(string key, Cell* cell; _globals)
+        {
+            if( isLocal(key) )
+                ctxt[key] = cell;
+        }
+    }
+
+    void loadContext(ref Cell*[string] ctxt)
+    {
+        foreach(string key, Cell* cell; ctxt)
+        {
+            addLocal(key,cell);
+        }
+    }
+
     void pushScope() {
 //       writefln ("PUSH-SCOPE _restore.length=%d  _remove.length=%d", _restore.length,  _remove.length);
        Cell*[char[]] append_restore;
