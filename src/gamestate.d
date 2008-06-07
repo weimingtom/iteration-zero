@@ -5,11 +5,11 @@ import guichan.key;
 
 import dlisp.bind;
 
-abstract class GameState
+class GameState
 {
-    mixin BindClass!("GameState");
+    mixin BindClass!("C/Game-State");
     
-    string name();
+    abstract string name();
     void start() {}
     void stop() {}
     void logic() {}

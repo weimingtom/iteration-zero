@@ -1,4 +1,9 @@
 
+(defmacro gencall (function-name)
+     `(lambda (object &rest args)
+         (funcall (get-method object ',function-name) (cons object args))))
+
+
 (defun 1+ (a) 
     "(1+ <num>); return <num> increased by 1."
   (+ a 1))
@@ -93,23 +98,27 @@
         l
         (append (reverse (rest l)) (list (first l)))))
 
+(defun collect (fun l)
+    (if l 
+        (cons (funcall fun (list (first l))) (collect fun (rest l)))
+        nil))
 
 (defmacro call-method (name object &rest args)
     `(let ((m (get-attr ,object ,name)))
         (funcall m (cons ,object ,args))))
 
-(defun get-method (object name)
-    (if (has-attr object name)
-        (get-attr object name)
-        (if (isobject (get-attr object 'superclass))
-            (get-method (get-attr object 'superclass) name))))
+;; (defun get-method (object name)
+;;     (if (has-attr object name)
+;;         (get-attr object name)
+;;         (if (isobject (get-attr object 'superclass))
+;;             (get-method (get-attr object 'superclass) name))))
 
-(defmacro defgeneric (function-name)
-    `(defun ,function-name (object &rest args)
-        (funcall (get-method object ',function-name) (cons object args))))
-
-(defmacro defmethod (class method-name signature body)
-    `(set-attr ,class ',method-name
-        (lambda ,(cons 'self signature)
-            ,body)))
-
+;; (defmacro defgeneric (function-name)
+;;     `(defun ,function-name (object &rest args)
+;;         (funcall (get-method object ',function-name) (cons object args))))
+;; 
+;; (defmacro defmethod (class method-name signature body)
+;;     `(set-attr ,class ',method-name
+;;         (lambda ,(cons 'self signature)
+;;             ,body)))
+;; 

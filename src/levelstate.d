@@ -39,6 +39,7 @@ class LevelState : GameState
     {
         engine = Engine.instance;
         dlisp = engine.dlisp;
+        bindClass(dlisp.environment);
 
         view = new LevelRenderer;
         engine.renderPipeline.add (view);

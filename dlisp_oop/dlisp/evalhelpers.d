@@ -190,7 +190,11 @@ public {
             throw new ArgumentState("Too short argument list.", startarg.pos);
         }
         assert(args.car !is null);
-        throw new TypeState("Could not evaluate argument as: " ~ tfmt ~ " (" ~ cellToString(args.car)~")", args.car.pos);
+        string evalarg = "";
+        if( dlisp.environment.isBound(args.car.name) )
+            evalarg = " ==> (" ~ cellToString(dlisp.environment[args.car.name]) ~ ")";
+        throw new TypeState("Could not evaluate argument as: "
+            ~ tfmt ~ " (" ~ cellToString(args.car)~")" ~ evalarg,args.car.pos);
       } else {
         if (mincnt != maxcnt)
           cnts ~= a;

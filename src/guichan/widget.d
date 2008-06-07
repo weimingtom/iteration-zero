@@ -844,7 +844,7 @@ class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
     void mouseMoved(MouseEvent mouseEvent) { mouseMovedCallback(mouseEvent); }
     void mouseDragged(MouseEvent mouseEvent) { mouseDraggedCallback(mouseEvent); }
 
-    mixin BindClass!("Widget");
+    mixin BindClass!("C/Widget");
     mixin BindMethods!(getId,getParent);
     mixin BindMethods!(getX,getY,getWidth,getHeight);
     mixin BindMethods!(setX,setY,setWidth,setHeight);

@@ -448,10 +448,16 @@ template BindClass(string classname)
   static void bindClass(Environment environment)
   {
       environment[classname] = getClass();
+      foreach(string key, Cell* method; _methods)
+      {
+        environment.addGeneric(key);
+        writefln("BINDING GENERIC: ", key);
+      }
   }
 
   void bindInstance(Environment environment, string name)
   {
+      bindClass(environment);
       environment[name] = wrap;
   }
 
@@ -533,9 +539,9 @@ template BindClass(string classname)
     if( _classCell is null )
     {
       _classCell = newObject(classname);
-      _classCell.table["MAKE-INSTANCE"] = newPredef("MAKE-INSTANCE",toDelegate(&makeInstance),"CREATES AN INSTANCE OF " ~ toupper(classname));
-      _classCell.table["CAST"] = newPredef("CAST",toDelegate(&castToClass),"CASTS INTO AN INSTANCE OF " ~ toupper(classname));
-      _classCell.table["IS-INSTANCE"] = newPredef("IS-INSTANCE",toDelegate(&canCastToClass),"CAN BE CAST INTO AN INSTANCE OF " ~ toupper(classname));
+      _methods["MAKE-INSTANCE"] = newPredef("MAKE-INSTANCE",toDelegate(&makeInstance),"CREATES AN INSTANCE OF " ~ toupper(classname));
+      _methods["CAST"] = newPredef("CAST",toDelegate(&castToClass),"CASTS INTO AN INSTANCE OF " ~ toupper(classname));
+      _methods["IS-INSTANCE"] = newPredef("IS-INSTANCE",toDelegate(&canCastToClass),"CAN BE CAST INTO AN INSTANCE OF " ~ toupper(classname));
 
       foreach(string name, Cell* method; _methods)
       {
@@ -658,7 +664,7 @@ template BindMethod(string name,alias func)
 {
     static this()
     {
-      writefln("DLISP.BIND: method %s of class %s",toupper(name), toupper(typeof(this).stringof) );
+//       writefln("DLISP.BIND: method %s of class %s",toupper(name), toupper(typeof(this).stringof) );
       static Cell* methodWrapper(DLisp dlisp, Cell* cell)
       {
         assert(cell !is null);

@@ -119,7 +119,7 @@ public {
     Cell*[] args = evalArgs(dlisp, "ol", cell.cdr);
     return dlisp.eval(newCons(args[0], args[1]));
   }
-  
+
   Cell* evalParse(DLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".", cell.cdr);
     if (isString(args[0])) {
@@ -202,7 +202,8 @@ public Environment addToEnvironment(Environment environment) {
   environment.bindPredef("time", &evalTime, "(TIME <form>); Evaluate and return <form>s result, and print timing information.");
 
   environment.bindPredef("eval", &evalEval,"(EVAL <arg>); Execute <arg>.");
-  environment.bindPredef("funcall", &evalFunCall,"(EVALFUN <func> <list>); Execute function or macro <func> with arguments in <list>.");
+  environment.bindPredef("funcall", &evalFunCall,"(FUNCALL <func> <list>); Execute function or macro <func> with arguments in <list>.");
+  environment.clonePredef("funcall","apply");
   environment.bindPredef("parse", &evalParse,"(PARSE <str>|<stream>); Parse and return the string <str> or the string in stream <stream>, as lisp program.");
   environment.bindPredef("quote", &evalQuote, "(QUOTE <sym>); Quotes symbol <sym>, equivalent to \"'<sym>\".", true);
   environment.bindPredef("back-quote", &evalBack_Quote); 

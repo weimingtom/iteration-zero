@@ -44,9 +44,20 @@ public {
 
     Cell* evalGetMethod(DLisp dlisp, Cell* cell)
     {
+        Cell* cells[] = evalArgs(dlisp,".y",cell.cdr);
+        if( !isObject(cells[0]) )
+        {
+            if( dlisp.environment.isBound(cells[1].name) )
+                return dlisp.environment[cells[1].name];
+            return null;
+        }
 
-        Cell* cells[] = evalArgs(dlisp,"Oy",cell.cdr);
-        return getAttribute(cells[0],cells[1].name);
+        cell = getAttribute(cells[0],cells[1].name);
+        if( cell !is null )
+            return cell;
+        if( dlisp.environment.isBound(cells[1].name) )
+            return dlisp.environment[cells[1].name];
+        return null;
     }
 
     Cell* evalGetAttr(DLisp dlisp, Cell* cell)
@@ -75,6 +86,11 @@ public {
         return nil;
     }
 
+//     Cell* evalGenCall(DLisp dlisp, Cell* cell) {
+//         Cell* cells[] = evalArgs (dlisp, "y", cell.cdr);
+//         
+//         return dlisp.eval(cell);
+//     }
 }
 
 public Environment addToEnvironment(Environment environment) {
@@ -84,5 +100,8 @@ public Environment addToEnvironment(Environment environment) {
 
     environment.bindPredef("create-object", &evalCreateObject, "(CREATE-OBJECT [<superclass>]); Creates a new Object.");
     environment.bindPredef("get-method", &evalGetMethod, "(GET-METHOD <object> <sym>); Get unbound method.");
+//     environment.bindPredef("gencall", &evalGenCall,
+//         "(GENCALL <func> <object> <args>); Execute generic, function or macro <func> with arguments in <object> <args>.");
+
     return environment;
 }

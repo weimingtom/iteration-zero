@@ -73,20 +73,13 @@ public template Evaluator() {
         }
       }
 
-      // MAYBE WE NEED TO DISPATCH?
-      Cell* method = null;
-      if( cell.car && cell.cdr && cell.cdr.car && environment.isBound(cell.cdr.car.name)  )
-      {
-        // Note the Hacky check for set-attr. Maybe some kind of override?
-         if (isObject(environment[cell.cdr.car.name]) && cell.car.name != "SET-ATTR")
-         {
-            // writefln ("OBJECT:", cell.car.name," .. ", cellToString(cell.cdr.car));
-            method = getAttribute(environment[cell.cdr.car.name],cell.car.name);
-         }
-      }
-
       if (cell.cellType == CellType.ctSYM) {
-        if (environment.isBound(cell.name)) {
+        if( environment.isGeneric(cell.name) ) {
+            Cell* temp = environment["GENCALL"];
+            Cell* rval = eval(newList(temp,cell));
+            //  writefln("GENERIC: ", cell.name," ==> ", cellToString(newList(temp,cell))," ==> ", cellToString(rval));
+            return rval;
+        } else if (environment.isBound(cell.name)) {
           Cell* temp = environment[cell.name];
           if (!leavebound && isBoundValue(temp)) {
             return eval(temp);
@@ -94,21 +87,11 @@ public template Evaluator() {
             return temp;
           }
         } else {
-//           writefln ("METHOD:", cell.name, cellToString(method));
           throw new UnboundSymbolState("Unbound symbol: " ~ cell.name, cell.pos); 
         }
       }
 
-      Cell* func;
-
-      // DISPATCH
-      if( isFunc(method) )
-      {
-        func = method;
-      } else {
-        func = eval(cell.car);
-      }
-
+      Cell* func = eval(cell.car);
       if( func is null )
         throw new ErrorState("Not an executable function: " ~ cellToString(cell.car),cell.pos);
 
