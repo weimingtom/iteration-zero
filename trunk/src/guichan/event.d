@@ -47,26 +47,27 @@
 
 module guichan.event;
 
-import guichan.widget;
+private import guichan.iwidget;
 import guichan.key;
 
-import dlisp.bind;
+private import dlisp.bind;
 
 class Event
 {
-    private Widget mSource;
+    private IWidget mSource;
 
-    this(Widget source)
+    this(IWidget source)
     {
       mSource = source;
     }
 
-    Widget getSource()
+    IWidget getSource()
     {
         return mSource;
     }
 
-    mixin BindClass!("Event");
+    mixin BindClass!("C/Event");
+    mixin BindMethods!(getSource);
 }
 
 class InputEvent : Event
@@ -100,7 +101,7 @@ class InputEvent : Event
     public:
 
 
-    this(Widget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed)
+    this(IWidget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed)
     {
         super(source);
         mShiftPressed = isShiftPressed;
@@ -141,6 +142,7 @@ class InputEvent : Event
     }
 
     mixin BindClass!("InputEvent");
+    mixin BindMethods!(isShiftPressed,isControlPressed,isAltPressed,isMetaPressed,consume,isConsumed);
 }
 
 class KeyEvent: InputEvent
@@ -170,7 +172,7 @@ class KeyEvent: InputEvent
         RELEASED
     }
 
-    this(Widget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed, uint type, bool isNumericPad,Key key)
+    this(IWidget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed, uint type, bool isNumericPad,Key key)
     {
         super(source,isShiftPressed,isControlPressed,isAltPressed,isMetaPressed);
         mType = type;
@@ -194,11 +196,12 @@ class KeyEvent: InputEvent
     }
 
     mixin BindClass!("KeyEvent");
+    mixin BindMethods!(getType,isNumericPad);
 }
 
 class MouseEvent : InputEvent
 {
-    this(Widget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed, uint type, uint button, int x, int y, int clickCount)
+    this(IWidget source, bool isShiftPressed, bool isControlPressed, bool isAltPressed, bool isMetaPressed, uint type, uint button, int x, int y, int clickCount)
     {
         super(source, isShiftPressed, isControlPressed, isAltPressed, isMetaPressed);
         mType = type;
@@ -272,6 +275,7 @@ class MouseEvent : InputEvent
     }
 
     mixin BindClass!("MouseEvent");
+    mixin BindMethods!(getButton,getX,getY,getClickCount,getType);
 
     protected:
         /**
@@ -306,7 +310,7 @@ class ActionEvent : Event
 {
   private string mId;
 
-    this(Widget source, string id)
+    this(IWidget source, string id)
     {
       super(source);
       mId = id;
@@ -322,7 +326,7 @@ class ActionEvent : Event
 
 class SelectionEvent : Event
 {
-    this(Widget source)
+    this(IWidget source)
     {
        super(source);
     }

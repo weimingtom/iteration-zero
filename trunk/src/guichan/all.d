@@ -15,18 +15,3 @@ public import
   guichan.keyinput,
   guichan.key;
 
-private import
-    guichan.widgets.all,
-    guichan.basiccontainer,
-    dlisp.bind
-    ;
-
-void bindGuichan(Environment env)
-{
-    Widget.bindClass(env);
-    BasicContainer.bindClass(env);
-    Container.bindClass(env);
-    Gui.bindClass(env);
-
-    Button.bindClass(env);
-}

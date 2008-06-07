@@ -1080,8 +1080,8 @@ protected:
       */
     void distributeKeyEvent(KeyEvent keyEvent)
     {
-        Widget parent = keyEvent.getSource();
-        Widget widget = keyEvent.getSource();
+        Widget parent = cast(Widget)keyEvent.getSource();
+        Widget widget = cast(Widget)keyEvent.getSource();
 
         if (mFocusHandler.getModalFocused() !is null
             && !widget.isModalFocused())

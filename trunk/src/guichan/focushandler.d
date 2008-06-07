@@ -496,7 +496,7 @@ class FocusHandler
 
     void distributeFocusLostEvent(Event focusEvent)
     {
-        Widget sourceWidget = focusEvent.getSource;
+        Widget sourceWidget = cast(Widget)focusEvent.getSource;
 
         FocusListener[] focusListeners = sourceWidget._getFocusListeners;
 
@@ -509,7 +509,7 @@ class FocusHandler
 
     void distributeFocusGainedEvent(Event focusEvent)
     {
-        Widget sourceWidget = focusEvent.getSource;
+        Widget sourceWidget = cast(Widget)focusEvent.getSource;
 
         FocusListener[] focusListeners = sourceWidget._getFocusListeners;
 
