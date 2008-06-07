@@ -47,16 +47,10 @@
 
 module guichan.widget;
 
-import guichan.event;
+import guichan.iwidget;
 import guichan.listener;
 import guichan.util;
 import guichan.basiccontainer;
-
-// import guichan.actionlistener;
-// import guichan.deathlistener;
-// import guichan.mouselistener;
-// import guichan.widgetlistener;
-// import guichan.keylistener;
 
 import guichan.defaultfont;
 import guichan.font;
@@ -68,10 +62,11 @@ import guichan.focushandler;
 import guichan.graphics;
 import guichan.keyinput;
 import guichan.mouseinput;
+import guichan.event;
 
 import dlisp.bind;
 
-class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
+class Widget : IWidget, MouseListener, KeyListener, FocusListener, WidgetListener
 {
   private:
     static Widget[] mWidgets;
@@ -845,7 +840,7 @@ class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
     void mouseDragged(MouseEvent mouseEvent) { mouseDraggedCallback(mouseEvent); }
 
     mixin BindClass!("C/Widget");
-    mixin BindMethods!(getId,getParent);
+    mixin BindMethods!(setId,getId,getParent);
     mixin BindMethods!(getX,getY,getWidth,getHeight);
     mixin BindMethods!(setX,setY,setWidth,setHeight);
     mixin BindMethods!(setPosition,setSize);

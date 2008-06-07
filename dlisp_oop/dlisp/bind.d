@@ -338,6 +338,11 @@ template BoxReturnValue(T : int)
   const BoxReturnValue = "return newInt(return_value);";
 }
 
+template BoxReturnValue(T : uint)
+{
+  const BoxReturnValue = "return newInt(return_value);";
+}
+
 template BoxReturnValue(T : long)
 {
   const BoxReturnValue = "return newInt(return_value);";
@@ -393,7 +398,7 @@ template BoxReturnValue(T : T[])
 template BoxReturnValue(T)
 {
   static if ( IsBoundClass!(T) ) {
-    const BoxReturnValue = "return return_value.wrap;"; 
+    const BoxReturnValue = "if( return_value !is null ){ return return_value.wrap; }else{ return null; };"; 
   } else {
     pragma(msg,"DON'T KNOW HOW TO AUTOMATICALLY WRAP RETURN TYPE: " ~ T.stringof);
     static assert(0);
@@ -672,9 +677,12 @@ template BindMethod(string name,alias func)
             throw new ArgumentState("Method " ~ name ~ " called without object.",cell.pos);
 
         Cell* objectCell = cell.cdr.car;
-        auto instance = getInstance(dlisp.eval(objectCell));
+        Cell* evalObjectCell = dlisp.eval(objectCell);
+        auto instance = getInstance(evalObjectCell);
+        if(instance is null)
+            throw new ArgumentState("Method " ~ name ~ " called without a valid object, got " ~ cellToString(evalObjectCell),cell.pos);
 
-//         writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
+        // writefln ("METHOD: %s SELF: %s ARGS: %s",name, instance, cellToString(cell.cdr.cdr));
 
         Cell*[] cargs = evalArgs(dlisp,cell.cdr.cdr);
         static if( HasParams!(func) ) {

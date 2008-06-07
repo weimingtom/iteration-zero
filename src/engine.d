@@ -23,6 +23,7 @@ import dlisp.predefs.all;
 import dlisp.bind;
 
 import guichan.all;
+import guichan.bind;
 import guichan.gui;
 import guichan.opengl.graphics;
 import guichan.opengl.font;

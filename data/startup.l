@@ -21,6 +21,22 @@
             (set-position quit-button (- (x-resolution *engine*) 105) 5)
             quit-button)))
 
+(defun get-widget-root (widget)
+    (if (get-parent widget)
+        (if (get-parent (get-parent widget))
+            (get-widget-root (get-parent widget))
+            widget)
+        nil))
+
+(defun hide-widget (widget)
+    (let ((root (get-widget-root widget)))
+        (when root 
+            ;;(print "ROOT:" root  (get-id root) *ln*)
+            (remove *top* root))))
+
+(defun make-close-handler ()
+    (lambda (event)
+        (hide-widget (get-source event))))
 
 (defun create-button (name w h onclick)
     (let ((b (make-instance button)))
@@ -34,7 +50,7 @@
     (create-button name w 30
         (lambda (event)
             (load (get-state *engine* "test") filename)
-            (remove *top* c)
+            (hide-widget (get-source event))
             (start *engine* "test"))))
 
 (defun create-menu (options)
@@ -44,6 +60,7 @@
           (y 0)
           (make-button
             (lambda (option) (create-menu-button (first option) (second option) box (* 2 x4)))))
+        (set-id box "main-menu")
         (set-size box (* 2 x4) (* 2 y4))
         (set-position box x4 y4)
         (set-opaque box nil)
