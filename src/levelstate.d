@@ -20,6 +20,8 @@ import guichan.widgets.all;
 import guichan.event;
 import gamestate;
 
+import dlisp.bind;
+
 class LevelState : GameState
 {
     public:
@@ -31,6 +33,8 @@ class LevelState : GameState
         TurnManager turnManager;
         string filename;
 
+    mixin BindClass!("LEVEL-STATE");
+
     this()
     {
         engine = Engine.instance;
@@ -38,6 +42,11 @@ class LevelState : GameState
 
         view = new LevelRenderer;
         engine.renderPipeline.add (view);
+    }
+
+    void load(string filename_)
+    {
+        filename = filename_;
     }
 
     void start()
@@ -133,4 +142,6 @@ class LevelState : GameState
         if( view.zoom > 0.21 )
                  view.zoom -= 0.2;
     }
+
+    mixin BindMethods!(load);
 }

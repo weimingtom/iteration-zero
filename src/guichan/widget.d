@@ -220,6 +220,12 @@ class Widget : MouseListener, KeyListener, FocusListener, WidgetListener
         mCurrentFont = null;
 
         mWidgets ~= this;
+
+        addMouseListener(this);
+        addKeyListener(this);
+        addFocusListener(this);
+        addWidgetListener(this);
+
     }
 
     ~this()

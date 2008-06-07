@@ -79,9 +79,6 @@ class Button : Widget
       adjustSize();
       setFrameSize(2);
 
-      addMouseListener(this);
-      addKeyListener(this);
-      addFocusListener(this);
     }
 
     /**
@@ -104,10 +101,6 @@ class Button : Widget
       setFocusable(true);
       adjustSize();
       setFrameSize(2);
-
-      addMouseListener(this);
-      addKeyListener(this);
-      addFocusListener(this);
     }
 
 

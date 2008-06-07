@@ -217,9 +217,8 @@ class Engine
             _frames += 1;
 
             _gui.logic();
+            logic();
             handleEvents();
-            if( _logic_cb && _logic_cb.isValid )
-                _logic_cb.call(_frames);
         }
     }
 
@@ -259,6 +258,12 @@ class Engine
     void stop()
     {
         _running = false;
+        stopCallback();
+    }
+
+    void logic()
+    {
+        logicCallback();
     }
 
     GameState state()
@@ -276,6 +281,11 @@ class Engine
         _nextState = _states[name];
     }
 
+    GameState getState(string name)
+    {
+        return _states[name];
+    }
+
     void addState(GameState state_)
     {
         assert( state_ !is null );
@@ -286,11 +296,13 @@ class Engine
     int   xResolution () { return _xResolution; }
     int   yResolution () { return _yResolution; }
 
-    void setLogicHandler(Function f) { _logic_cb = f; }
 
     mixin BindMethods!(xResolution,yResolution);
-    mixin BindMethods!(setLogicHandler);
+    mixin BindHandlers!(logic,stop);
+    mixin BindMethods!(start,stop);
     mixin BindMethod!("get-gui",gui);
+    mixin BindMethod!("get-current-state",state);
+    mixin BindMethods!(addState,getState);
 
     private {
         // horizontal and vertical screen resolution
@@ -319,8 +331,6 @@ class Engine
 
         DLisp _dlisp;
         Gui _gui;
-
-        Function _logic_cb;
 
         void _updateStates()
         {

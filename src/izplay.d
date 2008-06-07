@@ -17,7 +17,7 @@ void main(char[][] argv)
     engine.addState( mstate );
 
     foreach(string filename; argv[1 .. $])
-        engine.dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);
+        engine.dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", false);
 
     engine.start ("menu");
 

@@ -499,6 +499,7 @@ template BindClass(string classname)
 
   static typeof(this) getInstance(Cell* cell)
   {
+    assert(isInstance(cell));
     return unbox!(typeof(this))(cell.instance);
   }
 
@@ -660,6 +661,10 @@ template BindMethod(string name,alias func)
       writefln("DLISP.BIND: method %s of class %s",toupper(name), toupper(typeof(this).stringof) );
       static Cell* methodWrapper(DLisp dlisp, Cell* cell)
       {
+        assert(cell !is null);
+        if(cell.cdr is null)
+            throw new ArgumentState("Method " ~ name ~ " called without object.",cell.pos);
+
         Cell* objectCell = cell.cdr.car;
         auto instance = getInstance(dlisp.eval(objectCell));
 

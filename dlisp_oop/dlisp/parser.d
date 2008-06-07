@@ -206,16 +206,25 @@ public template Parser() {
       return parseEvalPrint(new MemoryStream(source), silent);
     }
     
-    Cell* parseEvalPrint(Stream stream, bool silent = false) {
-      Cell* cell = null;
-      while (!stream.eof) {
-        cell = this.parse(stream);
-        // writefln(cellToString(cell));
-        cell = this.eval(cell);
-        if (!silent) {
-          writefln(cellToString(cell));
+    Cell* parseEvalPrint(Stream stream, bool silent = false, bool dotraceback = true) {
+      scope(failure) {
+        if( dotraceback ) {
+            foreach(int i, Cell* tracedCell; traceback) {
+              writefln("FR #%d %s",i,cellToString(tracedCell));
+            }
+            traceback.length = 0;
         }
       }
+      Cell* cell = null;
+        while (!stream.eof) {
+            cell = this.parse(stream);
+            // writefln(cellToString(cell));
+            cell = this.eval(cell);
+            if (!silent) {
+            writefln(cellToString(cell));
+            }
+        }
+      
       return cell;
     }
     
