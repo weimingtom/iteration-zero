@@ -48,6 +48,7 @@ PredefFunc toDelegate(PredefFuncPtr fn)
 
 public class Environment {
   private Cell*[char[]] _globals;
+  private bool[char[]] _generics;
   private Cell*[char[]][] _restore;
   private char[][][] _remove;
   
@@ -76,7 +77,7 @@ public class Environment {
     void bindValue(char[] name, char[]* pointer) {
       this[name] = newBoundStr(pointer);
     }
-    
+
     void clonePredef(char[] name, char[] newname) {
       this[newname] = this[name.toupper()];
     }
@@ -94,7 +95,11 @@ public class Environment {
     }
         
     bool isBound(char[] key) {
-      return (key in _globals) != null;
+      if( (key in _globals) != null )
+        return true;
+      if( isGeneric(key) )
+        return true;
+      return false;
     }
     
     void unbind(char[] key) {
@@ -118,9 +123,19 @@ public class Environment {
       _globals[key] = value;
     }
 
+    void addGeneric(char[] key)
+    {
+        _generics[key] = true;
+    }
+
+    bool isGeneric(char[] key)
+    {
+        return (key in _generics) !is null;
+    }
+
     bool isLocal(string key)
     {
-//         writefln("FIXME");
+        // FIXME:
         return true;
     }
 
