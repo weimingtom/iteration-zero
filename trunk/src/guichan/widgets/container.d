@@ -112,6 +112,7 @@ class Container : BasicContainer
 
     mixin BindClass!("Container");
     mixin BindMethods!(add,remove);
+    mixin BindMethods!(setOpaque,isOpaque);
 
   protected:
     bool mOpaque;

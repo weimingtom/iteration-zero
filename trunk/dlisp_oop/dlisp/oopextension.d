@@ -52,8 +52,9 @@ public {
 
     Cell* getAttribute(Cell* obj, string name)
     {
-//         writefln( "get-attr: ",name);
-//         writefln( "obj: ",obj.table.keys);
+//         writefln( ">>get-attr: ",name);
+//         writefln( "  obj: ",obj.table.keys);
+//         scope(exit) writefln("<<get-attr: ",name);
         while( obj !is null && obj.cellType == CellType.ctOBJECT )
         {
             if( (name in obj.table) !is null )

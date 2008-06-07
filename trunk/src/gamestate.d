@@ -3,8 +3,12 @@ module gamestate;
 import guichan.event;
 import guichan.key;
 
+import dlisp.bind;
+
 abstract class GameState
 {
+    mixin BindClass!("GameState");
+    
     string name();
     void start() {}
     void stop() {}

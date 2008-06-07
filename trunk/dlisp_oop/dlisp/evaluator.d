@@ -108,6 +108,10 @@ public template Evaluator() {
       } else {
         func = eval(cell.car);
       }
+
+      if( func is null )
+        throw new ErrorState("Not an executable function: " ~ cellToString(cell.car),cell.pos);
+
       char[] name = cell.car.name;
       switch (func.cellType) {
         case CellType.ctFUNC:
@@ -191,6 +195,7 @@ public template Evaluator() {
             while (func) {
               cell = eval(func.car);
               if (ismacro) {
+//                 writefln("MACROFORMS: ",cellToString(cell));
                 macroforms ~= cell;
               }
               func = func.cdr;
