@@ -47,7 +47,7 @@
 
 module guichan.font;
 
-import guichan.graphics;
+import guichan.iwidget;
 private import dlisp.bind;
 
     abstract class Font
@@ -107,6 +107,6 @@ private import dlisp.bind;
          * @param x The x coordinate where to draw the string.
          * @param y The y coordinate where to draw the string.
          */
-        abstract void drawString(Graphics graphics, dstring text, int x, int y);
+        abstract void drawString(IGraphics graphics, dstring text, int x, int y);
 
 }

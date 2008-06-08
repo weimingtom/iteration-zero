@@ -52,13 +52,13 @@ import guichan.color;
 import guichan.exception;
 import guichan.font;
 import guichan.image;
-
+import guichan.iwidget;
 enum Alignment
 {
   LEFT,CENTER,RIGHT
 }
 
-class Graphics
+class Graphics : IGraphics
 {
 //     /**
 //       * Alignments for text drawing.

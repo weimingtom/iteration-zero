@@ -53,7 +53,7 @@ import guichan.key;
 import guichan.widget;
 import guichan.graphics;
 import guichan.input;
-import guichan.focushandler;
+// import guichan.focushandler;
 import guichan.exception;
 import guichan.rectangle;
 
@@ -352,7 +352,7 @@ public:
 //     virtual void removeGlobalKeyListener(KeyListener* keyListener);
 
 
-    mixin BindMethods!(getTop);
+    mixin BindMethods!(getTop,setTabbingEnabled,isTabbingEnabled,focusNone);
 
 protected:
     /**
@@ -626,7 +626,7 @@ protected:
 
         if (mFocusHandler.getDraggedWidget() !is null)
         {
-            distributeMouseEvent(mFocusHandler.getDraggedWidget(),
+            distributeMouseEvent(cast(Widget)mFocusHandler.getDraggedWidget(),
                                  MouseEvent.DRAGGED,
                                  mLastMouseDragButton,
                                  mouseInput.getX(),
@@ -655,7 +655,7 @@ protected:
 
         if (mFocusHandler.getDraggedWidget() !is null)
         {
-            sourceWidget = mFocusHandler.getDraggedWidget();
+            sourceWidget = cast(Widget)mFocusHandler.getDraggedWidget();
         }
 
         int sourceWidgetX, sourceWidgetY;
@@ -706,7 +706,7 @@ protected:
 
         if (mFocusHandler.getDraggedWidget() !is null)
         {
-            sourceWidget = mFocusHandler.getDraggedWidget();
+            sourceWidget = cast(Widget)mFocusHandler.getDraggedWidget();
         }
 
         int sourceWidgetX, sourceWidgetY;
@@ -731,7 +731,7 @@ protected:
 
         if (mFocusHandler.getDraggedWidget() !is null)
         {
-            sourceWidget = mFocusHandler.getDraggedWidget();
+            sourceWidget = cast(Widget)mFocusHandler.getDraggedWidget();
         }
 
         int sourceWidgetX, sourceWidgetY;
@@ -761,7 +761,7 @@ protected:
                 mFocusHandler.setLastWidgetPressed(null);
             }
             
-            sourceWidget = mFocusHandler.getDraggedWidget();
+            sourceWidget = cast(Widget)mFocusHandler.getDraggedWidget();
         }
 
         int sourceWidgetX, sourceWidgetY;
@@ -1186,7 +1186,7 @@ protected:
         if (mFocusHandler.getModalMouseInputFocused() !is null
             && !widget.isModalMouseInputFocused())
         {
-            return mFocusHandler.getModalMouseInputFocused();
+            return cast(Widget)mFocusHandler.getModalMouseInputFocused();
         }
 
         return widget;
@@ -1200,12 +1200,12 @@ protected:
       */
     Widget getKeyEventSource()
     {
-        Widget widget = mFocusHandler.getFocused;
+        Widget widget = cast(Widget)mFocusHandler.getFocused;
 
         while (widget._getInternalFocusHandler !is null
                && widget._getInternalFocusHandler.getFocused !is null)
         {
-            widget = widget._getInternalFocusHandler.getFocused;
+            widget = cast(Widget)widget._getInternalFocusHandler.getFocused;
         }
 
         return widget;
