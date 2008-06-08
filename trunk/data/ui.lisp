@@ -44,7 +44,7 @@
             (set-position widget x starty)
             (set-size widget maxw maxh)
             (add box widget)
-            (set x (+ x maxh 5)))
+            (set x (+ x maxw 5)))
         box))
 
 (defun show-widget (w)
@@ -81,7 +81,7 @@
             (on-mouse-clicked button onclick)
             button))
 
-(defun create-menu-button (option box w)
+(defun create-menu-button (option box w &optional (h 30))
     (if (not (first option))
         (make-instance C/CONTAINER)
         (create-button (first option) w 30
@@ -101,6 +101,25 @@
             (set-height box (+ (* (length options) 35) 10)))
         (vpack-widgets box 0 0 (map make-button options))
         box))
+
+(defun create-toolbar (options)
+    (let ((box (make-instance C/CONTAINER)))
+        (let ((x 0)
+            (make-button
+                (lambda (o) (create-menu-button o box 20 20 )))
+            (align-button (lambda (button)
+                    (set-font button *ui-text-font*)
+                    (set-size button 
+                        (+ 10 (get-width *ui-text-font* (get-caption button)))
+                        (+ 5  (get-height *ui-text-font*)))
+                    button)))
+        (set-id box "toolbar")
+        (set-opaque box nil)
+        (let ((buttons (map align-button (map make-button options))))
+            (set-size box (+ (* (length options) (+ 5 (funcall max (map get-width buttons) 10)))) 20)
+            (hpack-widgets box 0 0 buttons))
+        box)))
+    
 
 (defun make-info-window (text)
     (let ((win (make-instance C/WINDOW))

@@ -6,6 +6,10 @@
       ("Demo Level02" (load-and-start-level "data/test/level02.dl"))
       ("Quit"         (stop *engine*))))
 
+(defvar *toolbar*
+    (("quit" (stop *engine*))
+     ("menu" (start *engine* "menu"))))
+
 (defmacro menu-option (item options) `(eval (find ,item ,options)))
 (defvar *new-party-menu-left*
     '(("Race"  (menu-option 'race *character-creation-steps*))
@@ -98,9 +102,16 @@
 
 (on-start (get-state *engine* "level-state")
     (lambda ()
-        (show-widget (make-party-portraits-widget *party*))))
+        (let ((portraits (make-party-portraits-widget *party*)))
+            (show-widget portraits)
+            (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
-(show-quit-button)
+;;(show-quit-button)
+(show-widget
+    (let ((tb (create-toolbar *toolbar*)))
+        (set-position tb 5 (- (y-resolution *engine*) 5 (get-height tb)))
+        tb))
+
 (start *engine* "menu")
 
 
