@@ -9,7 +9,14 @@ class GameState
 {
     mixin BindClass!("C/Game-State");
     
-    abstract string name();
+    this(string name)
+    {
+        _name = name;
+    }
+
+    string name() { return _name; }
+    
+
     void start() {}
     void stop() {}
     void logic() {}
@@ -27,4 +34,9 @@ class GameState
     void mouseWheelMovedDown(MouseEvent mouseEvent) { }
     void mouseMoved(MouseEvent mouseEvent) { }
     void mouseDragged(MouseEvent mouseEvent) { }
+
+    mixin BindConstructor!(GameState function(string));
+
+    private:
+        string _name;
 }
