@@ -21,7 +21,7 @@ All bound methods are listed here
  * GET-CURRENT-STATE
  * GET-STATE
 
-== C/Widget ==
+== C/WIDGET ==
  * SET-FONT
  * ON-FOCUS-LOST
  * GET-MOUSE-WHEEL-MOVED-UP-HANDLER
@@ -90,7 +90,7 @@ All bound methods are listed here
  * MAKE-INSTANCE
  * SET-PADDING
 
-== BasicContainer ==
+== C/BASIC-CONTAINER ==
  * FOCUS-PREVIOUS
  * IS-INSTANCE
  * MOVE-TO-BOTTOM
@@ -100,7 +100,7 @@ All bound methods are listed here
  * CAST
  * MAKE-INSTANCE
 
-== C/Container ==
+== C/CONTAINER ==
  * IS-OPAQUE
  * IS-INSTANCE
  * ADD
@@ -111,7 +111,7 @@ All bound methods are listed here
  * MAKE-INSTANCE
  * CLEAR
 
-== C/Button ==
+== C/BUTTON ==
  * SET-CAPTION
  * GET-CAPTION
  * IS-INSTANCE
@@ -134,7 +134,7 @@ All bound methods are listed here
  * CAST
  * MAKE-INSTANCE
 
-== Gui ==
+== C/GUI ==
  * IS-INSTANCE
  * IS-TABBING-ENABLED
  * GET-TOP
@@ -143,7 +143,7 @@ All bound methods are listed here
  * FOCUS-NONE
  * MAKE-INSTANCE
 
-== C/Event ==
+== C/EVENT ==
  * IS-INSTANCE
  * GET-SOURCE
  * CAST
@@ -156,7 +156,7 @@ All bound methods are listed here
  * GET-HEIGHT
  * MAKE-INSTANCE
 
-== C/Game-State ==
+== C/GAME-STATE ==
  * GET-LOGIC-HANDLER
  * GET-MOUSE-WHEEL-MOVED-UP-HANDLER
  * ON-MOUSE-WHEEL-MOVED-DOWN
@@ -189,7 +189,7 @@ All bound methods are listed here
  * ON-MOUSE-ENTERED
  * GET-MOUSE-WHEEL-MOVED-DOWN-HANDLER
 
-== LEVEL-STATE ==
+== C/LEVEL-STATE ==
  * IS-INSTANCE
  * LOAD
  * CAST
