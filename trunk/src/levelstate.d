@@ -58,7 +58,7 @@ class LevelState : GameState
 
         engine.renderPipeline.setPipeline(["level"]);
 
-        party.bindInstance(dlisp.environment,"*party*");
+        party = Party.getInstance(dlisp.environment["*PARTY*"]);
         GObject.bindClass(dlisp.environment);
         Character.bindClass(dlisp.environment);
 
@@ -69,45 +69,27 @@ class LevelState : GameState
 //         dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
 //         dlisp.environment.popScope();
         party.load("data/test/party.sf");
-        writefln( "char01\n", party.get(1).toString() );
-
-        assert( party.getSize() > 0 );
         active = party.getActive();
-
-        party.placeInLevel( view.level, 5,5);
-
-        auto topWidget = cast(Container)engine.gui.getTop;
-        topWidget.setId( "top" );
-        auto window = new Window("Party"d);
-        window.setPosition (100, 100);
-        window.setSize (300, 300);
-        int y = 5;
-        foreach(Character c; party)
-        {
-            auto label = new Label(toUTF32(c.getName()));
-            window.add(label, 5, y);
-            y += 20;
-        }
-
-        window.setId( "window" );
-
-        topWidget.add( window );
+        party.placeInLevel( view.level, 20,20);
 
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        super.start();
     }
 
     void stop()
     {
+        super.stop();
     }
 
     void logic()
     {
         turnManager.logic();
-        view.trackObject (turnManager.getCurrent());
         active = party.getActive();
+        view.trackObject (active);
 
         int x,y;
         int clicked = SDL_GetMouseState(&x,&y) & SDL_BUTTON(1);
@@ -116,6 +98,7 @@ class LevelState : GameState
         view.sceneMode();
         view.drawHighlight(x,y);
 
+        super.logic();
     }
 
     void mouseClicked(MouseEvent mouseEvent)
@@ -130,17 +113,20 @@ class LevelState : GameState
             if( !active.isBusy )
                 active.startMovingTo(x,y);
         }
+        super.mouseClicked(mouseEvent);
     }
 
     void mouseWheelMovedUp(MouseEvent mouseEvent)
     {
         view.zoom += 0.1;
+        super.mouseWheelMovedUp(mouseEvent);
     }
 
     void mouseWheelMovedDown(MouseEvent mouseEvent)
     {
         if( view.zoom > 0.21 )
                  view.zoom -= 0.2;
+        super.mouseWheelMovedDown(mouseEvent);
     }
 
     mixin BindMethods!(load);

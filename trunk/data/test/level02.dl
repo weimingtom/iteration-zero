@@ -1,6 +1,6 @@
 (load-dataset *level* "data/test/micro_dataset.dl")
 
-(init *level* 10 10)
+(init *level* 50 50)
 (finalize *level*)
 
 (defun place-tile (x y name)
@@ -20,11 +20,11 @@
 
 ;; (place-object-by-name *level* 5 5 "blade")
 
-(place-tile 0 0 "wall")
+(place-tile 10 10 "wall")
 
 
-(place-wall-x 0 0 10 "wall")
-(place-wall-x 0 9 10 "wall")
-(place-wall-y 0 0 10 "wall")
-(place-wall-y 9 0 10 "wall")
+(place-wall-x 0 0 50 "wall")
+(place-wall-x 0 49 50 "wall")
+(place-wall-y 0 0 50 "wall")
+(place-wall-y 49 0 50 "wall")
 

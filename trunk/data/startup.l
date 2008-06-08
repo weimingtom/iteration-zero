@@ -42,11 +42,19 @@
         (on-stop  menu-state  (lambda () (hide-widget main-menu)))
         menu-state))
 
+(defun character-selected (chara)
+    (progn 
+        (print "Character selected " (get-name chara) *ln*))
+        (let ((n (index (get-name chara) (map get-name (get-members *party*)))))
+            (when n
+                (print "Index is: " n *ln*)
+                (set-active *party* n))))
+
 (defun make-character-portrait (character)
     (let ((button (make-instance C/BUTTON)))
         (set-size button 100 100)
         (set-caption button (get-name character))
-        (print (get-name character) *ln*)
+        (on-mouse-clicked button (lambda (event) (character-selected character)))
         button))
 
 (defun make-range (a &optional (b nil))
@@ -56,16 +64,16 @@
             (cons a (make-range (inc a) b)))))
 
 (defun get-members (party)
-    (map (lambda (i) (print "IIIIIIIIII " i *ln*) (get party i)) (make-range 1 (1+ (get-size party)))))
+    (map (lambda (i) (get party i)) (make-range 1 (1+ (get-size party)))))
 
 (defun make-party-portraits-widget (party)
     (let ((box (make-instance C/CONTAINER))
           (party-members (get-members party))
           (portraits ()))
-        (print "party-members " party-members *ln*)
+        (print "party-members " (map get-name party-members) *ln*)
         (set portraits (map make-character-portrait party-members))
         (hpack-widgets box 0 0 portraits)
-        (set-size box 200 100)
+        (set-size box (- (x-resolution *engine*) 200) 100)
         (set-position box 20 20)
         (set-opaque box nil)
         box))
@@ -92,6 +100,11 @@
     (let ((new-party-state (make-instance C/GAME-STATE "new-party-state")))
         (on-start new-party-state start-party-creation)
          new-party-state))
+
+(on-start (get-state *engine* "level-state")
+    (lambda ()
+        (show-widget (make-party-portraits-widget *party*))))
+
 
 (show-quit-button)
 (start *engine* "menu")
