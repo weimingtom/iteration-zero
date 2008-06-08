@@ -844,6 +844,9 @@ class Widget : IWidget, MouseListener, KeyListener, FocusListener, WidgetListene
     mixin BindMethods!(getX,getY,getWidth,getHeight);
     mixin BindMethods!(setX,setY,setWidth,setHeight);
     mixin BindMethods!(setPosition,setSize);
+    mixin BindMethods!(setFont,getFont);
+    mixin BindMethods!(isEnabled,setEnabled,requestModalFocus,isModalFocused);
+
 
     mixin BindHandlers!(widgetResized,widgetMoved,widgetHidden,widgetShown);
     mixin BindHandlers!(keyPressed,keyReleased);

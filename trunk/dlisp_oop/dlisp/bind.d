@@ -53,13 +53,14 @@ module dlisp.bind;
 public {
   import dlisp.dlisp;
   import dlisp.evalhelpers : evalArgs;
-  import std.string;
-  import std.utf;
+  import std.utf : toUTF32, toUTF8;
   import std.stdio : writefln;
+  import std.string : toupper;
 
   import std.boxer;
   import std.traits : ReturnType, ParameterTypeTuple;
 }
+
 
 class Function
 {
@@ -284,6 +285,11 @@ template BoxArgument(int n, T : Function)
 }
 
 template BoxArgument(int n, T : int)
+{
+  const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
+}
+
+template BoxArgument(int n, T : uint)
 {
   const BoxArgument = CheckArgument!(n,"isInt") ~ AddArgument!("box(" ~ CArg!(n) ~ ".intValue)");
 }

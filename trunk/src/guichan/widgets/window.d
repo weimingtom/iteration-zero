@@ -51,7 +51,9 @@ private import
   guichan.all,
   guichan.widgets.container;
 
-class Window : Container, MouseListener
+private import dlisp.bind;
+
+class Window : Container
 {
     this()
     {
@@ -61,7 +63,6 @@ class Window : Container, MouseListener
         setPadding(2);
         setTitleBarHeight(26);
         setAlignment(Alignment.CENTER);
-        addMouseListener(this);
         setMovable(true);
         setOpaque(true);
     }
@@ -75,7 +76,6 @@ class Window : Container, MouseListener
         setPadding(2);
         setTitleBarHeight(26);
         setAlignment(Alignment.CENTER);
-        addMouseListener(this);
         setMovable(true);
         setOpaque(true);
     }
@@ -271,13 +271,8 @@ class Window : Container, MouseListener
         setSize(w + 2* getPadding(), h + getPadding() + getTitleBarHeight());
     }
 
-    void mouseEntered(MouseEvent mouseEvent){}
-    void mouseExited(MouseEvent mouseEvent){}
-    void mouseClicked(MouseEvent mouseEvent){}
-    void mouseWheelMovedUp(MouseEvent mouseEvent){}
-    void mouseWheelMovedDown(MouseEvent mouseEvent){}
-    void mouseMoved(MouseEvent mouseEvent){}
-
+    mixin BindClass!("C/WINDOW");
+    mixin BindMethods!(isMovable,setMovable,getPadding,setPadding,getCaption,setCaption);
 
 protected:
     /**

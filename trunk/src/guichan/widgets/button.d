@@ -60,7 +60,7 @@ private import dlisp.bind;
 class Button : Widget
 {
   public:
-    mixin BindClass!("Button");
+    mixin BindClass!("C/Button");
 
     /**
       *Constructor.

@@ -110,7 +110,7 @@ class Container : BasicContainer
         return super.findWidgetById(id);
     }
 
-    mixin BindClass!("Container");
+    mixin BindClass!("C/Container");
     mixin BindMethods!(add,remove);
     mixin BindMethods!(setOpaque,isOpaque);
 

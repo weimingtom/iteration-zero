@@ -8,6 +8,8 @@ import guichan.graphics;
 
 import RealFont = font;
 
+private import dlisp.bind;
+
 class OpenGLFont : guichan.font.Font
 {
   this(string filename, int size)
@@ -34,6 +36,9 @@ class OpenGLFont : guichan.font.Font
       float[2] posi = [cast(float)x,cast(float)y];
       _realFont.draw([text],posi,color);
   }
+
+  mixin BindClass!("C/GL-FONT");
+  mixin BindConstructor!(OpenGLFont function(string,int));
 
   private:
     RealFont.Font _realFont;
