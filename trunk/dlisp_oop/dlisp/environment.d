@@ -97,8 +97,6 @@ public class Environment {
     bool isBound(char[] key) {
       if( (key in _globals) != null )
         return true;
-      if( isGeneric(key) )
-        return true;
       return false;
     }
     
