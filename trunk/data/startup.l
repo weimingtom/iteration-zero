@@ -54,8 +54,7 @@
     (let ((button (make-instance C/BUTTON)))
         (set-size button 100 100)
         (set-caption button (get-name character))
-        (on-mouse-clicked button (lambda (event) (character-selected character)))
-        button))
+        (on-mouse-clicked button (lambda (event) (character-selected character)))))
 
 (defun make-range (start &optional (stop nil))
     (if (eq start nil)
@@ -75,8 +74,7 @@
         (hpack-widgets box 0 0 portraits)
         (set-size box (- (x-resolution *engine*) 200) 100)
         (set-position box 20 20)
-        (set-opaque box nil)
-        box))
+        (set-opaque box nil)))
 
 (defun make-create-party-interface ()
     (let ((left-menu (create-menu *new-party-menu-left* "new-party-menu-left" 200))
@@ -109,8 +107,8 @@
 ;;(show-quit-button)
 (show-widget
     (let ((tb (create-toolbar *toolbar*)))
-        (set-position tb 5 (- (y-resolution *engine*) 5 (get-height tb)))
-        tb))
+        (set-position tb 
+            5 (- (y-resolution *engine*) 5 (get-height tb)))))
 
 (start *engine* "menu")
 
