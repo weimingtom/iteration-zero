@@ -53,7 +53,6 @@ import guichan.widget;
 import guichan.event;
 import guichan.rectangle;
 import guichan.exception;
-import guichan.focushandler;
 import guichan.graphics;
 import guichan.mouseinput;
 import guichan.util;
@@ -221,6 +220,7 @@ class BasicContainer : public Widget
     void logic()
     {
         logicChildren();
+        super.logic();
     }
 
     void _setFocusHandler(FocusHandler focusHandler)
@@ -389,6 +389,7 @@ class BasicContainer : public Widget
     }
 
     mixin BindClass!("BasicContainer");
+    mixin BindMethods!(getWidgetAt,focusNext,focusPrevious,moveToBottom,moveToTop);
 
   protected:
     Widget[] mWidgets;

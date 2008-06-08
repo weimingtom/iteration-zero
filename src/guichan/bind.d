@@ -15,6 +15,7 @@ void bindGuichan(Environment env)
     Container.bindClass(env);
     Button.bindClass(env);
     Label.bindClass(env);
+    CheckBox.bindClass(env);
 
     Gui.bindClass(env);
     Event.bindClass(env);

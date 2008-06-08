@@ -57,7 +57,7 @@
         (on-mouse-clicked button (lambda (event) (character-selected character)))))
 
 (defun make-range (start &optional (stop nil))
-    (if (eq start nil)
+    (if (eq stop nil)
         (make-range 0 start)
         (if (>= start stop) ()
             (cons start (make-range (inc start) stop)))))

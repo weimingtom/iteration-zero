@@ -45,6 +45,7 @@ module guichan.widgets.checkbox;
 
 import guichan.all;
 
+private import dlisp.bind;
 
 /**
   * An implementation of a check box where a user can select or deselect
@@ -64,10 +65,7 @@ public:
     this()
     {
         setSelected(false);
-
         setFocusable(true);
-        addMouseListener(this);
-        addKeyListener(this);
     }
 
     /**
@@ -83,9 +81,6 @@ public:
         setSelected(selected);
 
         setFocusable(true);
-        addMouseListener(this);
-        addKeyListener(this);
-
         adjustSize();
     }
 
@@ -174,6 +169,7 @@ public:
             toggleSelected();
             keyEvent.consume();
         }
+        super.keyPressed(keyEvent);
     }
 
 
@@ -185,13 +181,17 @@ public:
         {
             toggleSelected();
         }
+        super.mouseClicked(mouseEvent);
     }
 
     void mouseDragged(MouseEvent mouseEvent)
     {
         mouseEvent.consume();
+        super.mouseDragged(mouseEvent);
     }
 
+    mixin BindClass!("C/CHECK-BOX");
+    mixin BindMethods!(setSelected,isSelected,getCaption,setCaption);
 
 protected:
     /**

@@ -111,7 +111,7 @@ class Container : BasicContainer
     }
 
     mixin BindClass!("C/Container");
-    mixin BindMethods!(add,remove);
+    mixin BindMethods!(add,remove,clear,findWidgetById);
     mixin BindMethods!(setOpaque,isOpaque);
 
   protected:
