@@ -53,11 +53,11 @@
         (on-mouse-clicked button (lambda (event) (character-selected character)))
         button))
 
-(defun make-range (a &optional (b nil))
-    (if (eq b nil)
-        (make-range 0 a)
-        (if (>= a b) ()
-            (cons a (make-range (inc a) b)))))
+(defun make-range (start &optional (stop nil))
+    (if (eq start nil)
+        (make-range 0 start)
+        (if (>= start stop) ()
+            (cons start (make-range (inc start) stop)))))
 
 (defun get-members (party)
     (map (lambda (i) (get party i)) (make-range 1 (1+ (get-size party)))))
@@ -99,7 +99,6 @@
 (on-start (get-state *engine* "level-state")
     (lambda ()
         (show-widget (make-party-portraits-widget *party*))))
-
 
 (show-quit-button)
 (start *engine* "menu")

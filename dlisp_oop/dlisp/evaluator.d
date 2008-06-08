@@ -75,11 +75,16 @@ public template Evaluator() {
 
       if (cell.cellType == CellType.ctSYM) {
         if( environment.isGeneric(cell.name) ) {
-            Cell* temp = environment["GENCALL"];
-            Cell* rval = eval(newList(temp,cell));
-            //  writefln("GENERIC: ", cell.name," ==> ", cellToString(newList(temp,cell))," ==> ", cellToString(rval));
-            return rval;
-        } else if (environment.isBound(cell.name)) {
+            if( !(environment.isBound(cell.name) && !isFunc(environment[cell.name])) )
+            {
+                Cell* temp = environment["GENCALL"];
+                Cell* rval = eval(newList(temp,cell));
+                //  writefln("GENERIC: ", cell.name," ==> ", cellToString(newList(temp,cell))," ==> ", cellToString(rval));
+                return rval;
+            }
+        }
+
+        if (environment.isBound(cell.name)) {
           Cell* temp = environment[cell.name];
           if (!leavebound && isBoundValue(temp)) {
             return eval(temp);
