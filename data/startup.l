@@ -1,71 +1,24 @@
-(defvar *gui* (get-gui *engine*))
-(defvar *top* (cast container (get-top *gui*)))
+(load "data/ui.lisp" t)
 
-(defun pack-widgets-vertically (box starty startx widgets)
-    (let ((maxw (funcall max (collect (gencall get-width) widgets)))
-          (maxh (funcall max (collect (gencall get-height) widgets)))
-          (y starty))
-        (dolist (widget widgets)
-            (set-position widget startx y)
-            (set-size widget maxw maxh)
-            (add box widget)
-            (incput y (+ maxh 5)))
-        box))
+(defvar *main-menu*
+    '(("New Party"    (start *engine* "new-party-state"))
+      ("Demo Level01" (load-and-start-level "data/test/level01.dl"))
+      ("Demo Level02" (load-and-start-level "data/test/level02.dl"))
+      ("Quit"         (stop *engine*))))
 
-(defun show-widget (w)
-    (progn (add *top* w) w))
+(defmacro menu-option (item options) `(eval (find ,item ,options)))
+(defvar *new-party-menu-left*
+    '(("Race"  (menu-option 'race *character-creation-steps*))
+      ("Class" (menu-option 'race *character-creation-steps*))
+      ("Name"  (menu-option 'race *character-creation-steps*))
+      (0       (not-implemented))
+      ("Add"   (not-implemented))
+      ("Back"  (not-implemented))))
 
-(defun show-quit-button ()
-    (show-widget
-        (let ((quit-button (create-button "quit" 100 40 (lambda (ev) (stop *engine*)))))
-            (set-position quit-button (- (x-resolution *engine*) 105) 5)
-            quit-button)))
+(defvar *character-creation-steps*
+    '((race (show-race-selection))))
 
-(defun get-widget-root (widget)
-    (if (get-parent widget)
-        (if (get-parent (get-parent widget))
-            (get-widget-root (get-parent widget))
-            widget)
-        nil))
 
-(defun hide-widget (widget)
-    (let ((root (get-widget-root widget)))
-        (when root 
-            ;;(print "ROOT:" root  (get-id root) *ln*)
-            (remove *top* root))))
-
-(defun make-close-handler ()
-    (lambda (event)
-        (hide-widget (get-source event))))
-
-(defun create-button (name w h onclick)
-    (let ((b (make-instance button)))
-            (set-position b 0 0)
-            (set-size b w h)
-            (set-caption b name)
-            (on-mouse-clicked b onclick)
-            b))
-
-(defun create-menu-button (name fun c w)
-    (create-button name w 30
-        (lambda (event)
-            (hide-widget (get-source event))
-            (print FUN *ln*)
-            (fun))))
-
-(defun create-menu (options)
-    (let ((box (make-instance container))
-          (x4 (/ (x-resolution *engine*) 4))
-          (y4 (/ (y-resolution *engine*) 4))
-          (y 0)
-          (make-button
-            (lambda (option) (create-menu-button (first option) (eval (second option)) box (* 2 x4)))))
-        (set-id box "main-menu")
-        (set-size box (* 2 x4) (* 2 y4))
-        (set-position box x4 y4)
-        (set-opaque box nil)
-        (pack-widgets-vertically box 0 0 (map make-button options))
-        box))
 
 (defun load-and-start-level (filename)
     (progn
@@ -76,16 +29,64 @@
     `(lambda (&rest args)
         (funcall ,fun (cons ,a args))))
 
-(add-state *engine*
-    (let ((menu-state (make-instance C/GAME-STATE "menu")))
-        menu-state))
-(start *engine* "menu")
+(defun make-main-menu ()
+    (center-on-screen
+        (create-menu *main-menu* "main-menu"
+            (/ (x-resolution *engine*) 2)
+            (/ (y-resolution *engine*) 2))))
 
-(show-widget
-    (create-menu 
-        (list ("Level02" (bind1st load-and-start-level "data/test/level02.dl"))
-              ("Level01" (bind1st load-and-start-level "data/test/level01.dl")))))
+(add-state *engine*
+    (let ((menu-state (make-instance C/GAME-STATE "menu"))
+          (main-menu (make-main-menu)))
+        (on-start menu-state (lambda () (show-widget main-menu)))
+        (on-stop  menu-state  (lambda () (hide-widget main-menu)))
+        menu-state))
+
+(defun make-character-portrait (character)
+    (let ((button (make-instance C/BUTTON)))
+        (set-size button 100 100)
+        (set-caption button (get-name character))
+        (print (get-name character) *ln*)
+        button))
+
+(defun make-range (a &optional (b nil))
+    (if (eq b nil)
+        (make-range 0 a)
+        (if (>= a b) ()
+            (cons a (make-range (inc a) b)))))
+
+(defun get-members (party)
+    (map (lambda (i) (print "IIIIIIIIII " i *ln*) (get party i)) (make-range 1 (1+ (get-size party)))))
+
+(defun make-party-portraits-widget (party)
+    (let ((box (make-instance C/CONTAINER))
+          (party-members (get-members party))
+          (portraits ()))
+        (print "party-members " party-members *ln*)
+        (set portraits (map make-character-portrait party-members))
+        (hpack-widgets box 0 0 portraits)
+        (set-size box 200 100)
+        (set-position box 20 20)
+        (set-opaque box nil)
+        box))
+
+(defun make-create-party-interface ()
+    (let ((left-menu (create-menu *new-party-menu-left* "new-party-menu-left" 200))
+          (portraits ()))
+        (put *party* (make-instance C/PARTY))
+        (add *party* (make-instance C/CHARACTER "Some Punk"))
+        (set portraits (make-party-portraits-widget *party*))
+        (set-position left-menu 20 140)
+        (list left-menu portraits)))
+
+(defvar *party* (make-instance C/PARTY))
+
+(add-state *engine*
+    (let ((new-party-state (make-instance C/GAME-STATE "new-party-state")))
+        (on-start new-party-state (lambda () (map show-widget (make-create-party-interface))))
+        new-party-state))
 
 (show-quit-button)
+(start *engine* "menu")
 
 

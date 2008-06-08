@@ -147,7 +147,7 @@ public Environment addToEnvironment(Environment environment) {
 
   environment.bindPredef("do", &evalDo, "(DO <forms> ...); Infinitely execute <forms>s.");
   environment.bindPredef("dotimes", &evalDoTimes, "(DOTIMES (<sym> <count> [<result>]) <forms> ...); Execute <forms>s <count> times with <sym> set iteration count starting with 0. Returns last evaluated cell or optionally the valuated <result> form.");
-  environment.bindPredef("dorange", &evalDoRange, "(DOTIMES (<sym> <start> <end> [<result>]) <forms> ...); Execute <forms>s with <sym> set to <start> and step 1 down or up for each iteration until <end>. Returns last evaluated cell or optionally the valuated <result> form.");
+  environment.bindPredef("dorange", &evalDoRange, "(DORANGE (<sym> <start> <end> [<result>]) <forms> ...); Execute <forms>s with <sym> set to <start> and step 1 down or up for each iteration until <end>. Returns last evaluated cell or optionally the valuated <result> form.");
   environment.bindPredef("dolist", &evalDoList, "(DOLIST (<sym> <list> [<result>]) <forms> ...); Execute <forms>s <count> times with <sym> set each element of <list> in succession. Returns last evaluated cell or optionally the valuated <result> form.");
 
   return environment;

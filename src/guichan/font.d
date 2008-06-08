@@ -48,10 +48,12 @@
 module guichan.font;
 
 import guichan.graphics;
+private import dlisp.bind;
 
     abstract class Font
     {
     public:
+        mixin BindClass!("C/FONT");
 
         /**
          * Gets the width of a string. The width of a string is not necesserily

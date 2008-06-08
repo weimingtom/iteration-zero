@@ -13,7 +13,7 @@
   (- a 1))
 
 (defun find (needle haystack)
-  (car (member needle haystack)))
+  (cdr (assoc needle haystack)))
 
 (defun sublist (index count list)
     "(SUBLIST <index> <count> <list>); Copy list from <index> for <count> items."
@@ -98,14 +98,11 @@
         l
         (append (reverse (rest l)) (list (first l)))))
 
-(defun collect (fun l)
-    (if l 
-        (cons (funcall fun (list (first l))) (collect fun (rest l)))
-        nil))
+(set length elements)
 
-(defmacro call-method (name object &rest args)
-    `(let ((m (get-attr ,object ,name)))
-        (funcall m (cons ,object ,args))))
+;; (defmacro call-method (name object &rest args)
+;;     `(let ((m (get-attr ,object ,name)))
+;;         (funcall m (cons ,object ,args))))
 
 ;; (defun get-method (object name)
 ;;     (if (has-attr object name)

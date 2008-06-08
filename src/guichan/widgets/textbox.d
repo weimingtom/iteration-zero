@@ -46,12 +46,15 @@ module guichan.widgets.textbox;
 import guichan.all;
 import guichan.util;
 
+private import dlisp.bind;
+
 /**
   * An implementation of a text box where a user can enter text that contains of many lines.
   */
 class TextBox: Widget
 {
 public:
+    mixin BindClass!("C/TEXT-BOX");
     /**
       * Constructor.
       */
@@ -625,6 +628,8 @@ public:
     {
         mouseEvent.consume();
     }
+
+    mixin BindMethods!(setOpaque,isOpaque,getTextRow,setTextRow,getText,setText,addRow,isEditable,setEditable);
 
 protected:
     /**

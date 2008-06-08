@@ -48,6 +48,7 @@
 module guichan.widgets.label;
 
 private import guichan.all;
+private import dlisp.bind;
 
 class Label : Widget
 {
@@ -115,6 +116,9 @@ class Label : Widget
         setWidth(getFont().getWidth(getCaption()));
         setHeight(getFont().getHeight());
     }
+
+    mixin BindClass!("C/LABEL");
+    mixin BindMethods!(setCaption,getCaption);
 
   protected:
   /**
