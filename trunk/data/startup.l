@@ -13,7 +13,7 @@
       ("Name"  (menu-option 'race *character-creation-steps*))
       (0       (not-implemented))
       ("Add"   (not-implemented))
-      ("Back"  (not-implemented))))
+      ("Back"  (start *engine* "menu"))))
 
 (defvar *character-creation-steps*
     '((race (show-race-selection))))
@@ -73,18 +73,25 @@
 (defun make-create-party-interface ()
     (let ((left-menu (create-menu *new-party-menu-left* "new-party-menu-left" 200))
           (portraits ()))
-        (put *party* (make-instance C/PARTY))
-        (add *party* (make-instance C/CHARACTER "Some Punk"))
         (set portraits (make-party-portraits-widget *party*))
         (set-position left-menu 20 140)
         (list left-menu portraits)))
 
 (defvar *party* (make-instance C/PARTY))
 
+(defun start-party-creation ()
+    (progn
+        (put *party* (make-instance c/party))
+        (add *party* (make-instance c/character "some punk"))
+        (let ((party-widgets (make-create-party-interface)))
+            (map show-widget party-widgets)
+            (on-stop (get-state *engine* "new-party-state")
+                (lambda () (map hide-widget party-widgets))))))
+
 (add-state *engine*
     (let ((new-party-state (make-instance C/GAME-STATE "new-party-state")))
-        (on-start new-party-state (lambda () (map show-widget (make-create-party-interface))))
-        new-party-state))
+        (on-start new-party-state start-party-creation)
+         new-party-state))
 
 (show-quit-button)
 (start *engine* "menu")
