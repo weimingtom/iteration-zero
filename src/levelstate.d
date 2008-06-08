@@ -65,9 +65,6 @@ class LevelState : GameState
         view.level = new Level (filename);
         turnManager = new TurnManager(party,view.level);
 
-//         dlisp.environment.pushScope();
-//         dlisp.parseEvalPrint("(LOAD \"data/test/party.dl\" T)", true);//"
-//         dlisp.environment.popScope();
         party.load("data/test/party.sf");
         active = party.getActive();
         party.placeInLevel( view.level, 20,20);
@@ -82,6 +79,7 @@ class LevelState : GameState
 
     void stop()
     {
+        engine.renderPipeline.setPipeline([]);
         super.stop();
     }
 
