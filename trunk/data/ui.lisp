@@ -12,11 +12,10 @@
     (/ (- w inset) 2))
 
 (defun center-widget (widget w h)
-    (progn
-        (set-position widget
-            (/ (- w (get-width widget)) 2)
-            (/ (- h (get-height widget)) 2))
-        widget))
+    (set-position widget
+        (/ (- w (get-width widget)) 2)
+        (/ (- h (get-height widget)) 2))
+    widget)
 
 (defun center-on-screen (widget)
     (center-widget widget
@@ -49,7 +48,8 @@
         box))
 
 (defun show-widget (w)
-    (progn (add *top* w) w))
+    (add *top* w) 
+    w)
 
 (defun show-quit-button ()
     (show-widget

@@ -18,12 +18,9 @@
 (defvar *character-creation-steps*
     '((race (show-race-selection))))
 
-
-
 (defun load-and-start-level (filename)
-    (progn
-        (load (get-state *engine* "level-state") filename)
-        (start *engine* "level-state")))
+    (load (get-state *engine* "level-state") filename)
+    (start *engine* "level-state"))
 
 (defmacro bind1st (fun a)
     `(lambda (&rest args)
@@ -43,12 +40,11 @@
         menu-state))
 
 (defun character-selected (chara)
-    (progn 
-        (print "Character selected " (get-name chara) *ln*))
-        (let ((n (index chara  (get-members *party*))))
-            (when n
-                (print "Index is: " n *ln*)
-                (set-active *party* n))))
+    (print "Character selected " (get-name chara) *ln*)
+    (let ((n (index chara  (get-members *party*))))
+        (when n
+            (print "Index is: " n *ln*)
+            (set-active *party* n))))
 
 (defun make-character-portrait (character)
     (let ((button (make-instance C/BUTTON)))
@@ -88,13 +84,12 @@
 (defvar *party* (make-instance C/PARTY))
 
 (defun start-party-creation ()
-    (progn
-        (put *party* (make-instance c/party))
-        (add *party* (make-instance c/character "some punk"))
-        (let ((party-widgets (make-create-party-interface)))
-            (map show-widget party-widgets)
-            (on-stop (get-state *engine* "new-party-state")
-                (lambda () (map hide-widget party-widgets))))))
+    (put *party* (make-instance c/party))
+    (add *party* (make-instance c/character "some punk"))
+    (let ((party-widgets (make-create-party-interface)))
+        (map show-widget party-widgets)
+        (on-stop (get-state *engine* "new-party-state")
+            (lambda () (map hide-widget party-widgets)))))
 
 (add-state *engine*
     (let ((new-party-state (make-instance C/GAME-STATE "new-party-state")))

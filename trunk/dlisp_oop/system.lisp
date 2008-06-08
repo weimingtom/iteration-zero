@@ -32,10 +32,9 @@
     (write *std-out* object)))
 
 (defun println (&rest objects)
-  (progn
     (dolist (object objects)
       (write *std-out* (join (tostring object) *ln*)))
-    (first (last objects))))
+    (first (last objects)))
 
 (defmacro inc (a &optional (d 1))
   `(+ ,a ,d))
