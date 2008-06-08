@@ -1,6 +1,7 @@
 module actor;
 
 import gobject;
+import dlisp.bind;
 
 class Actor : GObject
 {
@@ -50,4 +51,6 @@ public:
         _does_turn = false;
         _skip();
     }
+
+    mixin BindClass!("C/ACTOR");
 }

@@ -58,6 +58,11 @@ class Party
             return _members[_active];
         }
 
+        void setActive(int i)
+        {
+            _active = i-1;
+        }
+
         int getSize()
         {
             return _members.length;
@@ -84,5 +89,6 @@ class Party
         }
 
         mixin BindClass!("C/PARTY");
-        mixin BindMethods!(getTotalWeight,get,remove,add,getActive,getSize);
+        mixin BindMethods!(getTotalWeight,get,remove,add,getActive,getSize,setActive);
+
 }

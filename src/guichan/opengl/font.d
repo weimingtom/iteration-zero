@@ -39,6 +39,7 @@ class OpenGLFont : guichan.font.Font
 
   mixin BindClass!("C/GL-FONT");
   mixin BindConstructor!(OpenGLFont function(string,int));
+  mixin BindMethods!(getWidth,getHeight);
 
   private:
     RealFont.Font _realFont;
