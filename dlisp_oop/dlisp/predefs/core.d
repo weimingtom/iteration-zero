@@ -169,7 +169,7 @@ public {
     Cell*[] args = evalArgs(dlisp, "'y'l's?'.+", cell.cdr);
     char[] docs = "";
     Cell* fbody;
-    if (args.length > 3) {
+    if (args.length > 3 && isString(args[2]) ) {
       docs = args[2].strValue;
       fbody = cell.cdr.cdr.cdr.cdr;
     } else {
