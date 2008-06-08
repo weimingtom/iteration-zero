@@ -45,7 +45,7 @@
 (defun character-selected (chara)
     (progn 
         (print "Character selected " (get-name chara) *ln*))
-        (let ((n (index (get-name chara) (map get-name (get-members *party*)))))
+        (let ((n (index chara  (get-members *party*))))
             (when n
                 (print "Index is: " n *ln*)
                 (set-active *party* n))))

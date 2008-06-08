@@ -343,6 +343,9 @@ public {
           return false;
         }
         break;
+      case CellType.ctOBJECT:
+        return cella.instance is cellb.instance;
+
       default:
         return false;
     }

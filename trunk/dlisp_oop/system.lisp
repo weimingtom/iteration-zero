@@ -15,11 +15,12 @@
 (defun find (needle haystack)
   (cdr (assoc needle haystack)))
 
+;; Ugliest index function in town.
 (defun index (needle haystack)
     (if (eq haystack nil) nil
         (if (eq needle (first haystack)) 1
             (let ((subi (index needle (rest haystack))))
-                (print "index " needle " " haystack " " subi *ln*)
+;;                 (print "index " needle " " haystack " " subi *ln*)
                 (if (isnum subi) (1+ subi) subi)))))
 
 (defun sublist (index count list)
@@ -29,8 +30,6 @@
 (defun print (&rest objects)
   (dolist (object objects)
     (write *std-out* object)))
-;; (print (index "A" ("BCDA" "A")) *ln*)
-;; (welg)
 
 (defun println (&rest objects)
   (progn
