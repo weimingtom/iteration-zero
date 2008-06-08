@@ -151,6 +151,7 @@ class Engine
         bindInstance(_dlisp.environment,"*engine*");
 
         bindGuichan(_dlisp.environment);
+        GameState.bindClass(dlisp.environment);
 //         BasicContainer.bindClass(_dlisp.environment);
 
         _gui = new Gui;

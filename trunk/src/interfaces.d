@@ -214,3 +214,37 @@ template AttributedObject()
         bool isShieldActive() { return _shield_on; }
         bool isShaderActive() { return _shader_on; }
 }
+
+// class GameState
+// {
+//     mixin BindClass!("C/Game-State");
+//     
+//     this(string name)
+//     {
+//         _name = name;
+//     }
+// 
+//     string name( return _name; );
+//     
+// 
+//     void start() {}
+//     void stop() {}
+//     void logic() {}
+// 
+//     void keyPressed(KeyEvent event) {}
+//     void keyReleased(KeyEvent event) {}
+// 
+//     void mouseEntered(MouseEvent mouseEvent) { }
+//     void mouseExited(MouseEvent mouseEvent) { }
+//     void mousePressed(MouseEvent mouseEvent) { }
+//     void mouseReleased(MouseEvent mouseEvent) { }
+//     void mouseClicked(MouseEvent mouseEvent) { }
+// 
+//     void mouseWheelMovedUp(MouseEvent mouseEvent) { }
+//     void mouseWheelMovedDown(MouseEvent mouseEvent) { }
+//     void mouseMoved(MouseEvent mouseEvent) { }
+//     void mouseDragged(MouseEvent mouseEvent) { }
+// 
+//     private:
+//         string _name;
+// }

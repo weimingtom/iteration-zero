@@ -37,6 +37,7 @@ class LevelState : GameState
 
     this()
     {
+        super("level-state");
         engine = Engine.instance;
         dlisp = engine.dlisp;
         bindClass(dlisp.environment);
@@ -116,8 +117,6 @@ class LevelState : GameState
         view.drawHighlight(x,y);
 
     }
-
-    string name() { return "test"; }
 
     void mouseClicked(MouseEvent mouseEvent)
     {

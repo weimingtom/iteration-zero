@@ -46,12 +46,12 @@
             (on-mouse-clicked b onclick)
             b))
 
-(defun create-menu-button (name filename c w)
+(defun create-menu-button (name fun c w)
     (create-button name w 30
         (lambda (event)
-            (load (get-state *engine* "test") filename)
             (hide-widget (get-source event))
-            (start *engine* "test"))))
+            (print FUN *ln*)
+            (fun))))
 
 (defun create-menu (options)
     (let ((box (make-instance container))
@@ -59,7 +59,7 @@
           (y4 (/ (y-resolution *engine*) 4))
           (y 0)
           (make-button
-            (lambda (option) (create-menu-button (first option) (second option) box (* 2 x4)))))
+            (lambda (option) (create-menu-button (first option) (eval (second option)) box (* 2 x4)))))
         (set-id box "main-menu")
         (set-size box (* 2 x4) (* 2 y4))
         (set-position box x4 y4)
@@ -67,11 +67,25 @@
         (pack-widgets-vertically box 0 0 (map make-button options))
         box))
 
+(defun load-and-start-level (filename)
+    (progn
+        (load (get-state *engine* "level-state") filename)
+        (start *engine* "level-state")))
 
+(defmacro bind1st (fun a)
+    `(lambda (&rest args)
+        (funcall ,fun (cons ,a args))))
 
-
+(add-state *engine*
+    (let ((menu-state (make-instance C/GAME-STATE "menu")))
+        menu-state))
+(start *engine* "menu")
 
 (show-widget
-    (create-menu '(("Level02" "data/test/level02.dl") ("Level01" "data/test/level01.dl"))))
+    (create-menu 
+        (list ("Level02" (bind1st load-and-start-level "data/test/level02.dl"))
+              ("Level01" (bind1st load-and-start-level "data/test/level01.dl")))))
 
 (show-quit-button)
+
+

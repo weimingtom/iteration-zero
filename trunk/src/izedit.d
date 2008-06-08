@@ -28,6 +28,7 @@ class EditState : GameState
 
     this(char[] filename_)
     {
+        super("edit-state");
         filename = filename_;
         engine = Engine.instance;
         view = new LevelRenderer;
@@ -131,8 +132,6 @@ Und so weiter.
 //         view.lookAt(view.level.gobjects[0].real_x,view.level.gobjects[0].real_y);
     }
 
-    string name() { return "level"; }
-
     void keyPressed(KeyEvent event)
     {
         switch(event.getKey.getValue)
@@ -200,7 +199,7 @@ void main(char[][] argv)
     scope(exit) delete engine;      // when we exit, perform cleanup
 
     engine.addState( new EditState (argv[1]) );
-    engine.start ("level");
+    engine.start ("edit-state");
 
     engine.mainLoop();
 }
