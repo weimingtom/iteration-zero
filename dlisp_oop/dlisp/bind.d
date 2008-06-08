@@ -722,7 +722,7 @@ template BindMethod(string name,alias func)
         static if( HasReturnType!(func) ){
           mixin(BoxReturnValue!(ReturnType!(func)));
         }
-        return null;
+        return objectCell;
       }
 //       writefln(name);
       _methods[toupper(name)] = newPredef(name,toDelegate(&methodWrapper),"auto-generated unbound method.");
