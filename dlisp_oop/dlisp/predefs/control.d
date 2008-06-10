@@ -100,9 +100,19 @@ public {
   }
   
   Cell* evalReturnFrom(DLisp dlisp, Cell* cell) {
-    Cell*[] args = evalArgs(dlisp, "'y.?", cell.cdr);
-    throw new ReturnFromState("RETURN-FROM " ~ args[0].name, args[0].name,
-                                  args.length > 1 ? args[1] : null);
+    Cell*[] args = evalArgs(dlisp, "'..?", cell.cdr);
+    if( args[0] is null )
+    {
+        throw new ReturnFromState("RETURN-FROM NIL", null,
+                                   args.length > 1 ? args[1] : null );
+    } else {
+        // UGLY: Due to the possible null this can't be handled by the evalArgs helper  (yet)
+        if( !isSym(args[0]) )
+             throw new ArgumentState("Symbol expected.", cell.pos);
+
+        throw new ReturnFromState("RETURN-FROM " ~ args[0].name, args[0].name,
+                                   args.length > 1 ? args[1] : null);
+    }
     return null;
   }
   

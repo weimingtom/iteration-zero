@@ -186,15 +186,25 @@ public {
         }
       }
       if (a < mincnt) {
+
+	// FIXME:
+	// The following code has evolved over the of quickly handling
+	// segfaults and invalid assertions.
+	// Thus the pos argument is likely to be invalid.
         if(args is null) {
             throw new ArgumentState("Too short argument list.", startarg.pos);
         }
-        assert(args.car !is null);
         string evalarg = "";
-        if( dlisp.environment.isBound(args.car.name) )
-            evalarg = " ==> (" ~ cellToString(dlisp.environment[args.car.name]) ~ ")";
-        throw new TypeState("Could not evaluate argument as: "
-            ~ tfmt ~ " (" ~ cellToString(args.car)~")" ~ evalarg,args.car.pos);
+        if(args.car !is null) 
+	{
+        	if( dlisp.environment.isBound(args.car.name) )
+            		evalarg = " ==> [" ~ cellToString(dlisp.environment[args.car.name]) ~ "]";
+        	throw new TypeState("Could not evaluate argument as: "
+            		~ tfmt ~ " [" ~ cellToString(args.car)~ "]" ~ evalarg,args.car.pos);
+	} else {
+        	throw new TypeState("Could not evaluate argument as: "
+            		~ tfmt ~ " [" ~ cellToString(args.car) ~ "]",args.pos);
+	}
       } else {
         if (mincnt != maxcnt)
           cnts ~= a;
