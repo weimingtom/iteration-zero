@@ -29,7 +29,6 @@ private {
   import std.stream;
   import std.string;
   import std.cstream;
-
   import dlisp.evalhelpers;
   import dlisp.dlisp;
 }
@@ -41,7 +40,7 @@ public {
     try {
       return newStream(new File(args[0].strValue, FileMode.In | FileMode.Out));
     } catch (Exception e) {
-      throw new FileState("Could no open " ~ args[0].strValue);
+      throw new FileState("Could no open " ~ args[0].strValue ~ ", the error was [" ~ e.toString ~ "]");
     }
   }
   

@@ -28,7 +28,7 @@ private {
   import dlisp.dlisp;
 }
 
-public {
+private {
   import dlisp.predefs.core;
   import dlisp.predefs.variables;
   import dlisp.predefs.lists;

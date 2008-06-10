@@ -25,11 +25,12 @@
 module dle;
 
 import std.stdio;
+import std.string;
 import std.cstream;
 import dlisp.concell;
 import dlisp.dlisp;
-import dlisp.predefs.all;
 import dlisp.bind;
+import dlisp.predefs.all;
 
 int main(char[][] args) {
   DLisp dlisp = new DLisp(addAllToEnvironment(new Environment()));
