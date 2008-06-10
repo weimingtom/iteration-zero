@@ -245,8 +245,8 @@ public Environment addToEnvironment(Environment environment) {
 
   environment["*STATE*"] = null;
 
-  environment.bindPredef("let", &evalLet, "(LET ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in paralell and then valauta all <form>s.");
-  environment.bindPredef("progn", &evalProgn, "(PROGN [<form>] ...); Evaluates all form in the order they apear, and returns the result of the last form.");
+  environment.bindPredef("let", &evalLet, "(LET ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in paralell and then evalaute all <form>s.");
+  environment.bindPredef("progn", &evalProgn, "(PROGN [<form>] ...); Evaluates all form in the order they appear, and returns the result of the last form.");
   environment.bindPredef("block", &evalBlock, "(BLOCK <sym> [<form>] ...); Establishes a block named <sym> and evaluates all forms as an implicit progn. See RETURN-FROM.");
   environment.bindPredef("return-from", &evalReturnFrom, "(RETURN-FROM <sym> [<value>]); Return control and optional value to enclosing block. See BLOCK.");
   environment.bindPredef("tagbody", &evalTagbody, "(TAGBODY {<tag>|<form>} ...); Evaluates all forms. See GO.");

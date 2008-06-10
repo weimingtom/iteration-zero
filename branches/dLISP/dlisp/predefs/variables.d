@@ -114,7 +114,7 @@ public {
 
 public Environment addToEnvironment(Environment environment) {
   
-  environment.bindPredef("isset", &evalIsSet, "(ISSET <sym> .. ); Ruturns true if all <sym>s are set to avalue.");
+  environment.bindPredef("isset", &evalIsSet, "(ISSET <sym> .. ); Returns true if all <sym>s are set to a value.");
   environment.bindPredef("set", &evalSet, "(SET <sym> <cons>); Sets global symbol <sym> to <cons>.", true);
   environment.bindPredef("put", &evalPut, "(PUT <pos> <cons>); Place sym at pos.", true);
   environment.bindPredef("unset", &evalUnset, "(UNSET <sym> ...); Unset symbol value, returns last symbols value or NIL if none is set.");

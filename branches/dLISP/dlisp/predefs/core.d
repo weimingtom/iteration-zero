@@ -162,6 +162,7 @@ public {
   Cell* evalFunction(DLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.+", cell.cdr);
     cell = newFunc(cell.cdr.cdr, args[0]);
+    dlisp.environment.saveContext(cell.table);
     return cell;
   }
   
@@ -177,6 +178,7 @@ public {
       fbody = cell.cdr.cdr.cdr;
     }
     cell = newFunc(fbody, args[1], docs, args[0].name);
+    dlisp.environment.saveContext(cell.table);
     dlisp.environment()[cell.name] = cell;
     return cell;
   }

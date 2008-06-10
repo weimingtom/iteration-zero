@@ -109,6 +109,7 @@ public template Evaluator() {
           Cell* params = cell.cdr;
           Cell*[] macroforms;
           environment.pushScope();
+          environment.loadContext(func.table);
           try {
             bool dotrace = (name in tracefuncs) != null;
             Cell* parms = null;

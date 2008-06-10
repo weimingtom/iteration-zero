@@ -43,7 +43,7 @@ public {
   enum CellType {
     ctSYM, ctINT, ctFLOAT, ctSTR, 
     ctSTREAM, ctCONS, ctFUNC, ctPREDEF,
-    ctOBJECT, ctGENERIC,
+    ctOBJECT,
     ctBINT, ctBFLOAT, ctBSTR
   }
 
@@ -65,12 +65,12 @@ public {
           char[] docs;      // ctFUNC, ctPREDEF
           bool visited;
         }
+        Cell*[char[]] table; // Context
         union {
           struct {
             Cell* car, cdr; // ctCONS, ctFUNC
           }
           struct {
-            Cell*[char[]] table; // ctOBJECT
             Box instance;
           }
           PredefFunc func;  // ctPREDEF
