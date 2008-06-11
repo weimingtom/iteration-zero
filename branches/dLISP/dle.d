@@ -3,7 +3,11 @@
   dLISP
 
   Author: Fredrik Olsson <peylow@treyst.se>
+  Author: Klaus Blindert <klaus.blindert@web.de>
+
   Copyright (c) 2005 Treyst AB, <http://www.treyst.se>
+  Copyright (c) 2008 Klaus Blindert
+
   All rights reserved.
 
     This file is part of dLISP.
@@ -41,7 +45,8 @@ int main(char[][] args) {
   int inputcount = 0;
   char[] inputprompt = "> ";
   char[] input;
-  char[] resultprompt = "=> ";
+  char[] resultprompt = "\n=> ";
+  bool interactive = false;
 
   dlisp.environment.pushScope();
 
@@ -50,16 +55,28 @@ int main(char[][] args) {
   dlisp.environment.bindValue("*input-string*", &input);
   dlisp.environment.bindValue("*result-prompt*", &inputprompt);
   
-  dout.writeLine(dlisp.versionString());
+  if( args.length == 1 )
+     interactive = true;
 
   foreach(string filename; args[1..$])
   {
-    dlisp.eval(dlisp.parse("(load \"" ~ filename ~ "\")"));
+    if( filename == "-i" )
+    {
+       interactive = true;
+       continue;
+    }
+    
+    dlisp.eval(dlisp.parse("(load \"" ~ filename ~ "\" T)"));
   }
+  if( !interactive )
+    return 0;  
 
+  dout.writeLine(dlisp.versionString);
   while(1) {
     dout.writeString(inputprompt);
     input = din.readLine();
+    if( din.eof )
+       return 0;
     inputcount++;
     if (input != "") {
       if (input == "quit") 

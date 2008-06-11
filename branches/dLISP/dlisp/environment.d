@@ -155,7 +155,7 @@ public class Environment {
     }
 
     void pushScope() {
-       writefln ("PUSH-SCOPE _restore.length=%d  _remove.length=%d", _restore.length,  _remove.length);
+       version(debugScope) writefln ("PUSH-SCOPE _restore.length=%d  _remove.length=%d", _restore.length,  _remove.length);
        Cell*[char[]] append_restore;
       _restore ~= append_restore;
       _remove.length = _remove.length + 1;
@@ -165,8 +165,8 @@ public class Environment {
       if (_restore.length == 0) {
         throw new Exception("Local stack is empty");
       }
-      writefln("POP-SCOPE _restore[$-1] = ",_restore[$-1]);
-      writefln("POP-SCOPE _remove[$-1] = ",_remove[$-1]);
+      version(debugScope) writefln("POP-SCOPE _restore[$-1] = ",_restore[$-1]);
+      version(debugScope) writefln("POP-SCOPE _remove[$-1] = ",_remove[$-1]);
       foreach(char[] key, Cell* cell; _restore[_restore.length - 1]) {
         _globals[key] = cell;
       }

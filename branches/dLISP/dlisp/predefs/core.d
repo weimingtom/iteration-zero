@@ -40,7 +40,17 @@ public {
     Cell*[] args = evalArgs(dlisp, "sb?", cell.cdr);
     try {
       bool silent = args.length > 1 ? isTrue(args[1]) : false;
-      dlisp.parseEvalPrint(new File(args[0].strValue), silent);
+      auto file = new File(args[0].strValue);
+
+      // Skip she bang
+      char first_char = file.getc();
+      if( first_char == '#' )
+         file.readLine();
+      else
+         file.ungetc(first_char);
+    
+      // pep the stream.
+      dlisp.parseEvalPrint(file, silent);
     } catch (Exception e) {
       throw new FileState("Could not load " ~ args[0].strValue ~ " : " ~ e.toString());
     } finally {
