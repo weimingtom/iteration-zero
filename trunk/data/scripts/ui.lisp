@@ -1,13 +1,16 @@
 ;;
-;; Ui Helpers
+;; GUI Helpers
 ;;
 
+;; Top Level Globals
 (defvar *gui* (get-gui *engine*))
 (defvar *top* (cast C/CONTAINER (get-top *gui*)))
 
+;; Some fonts
 (defvar *ui-button-font* (make-instance C/GL-FONT "data/fonts/7service/7the.ttf" 14))
 (defvar *ui-text-font*   (make-instance C/GL-FONT "data/fonts/vera/Vera.ttf" 12))
 
+;; Geometry
 (defun center-in (inset w)
     (/ (- w inset) 2))
 
@@ -25,9 +28,10 @@
 (defun not-implemented ()
     (show-widget (make-info-window "not implemented")))
 
+
 (defun vpack-widgets (box starty startx widgets)
-    (let ((maxw (funcall max (map get-width widgets)))
-          (maxh (funcall max (map get-height widgets)))
+    (let ((maxw (funcall max (map (<- get-width) widgets)))
+          (maxh (funcall max (map (<- get-height) widgets)))
           (y starty))
         (dolist (widget widgets)
             (set-position widget startx y)
@@ -143,3 +147,7 @@
         (center-widget win (x-resolution *engine*) (y-resolution *engine*))
         (on-widget-shown win (lambda (event) (request-modal-focus win)))
         win))
+
+
+
+

@@ -1,3 +1,9 @@
+;;
+;; Startup of the game iteration zero.
+;;
+
+(load "data/scripts/basics.lisp" t)
+(load "data/scripts/layout.lisp" t)
 (load "data/scripts/ui.lisp" t)
 
 (defvar *main-menu*
@@ -71,10 +77,11 @@
           (portraits ()))
         (print "party-members " (map get-name party-members) *ln*)
         (set portraits (map make-character-portrait party-members))
-        (hpack-widgets box 0 0 portraits)
-        (set-size box (- (x-resolution *engine*) 200) 100)
-        (set-position box 20 20)
-        (set-opaque box nil)))
+        (w/object box
+            (hpack-widgets 0 0 portraits)
+            (set-size (- (x-resolution *engine*) 200) 100)
+            (set-position 20 20)
+            (set-opaque nil))))
 
 (defun make-create-party-interface ()
     (let ((left-menu (create-menu *new-party-menu-left* "new-party-menu-left" 200))
@@ -105,11 +112,14 @@
             (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
 ;;(show-quit-button)
-(show-widget
-    (let ((tb (create-toolbar *toolbar*)))
-        (set-position tb 
-            5 (- (y-resolution *engine*) 5 (get-height tb)))))
 
+
+(show-widget
+    (w/object (create-toolbar *toolbar*)
+        (set-x 5)
+        (set-y (- (y-resolution *engine*) 5 (get-height (self))))))
+
+(test-button)
 (start *engine* "menu")
 
 
