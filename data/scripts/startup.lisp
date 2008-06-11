@@ -1,4 +1,4 @@
-(load "data/ui.lisp" t)
+(load "data/scripts/ui.lisp" t)
 
 (defvar *main-menu*
     '(("New Party"    (start *engine* "new-party-state"))
