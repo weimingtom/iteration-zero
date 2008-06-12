@@ -3,12 +3,10 @@
 (print "Running dLISP test cases:" *ln*)
 (set fn function)
 
-(defmacro make-check (pred &rest forms)
-  `(fn (value)
-       (let ((rval (apply progn ,forms)))
-	 (if (,pred ,value rval)
-	   (print "OK:  " ,value " <=> " ,forms *ln*)
-	   (print "ERR: " ,value " <=/=> " ,forms *ln*)))))
+(defmacro test (message &rest forms)
+  `(progn
+     (print "Testing " ,message *ln*)
+     (map eval ',forms)))
 
 (defmacro check-eq (value form)
   `(let ((rval ,form))
@@ -25,7 +23,7 @@
 
 ;;;
 ;;; SET
-(progn
+(test "SET"
   (check-equal 3 (set a 1 b 2 c 3))
   (check-equal '(1 2 3) (list a b c))
   (check-equal 7 (set a (1+ b) b (1+ a) c (+ a b)))
@@ -33,7 +31,7 @@
 
 ;;;
 ;;; PUT
-(progn
+(test "PUT"
   (check-equal '(1 2 3)
 	       (set x (cons 'a 'b) y (list 1 2 3)))
   (check-equal '(1 X 3)
@@ -43,7 +41,7 @@
 
 ;;;
 ;;; QUOTE
-(progn
+(test "QUOTE"
  (check-equal 'a (quote a))
  (check-equal 1 (set a 1))
  (check-equal '(SETQ A 3) (quote (setq a 3)))
@@ -51,7 +49,7 @@
 
 ;;;
 ;;; LAMBDA
-(progn
+(test "LAMBDA"
   (check-equal 7
 	       ((lambda (x) (+ x 3)) 4))
   (check-equal "foo"
@@ -59,7 +57,7 @@
 
 ;;;
 ;;; EVAL
-(progn
+(test "EVAL"
   (check-equal 999
 	       (setq form '(1+ a) a 999))
   (check-equal 1000
@@ -71,7 +69,7 @@
 
 ;;;
 ;;; PARSE
-(progn
+(test "PARSE"
   (check-equal '(+ 1 2)
 	       (set foo (parse "(+ 1 2)")))
   (check-equal 3
@@ -83,7 +81,7 @@
 
 ;;;
 ;;; DEFUN
-(progn
+(test "DEFUN"
   (set plus1 (lambda (b) (+ 1 b)))
   (defun ortest (a &optional (b 2) &rest c) (list a b c))
   (check-equal '(1 2 NIL)
@@ -95,7 +93,7 @@
 
 ;;
 ;; CLOSURES
-(progn (print "CLOSURES" *ln*)
+(test "CLOSURES"
   (defun make-counter ()
     (let ((x 0))
       (lambda () (set x (+ x 1)) x)))
@@ -110,35 +108,34 @@
 
 ;;;
 ;;; DEFMACRO
- (print "DEFMACRO" *ln*)
-(if (defmacro inc (x) (list 'setq x (list '1+ x))) "OK defmacro1" "NOK defmacro1")
-(if (equal (setq a 41) 41) "OK defmacro2" "NOK defmacro2") 
-(if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
-(if (equal a 42) "OK defmacro4" "NOK defmacro4")
+(test "DEFMACRO"
+      (defmacro inc (x) (list 'setq x (list '1+ x)))
+      (set a 41)
+      (check-equal 42
+		   (inc a))
+      (check-equal 42
+		   a))
 
 ;;;
 ;;; LOOPCONTROL
-(progn
+(test "DOTIMES"
   (check-equal 9
 	       (dotimes (k 10) k)))
 
 
 ;;;
 ;;; CREATE-OBJECT
-(let ((name (create-object)))
-    (set-attr name 'attr1 1)
-    (print 
-        (if (equal (get-attr name 'attr1) 1)  "OK set/get-attr" "NOK set/get-attr"))
-    (set-attr name 'inc-attr1
-        (lambda (self) 
-            (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
-    (inc-attr1 name)
-    (if (equal (get-attr name 'attr1) 2)  "OK set/get-attr2" "NOK set/get-attr2"))
+(test "CREATE-OBJECT"
+      (set name (create-object))
+      (set-attr name 'attr1 1)
+      (check-equal (get-attr name 'attr1) 1)
+      (set-attr name 'inc-attr1
+		(lambda (self) 
+		  (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
+      ((gencall inc-attr1) name)
+      (check-equal 2
+		   (get-attr name 'attr1)))
 
-(let ((x 0))
-    (dotimes (k 10)
-        (set x (1+ x)))
-    (if (equal x 10)
-        "OK dotimes" "NOK dotimes"))
+(println
+ "Known to be broken are self-made generic functions.") 
 
-;;; RETURN LAST ELEMENT
