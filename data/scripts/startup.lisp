@@ -117,7 +117,7 @@
 (show-widget
     (w/object (create-toolbar *toolbar*)
         (set-x 5)
-        (set-y (- (y-resolution *engine*) 5 (get-height (self))))))
+        (set-y (- (y-resolution *engine*) 25))))
 
 (test-button)
 (start *engine* "menu")

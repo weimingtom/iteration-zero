@@ -26,6 +26,7 @@ module dlisp.predefs.core;
 
 private {
   import std.date;
+  import std.conv;
   import std.stdio;
   import std.stream;
   import std.string;
@@ -159,6 +160,11 @@ public {
     throw new EvalState("Comma not inside back quotes.", cell.pos);
   }
   
+  Cell* evalGenSym(DLisp dlisp, Cell* cell) {
+    Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
+    return newSym(args[0].strValue);
+  }
+
   Cell* evalFunction(DLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.+", cell.cdr);
     cell = newFunc(cell.cdr.cdr, args[0]);
@@ -212,6 +218,7 @@ public Environment addToEnvironment(Environment environment) {
   environment.clonePredef("function", "lambda");
   environment.bindPredef("defun", &evalDefun, "(DEFUN <sym> (<arg> ...) [<doc>] <body>); Defines function <sym> with arguments <arg> and body <body>, optionaly with documentation <doc>.", true);
   environment.bindPredef("defmacro", &evalDefmacro, "(DEFMACRO <sym> (<arg> ...) [<doc>] <body>); Defines macro <sym> with arguments <arg> and body <body>, optionaly with documentation <doc>.", true);
+  environment.bindPredef("symbol", &evalGenSym, "(SYMBOL <string>); Generates a symbol from a string.", true);
   
   return environment;
   
