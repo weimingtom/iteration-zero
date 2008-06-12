@@ -4,9 +4,12 @@ echo "Building dLISP interpreter:"
 mkdir -p build
 FILES=$(echo dle.d dlisp/*.d dlisp/predefs/*.d)
 
+#EXTRA="-version=debugContext -unittest"
+EXTRA=""
+
 for FILE in $FILES; do
 	echo "DMD $FILE"	
-	dmd -c $FILE -odbuild -version=debugContext
+	dmd -c $FILE -odbuild $EXTRA
 done
 
-dmd build/*.o -ofdle
+dmd build/*.o -ofdle -unittest

@@ -192,4 +192,16 @@ public class Environment : public IEnvironment {
     }
 }
 
+unittest {
+   Environment env = new Environment;
 
+   Context ctxt = env.context;
+   ctxt.bind("A",null);
+   assert( env.isBound("A") );
+
+   env.pushContext;
+   ctxt = env.context;
+   ctxt.bind("B",null);
+   assert( env.isBound("A") );
+   assert( env.isBound("B") );
+}

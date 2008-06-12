@@ -112,12 +112,13 @@ public template Evaluator() {
             bool dotrace = (name in tracefuncs) != null;
             Cell* parms = null;
             if (dotrace) {
-              tracelevel +=tracetabs;
+              tracelevel += tracetabs;
             }
             bool isoptional = false;
             char[] isrest = "";
 	    version(debugContext) writef(func.name);
-            environment.pushContext(func.context);
+	    assert( func.context );
+            Context ctxt = func.context;
             while (args) {
               if (args.car.name == "&OPTIONAL" ) {
                 isoptional = true;
@@ -149,9 +150,9 @@ public template Evaluator() {
                   parms = appendToList(parms, newCons(cell, null));
                 }
                 if (isList(args.car)) {
-                  environment.addLocal(args.car.car.name, cell);
+                  ctxt.bind(args.car.car.name, cell);
                 } else {
-                  environment.addLocal(args.car.name, cell);
+                  ctxt.bind(args.car.name, cell);
                 }
               }
               args = args.cdr;
@@ -169,17 +170,20 @@ public template Evaluator() {
                     rest = appendToList(rest, newCons(eval(params.car), null));
                     params = params.cdr;
                   }
-                  environment.addLocal(isrest, rest);
+                  ctxt.bind(isrest, rest);
                 }
               }
             } else {
               if (isrest != "") {
-                environment.addLocal(isrest, null);
+                ctxt.bind(isrest, null);
               }
             }
             if (dotrace) {
               writefln(repeat(" ", tracelevel), "Trace ", name, " in: ", cellToString(parms));
             }
+	    //ctxt.master = func.context;
+	    environment.pushContext(ctxt);
+	    scope(exit) environment.popContext;
             func = func.car;
             while (func) {
               cell = eval(func.car);
@@ -189,8 +193,9 @@ public template Evaluator() {
               }
               func = func.cdr;
             }
+            
           } finally {
-            environment.popContext();
+//            environment.popContext();
           }
           if (ismacro) {
             foreach (Cell* mcell; macroforms) {

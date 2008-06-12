@@ -172,8 +172,9 @@ public {
   Cell* evalFunction(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.+", cell.cdr);
     cell = newFunc(cell.cdr.cdr, args[0]);
-    if(  dlisp.environment.context.master )
+    if( dlisp.environment.context.master )
        cell.context = dlisp.environment.context.dup;
+    else { cell.context = new Context; cell.context.master = dlisp.environment.globals; }
     return cell;
   }
   
@@ -189,9 +190,10 @@ public {
       fbody = cell.cdr.cdr.cdr;
     }
     cell = newFunc(fbody, args[1], docs, args[0].name);
-    dlisp.environment.bind(cell.name, cell);
-    if(  dlisp.environment.context.master )
+    if( dlisp.environment.context.master )
        cell.context = dlisp.environment.context.dup;
+    else { cell.context = new Context; cell.context.master = dlisp.environment.globals; }
+    dlisp.environment.bind(cell.name,cell);
     return cell;
   }
   

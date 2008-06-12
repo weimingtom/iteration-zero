@@ -9,7 +9,7 @@
 	 (if (,pred ,value rval)
 	   (print "OK:  " ,value " <=> " ,forms *ln*)
 	   (print "ERR: " ,value " <=/=> " ,forms *ln*)))))
-     
+
 (defmacro check-eq (value form)
   `(let ((rval ,form))
      (unless (eq ,value rval)
@@ -22,22 +22,6 @@
 
 ;; Check the ckecks
 (check-eq 1 (+ 6 -5))
-
-
-;;
-;; CLOSURES
-(progn
-  (defun make-counter ()
-    (let ((x 0))
-      (lambda () (set x (+ x 1)) x)))
-  (set f1 (make-counter))
-  (set f2 (make-counter))
-  (check-eq 1 (f1))
-  (check-eq 2 (f1))
-  (check-eq 3 (f1))
-  (check-eq 1 (f2))
-  (check-eq 4 (f1))
-  (check-eq 2 (f2)))
 
 ;;;
 ;;; SET
@@ -100,16 +84,33 @@
 ;;;
 ;;; DEFUN
 (progn
+  (set plus1 (lambda (b) (+ 1 b)))
   (defun ortest (a &optional (b 2) &rest c) (list a b c))
   (check-equal '(1 2 NIL)
 	       (ortest 1))
   (check-equal '(1 3 (4))
-	       (ortest 1 (1+ 2) (1+ 3)))
+	       (ortest 1 (1+ 2) (plus1 3)))
   (check-equal '(1 2 (3 4))
 	       (ortest 1 2 3 4)))
 
+;;
+;; CLOSURES
+(progn (print "CLOSURES" *ln*)
+  (defun make-counter ()
+    (let ((x 0))
+      (lambda () (set x (+ x 1)) x)))
+  (set f1 (make-counter))
+  (set f2 (make-counter))
+  (check-eq 1 (f1))
+  (check-eq 2 (f1))
+  (check-eq 3 (f1))
+  (check-eq 1 (f2))
+  (check-eq 4 (f1))
+  (check-eq 2 (f2)))
+
 ;;;
 ;;; DEFMACRO
+ (print "DEFMACRO" *ln*)
 (if (defmacro inc (x) (list 'setq x (list '1+ x))) "OK defmacro1" "NOK defmacro1")
 (if (equal (setq a 41) 41) "OK defmacro2" "NOK defmacro2") 
 (if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
