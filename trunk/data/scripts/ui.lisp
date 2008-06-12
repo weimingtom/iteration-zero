@@ -29,28 +29,6 @@
     (show-widget (make-info-window "not implemented")))
 
 
-(defun vpack-widgets (box starty startx widgets)
-    (let ((maxw (funcall max (map (<- get-width) widgets)))
-          (maxh (funcall max (map (<- get-height) widgets)))
-          (y starty))
-        (dolist (widget widgets)
-            (set-position widget startx y)
-            (set-size widget maxw maxh)
-            (add box widget)
-            (set y (+ y maxh 5)))
-        box))
-
-(defun hpack-widgets (box starty startx widgets)
-    (let ((maxw (funcall max (map get-width widgets)))
-          (maxh (funcall max (map get-height widgets)))
-          (x startx))
-        (dolist (widget widgets)
-            (set-position widget x starty)
-            (set-size widget maxw maxh)
-            (add box widget)
-            (set x (+ x maxw 5)))
-        box))
-
 (defun show-widget (w)
     (add *top* w) 
     w)

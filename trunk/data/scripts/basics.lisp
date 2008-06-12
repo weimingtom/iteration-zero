@@ -3,11 +3,28 @@
 ;; to be moved to system.lisp at some point.
 ;;
 
+(defvar *gensym-counter* 0)
+
+(defun gensym ()
+    (symbol (join "gensym:" (tostring (incput *gensym-counter*)))))
+
+(unless (issym (gensym)) (error))
+(when (eq (gensym) (gensym)) (error))
+
+;;;; Correct implementation - doesn't work :-(
+ 
 (defmacro w/object (object &rest forms)
-    `(let ((<w/object>object ,object)
-           (self (lambda () <w/object>object)))
-        (dolist (<w/object>form ',forms)
-            (eval (cons (first <w/object>form) (cons <w/object>object (rest <w/object>form)))))
-        <w/object>object))
+    (let ((obj (gensym)) (form (gensym)))
+        `(let ((obj ,object))
+            (dolist (form ',forms)
+                (eval (cons (first form) (cons obj (rest form)))))
+            obj)))
+
+;; (defmacro w/object (object &rest forms)
+;;     `(let ((obj ,object))
+;;         (dolist (form ',forms)
+;;             (eval (cons (first form) (cons obj (rest form)))))
+;;         obj))
 
 (set <- gencall)
+
