@@ -31,7 +31,7 @@ private {
 
 public {
   
-  Cell* evalIsSet(DLisp dlisp, Cell* cell) {
+  Cell* evalIsSet(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "y+", cell.cdr);
     for (uint i = 0; i < args.length; i++) {
       if (!dlisp.environment.isBound(args[i].name)) {
@@ -41,19 +41,17 @@ public {
     return newBool(true);
   }
   
-  Cell* evalSet(DLisp dlisp, Cell* cell) {
+  Cell* evalSet(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "('y'.)+", cell.cdr);
     for(int i = 0; i < args.length; i += 2) {
       char[] name = args[i].name;
       cell = dlisp.eval(args[i + 1]);
-      //dlisp.environment[name] = cell;
-      Environment e = dlisp.environment;
-      e[name] = cell;
+      dlisp.environment.bind(name,cell);
     }
     return cell;
   }
   
-  Cell* evalPut(DLisp dlisp, Cell* cell) {
+  Cell* evalPut(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "('..)+", cell.cdr);
     Cell* place;
     for (int i = 0; i < args.length; i += 2) {
@@ -94,14 +92,14 @@ public {
     return cell;
   }
   
-  Cell* evalUnset(DLisp dlisp, Cell* cell) {
+  Cell* evalUnset(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "y+", cell.cdr);
     cell = null;
     for (uint i = 0; i < args.length; i++) {
       if (dlisp.environment.isBound(args[i].name)) {
         cell = dlisp.environment[args[i].name];
         if (dlisp.environment.isBound(args[i].name)) {
-          dlisp.environment.unbind(args[i].name);
+          // FIXME dlisp.environment.unbind(args[i].name);
         } else {
           throw new UnboundSymbolState("Unbound symbol: " ~ args[i].name, args[i].pos); 
         }
@@ -112,7 +110,7 @@ public {
   
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
   
   environment.bindPredef("isset", &evalIsSet, "(ISSET <sym> .. ); Returns true if all <sym>s are set to a value.");
   environment.bindPredef("set", &evalSet, "(SET <sym> <cons>); Sets global symbol <sym> to <cons>.", true);

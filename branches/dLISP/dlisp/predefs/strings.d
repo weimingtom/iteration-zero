@@ -34,7 +34,7 @@ private {
 
 public {
   
-  Cell* evalToString(DLisp dlisp, Cell* cell) {
+  Cell* evalToString(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".+", cell.cdr);
     char[] ret = "";
     char[] sep;
@@ -50,7 +50,7 @@ public {
     return newStr(ret);
   }
 
-  Cell* evalToChars(DLisp dlisp, Cell* cell) {
+  Cell* evalToChars(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
     Cell* makeCell(char[] source) {
       if (source.length == 0) {
@@ -62,24 +62,24 @@ public {
     return makeCell(args[0].strValue);
   }
 
-  Cell* evalSplit(DLisp dlisp, Cell* cell) {
+  Cell* evalSplit(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ss?", cell.cdr);
     char[] sep = dlisp.eval(newSym("*SEP*")).strValue;
     char[] delim = (args.length == 2) ? args[1].strValue : sep;
     return newStrList(split(args[0].strValue, delim));
   }
   
-  Cell* evalLeft(DLisp dlisp, Cell* cell) {
+  Cell* evalLeft(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "is", cell.cdr);
     return newStr(args[1].strValue[0..min(args[0].intValue, args[1].strValue.length)]);
   }
 
-  Cell* evalRight(DLisp dlisp, Cell* cell) {
+  Cell* evalRight(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "is", cell.cdr);
     return newStr(args[1].strValue[max($ - args[0].intValue, 0)..$]);
   }
   
-  Cell* evalSubString(DLisp dlisp, Cell* cell) {
+  Cell* evalSubString(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ii?s", cell.cdr);
     char[] str;
     int index = max(args[0].intValue, 0), count = int.max;
@@ -94,7 +94,7 @@ public {
     return newStr(str[index..(index + count)]);
   }
 
-  Cell* evalStringFuncs(DLisp dlisp, Cell* cell) {
+  Cell* evalStringFuncs(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
     switch (cell.car.name) {
       case "TRIM":
@@ -129,7 +129,7 @@ private {
   }
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
 
   environment["*SEP*"] = newStr(" ");
   environment["*LN*"] = newStr("\n");

@@ -35,7 +35,7 @@ private {
 
 public {
   
-  Cell* evalOpen(DLisp dlisp, Cell* cell) {
+  Cell* evalOpen(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "s", cell.cdr);
     try {
       return newStream(new File(args[0].strValue, FileMode.In | FileMode.Out));
@@ -44,7 +44,7 @@ public {
     }
   }
   
-  Cell* evalClose(DLisp dlisp, Cell* cell) {
+  Cell* evalClose(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "t", cell.cdr);
     try {
       args[0].streamValue.close();
@@ -54,7 +54,7 @@ public {
     return null;
   }
   
-  Cell* evalRead_Int(DLisp dlisp, Cell* cell) {
+  Cell* evalRead_Int(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "t", cell.cdr);
     if (args[0].streamValue.eof()) {
       return null;
@@ -68,7 +68,7 @@ public {
     }
   }
   
-  Cell* evalRead_Float(DLisp dlisp, Cell* cell) {
+  Cell* evalRead_Float(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "t", cell.cdr);
     if (args[0].streamValue.eof()) {
       return null;
@@ -82,7 +82,7 @@ public {
     }
   }
   
-  Cell* evalRead_Line(DLisp dlisp, Cell* cell) {
+  Cell* evalRead_Line(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "t", cell.cdr);
     if (args[0].streamValue.eof()) {
       return null;
@@ -94,7 +94,7 @@ public {
     }
   }
   
-  Cell* evalWrite(DLisp dlisp, Cell* cell) {
+  Cell* evalWrite(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "t.+", cell.cdr);
     cell = args[0];
     char[] sep = dlisp.eval(newSym("*SEP*")).strValue;
@@ -113,7 +113,7 @@ public {
   
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
   
   environment["*STD-IN*"] = newStream(din);
   environment["*STD-OUT*"] = newStream(dout);

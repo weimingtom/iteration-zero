@@ -36,7 +36,7 @@ private {
 
 public {
 
-  Cell* evalLoad(DLisp dlisp, Cell* cell) {
+  Cell* evalLoad(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "sb?", cell.cdr);
     try {
       bool silent = args.length > 1 ? isTrue(args[1]) : false;
@@ -59,13 +59,13 @@ public {
     return newSym("t");
   }
   
-  Cell* evalHelp(DLisp dlisp, Cell* cell) {
+  Cell* evalHelp(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "o?", cell.cdr);
     if (args.length == 1) {
       return newStr(args[0].docs);
     } else {
       cell = null;
-      char[][] funcs = dlisp.environment.allFuncs();
+      char[][] funcs;//FIXME: = dlisp.environment.allFuncs();
       foreach(char[] func; funcs) {
         cell = appendToList(cell, newStr(func));
       }
@@ -73,7 +73,7 @@ public {
     }
   }
   
-  Cell* evalTrace(DLisp dlisp, Cell* cell) {
+  Cell* evalTrace(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'y*", cell.cdr);
     if (args.length > 0) {
       foreach(Cell* arg; args) {
@@ -85,7 +85,7 @@ public {
     }
   }
   
-  Cell* evalUntrace(DLisp dlisp, Cell* cell) {
+  Cell* evalUntrace(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'y*", cell.cdr);
     if (args.length > 0) {
       foreach(Cell* arg; args) {
@@ -101,14 +101,14 @@ public {
     }
   }
   
-  Cell* evalTraceback(DLisp dlisp, Cell* cell) {
+  Cell* evalTraceback(IDLisp dlisp, Cell* cell) {
       foreach(int i, Cell* tracedCell; dlisp.traceback) {
         writefln("--FRAME #%d ------------------------------------\n%s",i,cellToString(tracedCell));
       }
       return nil;
   }
 
-  Cell* evalTime(DLisp dlisp, Cell* cell) {
+  Cell* evalTime(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l", cell.cdr);
     d_time start = getUTCtime();
     dlisp.evalcount = 0;
@@ -120,17 +120,17 @@ public {
     return cell;
   }
   
-  Cell* evalEval(DLisp dlisp, Cell* cell) {
+  Cell* evalEval(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".", cell.cdr);
     return dlisp.eval(args[0]);
   }
 
-  Cell* evalFunCall(DLisp dlisp, Cell* cell) {
+  Cell* evalFunCall(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ol", cell.cdr);
     return dlisp.eval(newCons(args[0], args[1]));
   }
 
-  Cell* evalParse(DLisp dlisp, Cell* cell) {
+  Cell* evalParse(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".", cell.cdr);
     if (isString(args[0])) {
       return dlisp.parse(args[0].strValue);
@@ -141,13 +141,13 @@ public {
     }
   }
   
-  Cell* evalQuote(DLisp dlisp, Cell* cell) {
+  Cell* evalQuote(IDLisp dlisp, Cell* cell) {
     // Should we be allowed to quote nulls?
     return cell.cdr.car;
   }
 
 
-  Cell* evalBack_Quote(DLisp dlisp, Cell* cell) {
+  Cell* evalBack_Quote(IDLisp dlisp, Cell* cell) {
     // Should we be allowed to quote nulls?
     Cell* backQuote(Cell* cell) {
       if (!cell) {
@@ -165,18 +165,19 @@ public {
     return backQuote(cell.cdr.car);
   }
 
-  Cell* evalComma_Quote(DLisp dlisp, Cell* cell) {
+  Cell* evalComma_Quote(IDLisp dlisp, Cell* cell) {
     throw new EvalState("Comma not inside back quotes.", cell.pos);
   }
   
-  Cell* evalFunction(DLisp dlisp, Cell* cell) {
+  Cell* evalFunction(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.+", cell.cdr);
     cell = newFunc(cell.cdr.cdr, args[0]);
-    dlisp.environment.saveContext(cell.table);
+    if(  dlisp.environment.context.master )
+       cell.context = dlisp.environment.context.dup;
     return cell;
   }
   
-  Cell* evalDefun(DLisp dlisp, Cell* cell) {
+  Cell* evalDefun(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'y'l's?'.+", cell.cdr);
     char[] docs = "";
     Cell* fbody;
@@ -188,12 +189,13 @@ public {
       fbody = cell.cdr.cdr.cdr;
     }
     cell = newFunc(fbody, args[1], docs, args[0].name);
-    dlisp.environment.saveContext(cell.table);
-    dlisp.environment()[cell.name] = cell;
+    dlisp.environment.bind(cell.name, cell);
+    if(  dlisp.environment.context.master )
+       cell.context = dlisp.environment.context.dup;
     return cell;
   }
   
-  Cell* evalDefmacro(DLisp dlisp, Cell* cell) {
+  Cell* evalDefmacro(IDLisp dlisp, Cell* cell) {
     cell = evalDefun(dlisp, cell);
     cell.ismacro = true;
     return cell;
@@ -201,7 +203,7 @@ public {
     
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
 
   environment["T"] = newSym("T");
   environment["NIL"] = null;

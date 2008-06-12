@@ -25,18 +25,18 @@
 module dlisp.environment;
 
 private {
-  import std.math;
+//  import std.math;
   import std.string;
-  import std.cstream;
   import std.stdio;
-  import dlisp.dlisp;
+  import dlisp.types;
+  import dlisp.concell;
 }
 
 PredefFunc toDelegate(PredefFuncPtr fn)
 { 
     struct holder {
         PredefFuncPtr f;
-        Cell* call(DLisp dlisp, Cell* cell)
+        Cell* call(IDLisp dlisp, Cell* cell)
         {
             return f(dlisp,cell);
         }
@@ -46,15 +46,12 @@ PredefFunc toDelegate(PredefFuncPtr fn)
     return &res.call;
 }
 
-public class Environment {
-  private Cell*[char[]] _globals;
-  private bool[char[]] _generics;
-  private Cell*[char[]][] _restore;
-  private char[][][] _remove;
+public class Environment : public IEnvironment {
+     private bool[char[]] _generics;
+     private Context[] _stack;
   
-  public {
-
     this() {
+       _stack ~= new Context;
     }
     
     void bindDelegate(char[] name, PredefFunc func, char[] docs = "", bool ismacro = false) {
@@ -62,7 +59,6 @@ public class Environment {
     }
 
     void bindPredef(char[] name, PredefFuncPtr funcPtr, char[] docs = "", bool ismacro = false) {
-//       auto func_dg = Cell* delegate(DLisp dlisp, Cell* cell) { return funcPtr(dlisp, cell); };
       this[name] = newPredef(name, toDelegate(funcPtr), docs, ismacro);
     }
     
@@ -82,43 +78,41 @@ public class Environment {
       this[newname] = this[name.toupper()];
     }
   
-    char[][] allFuncs() {
-      char[][] ret;
-      foreach (char[] key, Cell* cell; _globals) {
-        if (isFunc(cell)) {
-          if (cell.docs != "") {
-            ret ~= cell.name;
-          }
-        }
-      }
-      return ret;
-    }
-        
+// //     char[][] allFuncs() {
+// //       char[][] ret;
+// //       foreach (char[] key, Cell* cell; _globals) {
+// //         if (isFunc(cell)) {
+// //           if (cell.docs != "") {
+// //             ret ~= cell.name;
+// //           }
+// //         }
+// //       }
+// //       return ret;
+// //     }
+    
     bool isBound(char[] key) {
-      if( (key in _globals) != null )
-        return true;
-      return false;
+        return context.isBound(key);
     }
     
-    void unbind(char[] key) {
-      if (!isBound(key)) {
-        throw new Exception("Unbound symbol: " ~ key);
-      }
-      _globals.remove(key);
-    }
+//     void unbind(char[] key) {
+//       if (!isBound(key)) {
+//         throw new Exception("Unbound symbol: " ~ key);
+//       }
+//       // FIXME
+//       //_globals.remove(key);
+//     }
     
     void refresh() {
-      this._globals.rehash;
+      globals.refresh;
+      context.refresh;
     }
     
-    void addLocal(char[] key, Cell* value) {  
-      Cell** tcell = key in _globals;
-      if (tcell) {
-        _restore[_restore.length - 1][key] = *tcell;
-      } else {
-        _remove[_remove.length - 1] ~= key;
-      }
-      _globals[key] = value;
+    void addGlobal(char[] key, Cell* value) {
+        globals.bind(key,value);  
+    }
+
+    void addLocal(char[] key, Cell* value) {
+        context.bind(key,value);  
     }
 
     void addGeneric(char[] key)
@@ -133,62 +127,69 @@ public class Environment {
 
     bool isLocal(string key)
     {
-        // FIXME:
-        return true;
+       return !isGlobal(key) && context.isBound(key);
     }
 
-    void saveContext(ref Cell*[string] ctxt)
+    bool isGlobal(string key)
     {
-        foreach(string key, Cell* cell; _globals)
+        return globals.isBound(key);
+    }
+
+    Context context()
+    {
+	return _stack[$-1];
+    }
+
+    Context globals()
+    {
+        return _stack[0];
+    }
+
+    void pushContext(Context s = null) {
+       version(debugContext)
+	  { scope(exit) writefln("push-scope:#",_stack.length," >>",context.allKeys); }
+
+        if( s !is null )
         {
-            if( isLocal(key) )
-                ctxt[key] = cell;
+            _stack ~= s;
+            return;
+        }
+
+        if( _stack.length == 1 )
+        {
+            _stack ~= new Context;
+            context.master = globals;
+        } else
+        {
+            _stack ~= context;
         }
     }
+    
+    Context popContext() {
+       assert( _stack.length > 1 );
+       version(debugContext)
+          { scope(exit) writefln("pop-scope:#",_stack.length + 1); }
 
-    void loadContext(ref Cell*[string] ctxt)
+       Context top = context;
+       _stack.length = _stack.length - 1;
+       return context;
+    }
+
+    Cell* bind(string name, Cell* value)
     {
-        foreach(string key, Cell* cell; ctxt)
-        {
-            addLocal(key,cell);
-        }
-    }
-
-    void pushScope() {
-       version(debugScope) writefln ("PUSH-SCOPE _restore.length=%d  _remove.length=%d", _restore.length,  _remove.length);
-       Cell*[char[]] append_restore;
-      _restore ~= append_restore;
-      _remove.length = _remove.length + 1;
+       return context.bind(name,value);
     }
     
-    void popScope() {
-      if (_restore.length == 0) {
-        throw new Exception("Local stack is empty");
-      }
-      version(debugScope) writefln("POP-SCOPE _restore[$-1] = ",_restore[$-1]);
-      version(debugScope) writefln("POP-SCOPE _remove[$-1] = ",_remove[$-1]);
-      foreach(char[] key, Cell* cell; _restore[_restore.length - 1]) {
-        _globals[key] = cell;
-      }
-      foreach(char[] key; _remove[_remove.length - 1]) {
-        _globals.remove(key);
-      }
-      _restore.length = _restore.length - 1;
-      _remove.length = _remove.length - 1;  
-    }
-    
-    Cell* opIndex(char[] key) {
-      if (!isBound(key)) {
-        throw new Exception("Unbound symbol: " ~ key);
-      }
-      return _globals[key];
+    Cell* opIndex(string key) {
+       if( !isBound(key) ) {
+	  throw new Exception("Unbound symbol: " ~ key);
+       }
+       return context[key];
     }
 
-    Cell* opIndexAssign(Cell* value, char[] key) {
-      _globals[key.toupper()] = value;
-      return value;
+    Cell* opIndexAssign(Cell* value, string key) {
+       return context.bind(key.toupper(),value);
     }
-
-  }
-    
 }
+
+

@@ -108,8 +108,6 @@ public template Evaluator() {
           Cell* args = func.cdr;
           Cell* params = cell.cdr;
           Cell*[] macroforms;
-          environment.pushScope();
-          environment.loadContext(func.table);
           try {
             bool dotrace = (name in tracefuncs) != null;
             Cell* parms = null;
@@ -118,6 +116,8 @@ public template Evaluator() {
             }
             bool isoptional = false;
             char[] isrest = "";
+	    version(debugContext) writef(func.name);
+            environment.pushContext(func.context);
             while (args) {
               if (args.car.name == "&OPTIONAL" ) {
                 isoptional = true;
@@ -190,7 +190,7 @@ public template Evaluator() {
               func = func.cdr;
             }
           } finally {
-            environment.popScope();
+            environment.popContext();
           }
           if (ismacro) {
             foreach (Cell* mcell; macroforms) {

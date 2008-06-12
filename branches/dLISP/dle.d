@@ -48,8 +48,6 @@ int main(char[][] args) {
   char[] resultprompt = "\n=> ";
   bool interactive = false;
 
-  dlisp.environment.pushScope();
-
   dlisp.environment.bindValue("*input-count*", &inputcount);
   dlisp.environment.bindValue("*input-prompt*", &inputprompt);
   dlisp.environment.bindValue("*input-string*", &input);

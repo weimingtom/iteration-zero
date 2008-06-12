@@ -35,14 +35,14 @@ private {
 
 public {
 
-    Cell* evalCreateObject(DLisp dlisp, Cell* cell)
+    Cell* evalCreateObject(IDLisp dlisp, Cell* cell)
     {
         if( cell.cdr )
           return newObject("Unnamed object",dlisp.eval(cell.cdr));
         return newObject("Unnamed object");
     }
 
-    Cell* evalGetMethod(DLisp dlisp, Cell* cell)
+    Cell* evalGetMethod(IDLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs(dlisp,".y",cell.cdr);
         if( !isObject(cells[0]) )
@@ -60,7 +60,7 @@ public {
         return null;
     }
 
-    Cell* evalGetAttr(DLisp dlisp, Cell* cell)
+    Cell* evalGetAttr(IDLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs(dlisp,"Oy.?",cell.cdr);
         Cell* attr = getAttribute(cells[0],cells[1].name);
@@ -71,14 +71,14 @@ public {
         return attr;
     }
 
-    Cell* evalSetAttr(DLisp dlisp, Cell* cell)
+    Cell* evalSetAttr(IDLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs (dlisp, "Oy.", cell.cdr);
         cells[0].table[cells[1].name] = cells[2];
         return cells[2];
     }
 
-    Cell* evalHasAttr(DLisp dlisp, Cell* cell)
+    Cell* evalHasAttr(IDLisp dlisp, Cell* cell)
     {
         Cell* cells[] = evalArgs (dlisp, "Oy", cell.cdr);
         if( getAttribute(cells[0], cells[1].name) !is null)
@@ -86,14 +86,14 @@ public {
         return nil;
     }
 
-//     Cell* evalGenCall(DLisp dlisp, Cell* cell) {
+//     Cell* evalGenCall(IDLisp dlisp, Cell* cell) {
 //         Cell* cells[] = evalArgs (dlisp, "y", cell.cdr);
 //         
 //         return dlisp.eval(cell);
 //     }
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
     environment.bindPredef("get-attr", &evalGetAttr, "(GET-ATTR <object> <sym>); Return attr of <objects>");
     environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> <sym> <value>); Set attr of <objects>");
     environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> <sym>); Return whether <objects> has attr");
