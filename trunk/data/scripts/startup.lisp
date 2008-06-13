@@ -13,7 +13,7 @@
       ("Quit"         (stop *engine*))))
 
 (defvar *toolbar*
-    (("quit" (stop *engine*))
+    '(("quit" (stop *engine*))
      ("menu" (start *engine* "menu"))))
 
 (defmacro menu-option (item options) `(eval (find ,item ,options)))
@@ -106,19 +106,18 @@
          new-party-state))
 
 (on-start (get-state *engine* "level-state")
-    (lambda () (print "STUB.")))
-;;     (lambda ()
-;;         (let ((portraits (make-party-portraits-widget *party*)))
-;;             (show-widget portraits)
-;;             (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
+    (lambda ()
+        (let ((portraits (make-party-portraits-widget *party*)))
+            (show-widget portraits)
+            (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
 ;;(show-quit-button)
 
 
 (show-widget
-    (let ((tb (create-toolbar *toolbar*)))
-        (set-x tb 5)
-        (set-y tb (- (y-resolution *engine*) 25))))
+    (w/object (create-toolbar *toolbar*)
+        (set-x 5)
+        (set-y (- (y-resolution *engine*) 25))))
 
 ;; (test-button)
 (start *engine* "menu")
