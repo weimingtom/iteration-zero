@@ -8,7 +8,7 @@ import dlisp.dlisp;
 import party;
 import character;
 
-void bindGame(Environment env)
+void bindGame(IEnvironment env)
 {
     Party.bindClass(env);
     Character.bindClass(env);

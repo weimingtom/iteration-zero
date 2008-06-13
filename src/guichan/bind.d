@@ -7,7 +7,7 @@ private import
     guichan.opengl.font,
     dlisp.bind;
 
-void bindGuichan(Environment env)
+void bindGuichan(IEnvironment env)
 {
     Widget.bindClass(env);
     Window.bindClass(env);
