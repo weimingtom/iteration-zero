@@ -33,66 +33,66 @@ private {
 public {
   
   // Comparison ops =, /=, <, <=, >, >=
-  Cell* evalEqn(DLisp dlisp, Cell* cell) {
+  Cell* evalEqn(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &eqnCells);
   }
-  Cell* evalNeqn(DLisp dlisp, Cell* cell) {
+  Cell* evalNeqn(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &neqnCells);
   }
-  Cell* evalLtn(DLisp dlisp, Cell* cell) {
+  Cell* evalLtn(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &ltnCells);
   }
-  Cell* evalLten(DLisp dlisp, Cell* cell) {
+  Cell* evalLten(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &ltenCells);
   }
-  Cell* evalGtn(DLisp dlisp, Cell* cell) {
+  Cell* evalGtn(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &gtnCells);
   }
-  Cell* evalGten(DLisp dlisp, Cell* cell) {
+  Cell* evalGten(IDLisp dlisp, Cell* cell) {
     return evalCmpFunc(dlisp, cell, &gtenCells);
   }
   
-  Cell* evalEq(DLisp dlisp, Cell* cell) {
+  Cell* evalEq(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "..", cell.cdr);
     return newBool(eqCell(args[0], args[1]));
   }
   
-  Cell* evalEqual(DLisp dlisp, Cell* cell) {
+  Cell* evalEqual(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "..", cell.cdr);
     return newBool(eqCell(args[0], args[1], true));
   }
   
-  Cell* evalEndp(DLisp dlisp, Cell* cell) {
+  Cell* evalEndp(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "l", cell.cdr);
     return newBool(!args[0]);
   }
   
   // Cell type ops
-  Cell* evalAtom(DLisp dlisp, Cell* cell) {
+  Cell* evalAtom(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isAtom);
   }
-  Cell* evalIssym(DLisp dlisp, Cell* cell) {
+  Cell* evalIssym(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isSym);
   }
-  Cell* evalIsnum(DLisp dlisp, Cell* cell) {
+  Cell* evalIsnum(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isNumber);
   }
-  Cell* evalIsint(DLisp dlisp, Cell* cell) {
+  Cell* evalIsint(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isInt);
   }
-  Cell* evalIsfloat(DLisp dlisp, Cell* cell) {
+  Cell* evalIsfloat(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isFloat);
   }
-  Cell* evalIsstr(DLisp dlisp, Cell* cell) {
+  Cell* evalIsstr(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isString);
   }
-  Cell* evalIscons(DLisp dlisp, Cell* cell) {
+  Cell* evalIscons(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isCons);
   }
-  Cell* evalIslist(DLisp dlisp, Cell* cell) {
+  Cell* evalIslist(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isList);
   }
-  Cell* evalIsobject(DLisp dlisp, Cell* cell) {
+  Cell* evalIsobject(IDLisp dlisp, Cell* cell) {
     return isCellType(dlisp, cell, &isObject);
   }
   
@@ -123,7 +123,7 @@ private {
     return cmpCell(cella, cellb) >= 0;
   }
   
-  Cell* evalCmpFunc(DLisp dlisp, Cell* cell, CmpNumb cmpNumb) {
+  Cell* evalCmpFunc(IDLisp dlisp, Cell* cell, CmpNumb cmpNumb) {
     Cell*[] args = evalArgs(dlisp, "nn+", cell.cdr);
     for (uint i = 0; i < args.length - 1; i++) {
       if (!cmpNumb(args[i], args[i + 1])) {
@@ -133,7 +133,7 @@ private {
     return newSym("T");
   }
   
-  Cell* isCellType(DLisp dlisp, Cell* cell, IsType isType) {
+  Cell* isCellType(IDLisp dlisp, Cell* cell, IsType isType) {
     cell = dlisp.eval(cell.cdr.car);
     if (isType(cell))
       return newSym("T");

@@ -28,6 +28,7 @@ private {
   import std.stdio;
 
   import dlisp.concell;
+  import dlisp.types;
 }
 
 public {

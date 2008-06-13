@@ -30,54 +30,12 @@ private {
   import std.boxer;
   
   import dlisp.types;
-  import dlisp.dlisp;
+  import dlisp.states;
 }
 
 public {
   
   Cell* nil = null;
-  
-  typedef Cell* delegate(DLisp, Cell*) PredefFunc;
-  typedef Cell* function(DLisp, Cell*) PredefFuncPtr;
-  
-  enum CellType {
-    ctSYM, ctINT, ctFLOAT, ctSTR, 
-    ctSTREAM, ctCONS, ctFUNC, ctPREDEF,
-    ctOBJECT, ctGENERIC,
-    ctBINT, ctBFLOAT, ctBSTR
-  }
-
-  struct Cell {
-    CellType cellType;
-    char[] name;
-    Pos pos;
-    union {
-      int intValue;         // ctINT
-      int* pintValue;       // ctBINT
-      real floatValue;      // ctFLOAT
-      real* pfloatValue;    // ctBFLOAT
-      char[] strValue;      // ctSTR
-      char[]* pstrValue;    // ctBSTR
-      Stream streamValue;   // ctSTREAM
-      struct {              // ctCONS and ctFUNC, ctPREDEF
-        bool ismacro;       // ctFUNC, ctPREDEF
-        union {
-          char[] docs;      // ctFUNC, ctPREDEF
-          bool visited;
-        }
-        union {
-          struct {
-            Cell* car, cdr; // ctCONS, ctFUNC
-          }
-          struct {
-            Cell*[char[]] table; // ctOBJECT
-            Box instance;
-          }
-          PredefFunc func;  // ctPREDEF
-        }
-      }
-    }
-  }
   
   Cell* newSym(char[] name, bool nilsym = false) {
     atomcount++;

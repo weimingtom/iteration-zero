@@ -35,19 +35,19 @@ private {
 
 // Aritmetic ops +, - , *, /
 public {
-  Cell* evalAdd(DLisp dlisp, Cell* cell) {
+  Cell* evalAdd(IDLisp dlisp, Cell* cell) {
     return evalOpFunc(dlisp, cell, &addCells);
   }
-  Cell* evalSub(DLisp dlisp, Cell* cell) {
+  Cell* evalSub(IDLisp dlisp, Cell* cell) {
     return evalOpFunc(dlisp, cell, &subCells);
   }
-  Cell* evalMul(DLisp dlisp, Cell* cell) {
+  Cell* evalMul(IDLisp dlisp, Cell* cell) {
     return evalOpFunc(dlisp, cell, &mulCells);
   }
-  Cell* evalDiv(DLisp dlisp, Cell* cell) {
+  Cell* evalDiv(IDLisp dlisp, Cell* cell) {
     return evalOpFunc(dlisp, cell, &divCells);
   }
-  Cell* evalMod(DLisp dlisp, Cell* cell) {
+  Cell* evalMod(IDLisp dlisp, Cell* cell) {
     return evalOpFunc(dlisp, cell, &modCells);
   }
 }
@@ -156,7 +156,7 @@ private {
     }
   }
   
-  Cell* evalOpFunc(DLisp dlisp, Cell* cell, OpFunc opFunc) {
+  Cell* evalOpFunc(IDLisp dlisp, Cell* cell, OpFunc opFunc) {
     Cell* args = cell.cdr;
     uint cnt = listLen(args);
     if (cnt < 2) {
@@ -180,7 +180,7 @@ private {
   }
   
   
-  Cell* evalToType(DLisp dlisp, Cell* cell) {
+  Cell* evalToType(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".", cell.cdr);
     char[] typename;
     switch (cell.car.name) {
@@ -223,7 +223,7 @@ private {
 
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
 
   environment["PI"] = newFloat(PI);
 

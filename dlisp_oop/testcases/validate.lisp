@@ -1,75 +1,141 @@
+#! /usr/bin/env dle
+
+(print "Running dLISP test cases:" *ln*)
+(set fn function)
+
+(defmacro test (message &rest forms)
+  `(progn
+     (print "Testing " ,message *ln*)
+     (map eval ',forms)))
+
+(defmacro check-eq (value form)
+  `(let ((rval ,form))
+     (unless (eq ,value rval)
+	 (print "ERR: " ,value " <=/=> " rval *ln*))))
+
+(defmacro check-equal (value form)
+  `(let ((rval ,form))
+     (unless (equal ,value rval)
+	 (print "ERR: expected " ,value " <=/=> " rval "  from " ',form *ln*))))
+
+;; Check the ckecks
+(check-eq 1 (+ 6 -5))
+
 ;;;
 ;;; SET
-(if (equal (set a 1 b 2 c 3) 3) "OK set1" "NOK set1")
-(if (equal (list a b c) '(1 2 3)) "OK set2" "NOK set2") 
-(if (equal (set a (1+ b) b (1+ a) c (+ a b)) 7) "OK set3" "NOK set3")
-(if (equal (list a b c) '(3 4 7)) "OK set4" "NOK set4")
+(test "SET"
+  (check-equal 3 (set a 1 b 2 c 3))
+  (check-equal '(1 2 3) (list a b c))
+  (check-equal 7 (set a (1+ b) b (1+ a) c (+ a b)))
+  (check-equal '(3 4 7) (list a b c)))
 
 ;;;
 ;;; PUT
-(if (equal (set x (cons 'a 'b) y (list 1 2 3)) '(1 2 3)) "OK put1" "NOK put1")
-(if (equal (put (first x) 'x (first (rest y)) (first x) (rest x) y) '(1 X 3)) "OK put2" "NOK put2")
-(if (equal x '(X 1 X 3)) "OK put3" "NOK put3")
-(if (equal y '(1 X 3)) "OK put4" "NOK put4")
+(test "PUT"
+  (check-equal '(1 2 3)
+	       (set x (cons 'a 'b) y (list 1 2 3)))
+  (check-equal '(1 X 3)
+	       (put (first x) 'x (first (rest y)) (first x) (rest x) y))
+  (check-equal '(X 1 X 3) X)
+  (check-equal '(1 X 3) y))
 
 ;;;
 ;;; QUOTE
-(if (equal (quote a) 'a) "OK quote1" "NOK quote1")
-(if (equal (set a 1) 1) "OK quote2" "NOK quote2")
-(if (equal (quote (setq a 3)) '(SETQ A 3)) "OK quote3" "NOK quote3")
-(if (equal (first '(a b)) 'a) "OK quote4" "NOK quote4")
+(test "QUOTE"
+ (check-equal 'a (quote a))
+ (check-equal 1 (set a 1))
+ (check-equal '(SETQ A 3) (quote (setq a 3)))
+ (check-equal 'a (first '(a b))))
 
 ;;;
 ;;; LAMBDA
-(if (equal ((lambda (x) (+ x 3)) 4) 7) "OK lambda1" "NOK lambda1")
-(if (equal ((lambda () "foo")) "foo") "OK lambda2" "NOK lambda2")
+(test "LAMBDA"
+  (check-equal 7
+	       ((lambda (x) (+ x 3)) 4))
+  (check-equal "foo"
+	       ((lambda () "foo"))))
 
 ;;;
 ;;; EVAL
-(if (equal (setq form '(1+ a) a 999) 999) "OK eval1" "NOK eval1")
-(if (equal (eval form) 1000) "OK eval2" "NOK eval2")
-(if (equal (eval 'form) '(1+ A)) "OK eval3" "NOK eval3")
-(if (equal (let ((a 41)) (eval form)) 42) "OK eval4" "NOK eval4")
+(test "EVAL"
+  (check-equal 999
+	       (setq form '(1+ a) a 999))
+  (check-equal 1000
+	       (eval form))
+  (check-equal '(1+ A)
+	       (eval 'form))
+  (check-equal 42
+	       (let ((a 41)) (eval form))))
 
 ;;;
 ;;; PARSE
-(if (equal (set foo (parse "(+ 1 2)")) '(+ 1 2)) "OK parse1" "NOK parse1")
-(if (equal (eval foo) 3) "OK parse2" "NOK parse2")
-(if (equal (eval (parse "(+ 1 2)")) 3) "OK parse3" "NOK parse3")
-(if (equal (eval (parse (open "testcases/validateparse.lisp"))) 9) "OK parse4" "NOK parse4")
+(test "PARSE"
+  (check-equal '(+ 1 2)
+	       (set foo (parse "(+ 1 2)")))
+  (check-equal 3
+	       (eval foo))
+  (check-equal 3
+	       (eval (parse "(+ 1 2)")))
+  (check-equal 9
+	       (eval (parse (open "testcases/validateparse.lisp")))))
 
 ;;;
 ;;; DEFUN
-(if (defun ortest (a &optional (b 2) &rest c) (list a b c)) "OK defun1" "NOK defun1")
-(if (equal (ortest 1) '(1 2 NIL)) "OK defun2" "NOK defun2")
-(if (equal (ortest 1 (1+ 2) (1+ 3)) '(1 3 (4))) "OK defun3" "NOK defun3")
-(if (equal (ortest 1 2 3 4) '(1 2 (3 4))) "OK defun4" "NOK defun4")
+(test "DEFUN"
+  (set plus1 (lambda (b) (+ 1 b)))
+  (defun ortest (a &optional (b 2) &rest c) (list a b c))
+  (check-equal '(1 2 NIL)
+	       (ortest 1))
+  (check-equal '(1 3 (4))
+	       (ortest 1 (1+ 2) (plus1 3)))
+  (check-equal '(1 2 (3 4))
+	       (ortest 1 2 3 4)))
+
+;;
+;; CLOSURES
+(test "CLOSURES"
+  (defun make-counter ()
+    (let ((x 0))
+      (lambda () (set x (+ x 1)) x)))
+  (set f1 (make-counter))
+  (set f2 (make-counter))
+  (check-eq 1 (f1))
+  (check-eq 2 (f1))
+  (check-eq 3 (f1))
+  (check-eq 1 (f2))
+  (check-eq 4 (f1))
+  (check-eq 2 (f2)))
 
 ;;;
 ;;; DEFMACRO
-(if (defmacro inc (x) (list 'setq x (list '1+ x))) "OK defmacro1" "NOK defmacro1")
-(if (equal (setq a 41) 41) "OK defmacro2" "NOK defmacro2") 
-(if (equal (inc a) 42) "OK defmacro3" "NOK defmacro3")
-(if (equal a 42) "OK defmacro4" "NOK defmacro4")
+(test "DEFMACRO"
+      (defmacro inc (x) (list 'setq x (list '1+ x)))
+      (set a 41)
+      (check-equal 42
+		   (inc a))
+      (check-equal 42
+		   a))
+
+;;;
+;;; LOOPCONTROL
+(test "DOTIMES"
+  (check-equal 9
+	       (dotimes (k 10) k)))
 
 
 ;;;
 ;;; CREATE-OBJECT
-(let ((name (create-object)))
-    (set-attr name 'attr1 1)
-    (print 
-        (if (equal (get-attr name 'attr1) 1)  "OK set/get-attr" "NOK set/get-attr"))
-    (set-attr name 'inc-attr1
-        (lambda (self) 
-            (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
-    (inc-attr1 name)
-    (if (equal (get-attr name 'attr1) 2)  "OK set/get-attr2" "NOK set/get-attr2"))
+(test "CREATE-OBJECT"
+      (set name (create-object))
+      (set-attr name 'attr1 1)
+      (check-equal (get-attr name 'attr1) 1)
+      (set-attr name 'inc-attr1
+		(lambda (self) 
+		  (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
+      ((gencall inc-attr1) name)
+      (check-equal 2
+		   (get-attr name 'attr1)))
 
-(let ((x 0))
-    (dotimes (k 10)
-        (set x (1+ x)))
-    (if (equal x 10)
-        "OK dotimes" "NOK dotimes"))
+(println
+ "Known to be broken are self-made generic functions.") 
 
-;;; RETURN LAST ELEMENT
-(if (equal (dotimes (k 10) k) 9) "OK dotimes2" "NOK dotimes2")

@@ -31,7 +31,7 @@ private {
 
 public {
   
-  Cell* evalFirst(DLisp dlisp, Cell* cell) {
+  Cell* evalFirst(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "l", cell.cdr);
     if (args[0])
       return args[0].car;
@@ -39,7 +39,7 @@ public {
       return null;
   }
   
-  Cell* evalRest(DLisp dlisp, Cell* cell) {
+  Cell* evalRest(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "l", cell.cdr);
     if (args[0])
       return args[0].cdr;
@@ -47,12 +47,12 @@ public {
       return null;
   }
 
-  Cell* evalElements(DLisp dlisp, Cell* cell) {
+  Cell* evalElements(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "l", cell.cdr);
     return newInt(listLen(args[0]));
   }
   
-  Cell* evalNth(DLisp dlisp, Cell* cell) {
+  Cell* evalNth(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "il", cell.cdr);
     uint nth = args[0].intValue;
     Cell* list = args[1];
@@ -65,7 +65,7 @@ public {
     return list.car;
   }
 
-  Cell* evalFrom(DLisp dlisp, Cell* cell) {
+  Cell* evalFrom(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "il", cell.cdr);
     uint nth = args[0].intValue;
     Cell* list = args[1];
@@ -78,7 +78,7 @@ public {
     return list;
   }
   
-  Cell* evalLast(DLisp dlisp, Cell* cell) {
+  Cell* evalLast(IDLisp dlisp, Cell* cell) {
     uint cnt, len;
     Cell*[] args = evalArgs(dlisp, "li?", cell.cdr);
     cnt = args.length == 1 ? 1 : args[1].intValue;
@@ -96,13 +96,13 @@ public {
     return list;
   }
   
-  Cell* evalCons(DLisp dlisp, Cell* cell) {
+  Cell* evalCons(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "..", cell.cdr);
     return newCons(args[0], args[1]);
   }
   
   // List functions
-  Cell* evalList(DLisp dlisp, Cell* cell) {
+  Cell* evalList(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".*", cell.cdr);
     Cell* ret = null;
     for (int i = args.length - 1; i >= 0; i--) {
@@ -111,7 +111,7 @@ public {
     return ret;
   }
   
-  Cell* evalAssoc(DLisp dlisp, Cell* cell) {
+  Cell* evalAssoc(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".l", cell.cdr);
     Cell* item = args[0];
     args = evalArgs(dlisp, "'l*", args[1]);
@@ -123,7 +123,7 @@ public {
     return null;
   }
 
-  Cell* evalMember(DLisp dlisp, Cell* cell) {
+  Cell* evalMember(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".l", cell.cdr);
     Cell* item = args[0];
     cell = args[1];
@@ -136,7 +136,7 @@ public {
     return null;
   }
   
-  Cell* evalCopy(DLisp dlisp, Cell* cell) {
+  Cell* evalCopy(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "i?.", cell.cdr);
     if (args.length == 2) {
       return copyList(args[1], args[0].intValue);
@@ -145,7 +145,7 @@ public {
     }
   }
   
-  Cell* evalAppend(DLisp dlisp, Cell* cell) {
+  Cell* evalAppend(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".*", cell.cdr);
     if (args.length == 0) {
       return null;
@@ -160,7 +160,7 @@ public {
     }
   }
   
-  Cell* evalDistinct(DLisp dlisp, Cell* cell) {
+  Cell* evalDistinct(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "l", cell.cdr);
     Cell*[] res;
     Cell* first, cur, test;
@@ -178,7 +178,7 @@ public {
     return newList(res);
   }
   
-  Cell* evalUnion(DLisp dlisp, Cell* cell) {
+  Cell* evalUnion(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ll", cell.cdr);
     Cell*[] ret = listToArray(args[0]);
     Cell* cur;
@@ -197,7 +197,7 @@ public {
     return newList(ret);
   }
   
-  Cell* evalIntersect(DLisp dlisp, Cell* cell) {
+  Cell* evalIntersect(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ll", cell.cdr);
     Cell*[] lista, listb, ret;
     lista = listToArray(args[0]);
@@ -213,7 +213,7 @@ public {
     return newList(ret);
   }
 
-  Cell* evalDifference(DLisp dlisp, Cell* cell) {
+  Cell* evalDifference(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ll", cell.cdr);
     Cell*[] lista, listb, ret;
     lista = listToArray(args[0]);
@@ -238,7 +238,7 @@ public {
     return newList(ret);
   }
   
-  Cell* evalSort(DLisp dlisp, Cell* cell) {
+  Cell* evalSort(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ol", cell.cdr);
     Cell*[] ret = listToArray(args[1]);
     if (ret.length > 1) {
@@ -260,7 +260,7 @@ public {
     }
   }
   
-  Cell* evalMap(DLisp dlisp, Cell* cell) {
+  Cell* evalMap(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ol", cell.cdr);
     Cell*[] ret = listToArray(args[1]);
     if (ret.length > 0) {
@@ -278,7 +278,7 @@ public {
   
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
   
   environment.bindPredef("elements", &evalElements, "(ELEMENTS <list>); Return the length of a list.");
 
