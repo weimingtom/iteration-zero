@@ -5,16 +5,17 @@
 
 (defvar *gensym-counter* 0)
 
-(defun gensym ()
-    (symbol (join "gensym:" (tostring (incput *gensym-counter*)))))
+(defun gensym (&optional(prefix "gensym"))
+    (symbol (join prefix ":" (tostring (incput *gensym-counter*)))))
 
 (unless (issym (gensym)) (error))
 (when (eq (gensym) (gensym)) (error))
 
 ;;;; Correct implementation - doesn't work :-(
- 
+
 (defmacro w/object (object &rest forms)
     (let ((obj (gensym)) (form (gensym)))
+        (print forms)
         `(let ((obj ,object))
             (dolist (form ',forms)
                 (eval (cons (first form) (cons obj (rest form)))))

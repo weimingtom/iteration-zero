@@ -51,7 +51,7 @@
   `(return-from nil ,a))
 
 (defmacro defvar (name &optional initial-value)
-  `(unless (boundp ',name) (set ,name ,initial-value)))
+  `(unless (boundp ',name) (set! ,name ,initial-value)))
 
 (defun second (a) (nth 1 a))
 (defun third (a) (nth 2 a))

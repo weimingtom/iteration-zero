@@ -106,20 +106,21 @@
          new-party-state))
 
 (on-start (get-state *engine* "level-state")
-    (lambda ()
-        (let ((portraits (make-party-portraits-widget *party*)))
-            (show-widget portraits)
-            (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
+    (lambda () (print "STUB.")))
+;;     (lambda ()
+;;         (let ((portraits (make-party-portraits-widget *party*)))
+;;             (show-widget portraits)
+;;             (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
 ;;(show-quit-button)
 
 
 (show-widget
-    (w/object (create-toolbar *toolbar*)
-        (set-x 5)
-        (set-y (- (y-resolution *engine*) 25))))
+    (let ((tb (create-toolbar *toolbar*)))
+        (set-x tb 5)
+        (set-y tb (- (y-resolution *engine*) 25))))
 
-(test-button)
+;; (test-button)
 (start *engine* "menu")
 
 
