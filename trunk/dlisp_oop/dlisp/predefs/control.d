@@ -72,6 +72,24 @@ public {
     }
     return cell;
   }
+
+  Cell* evalLetStar(IDLisp dlisp, Cell* cell) {
+    Cell*[] args = evalArgs(dlisp, "'l'.*", cell.cdr);
+    Cell*[] locs = evalArgs(dlisp, "'l+", args[0]);
+    try {
+      dlisp.environment.pushContext();
+      foreach(Cell* pair; locs) {
+        Cell*[] arg  = evalArgs(dlisp, "'y.?", pair);
+        dlisp.environment.bind(arg[0].name,(arg.length == 2) ? arg[1] : null);
+      }
+      for (uint i = 1; i < args.length; i++) {
+        cell = dlisp.eval(args[i]);
+      }
+    } finally {
+      dlisp.environment.popContext();
+    }
+    return cell;
+  }
   
   Cell* evalProgn(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".*", cell.cdr);
@@ -246,6 +264,7 @@ public IEnvironment addToEnvironment(IEnvironment environment) {
   environment["*STATE*"] = null;
 
   environment.bindPredef("let", &evalLet, "(LET ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in paralell and then evalaute all <form>s.");
+  environment.bindPredef("let*", &evalLet, "(LET* ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in sequentiell and then evalaute all <form>s.");
   environment.bindPredef("progn", &evalProgn, "(PROGN [<form>] ...); Evaluates all form in the order they appear, and returns the result of the last form.");
   environment.bindPredef("block", &evalBlock, "(BLOCK <sym> [<form>] ...); Establishes a block named <sym> and evaluates all forms as an implicit progn. See RETURN-FROM.");
   environment.bindPredef("return-from", &evalReturnFrom, "(RETURN-FROM <sym> [<value>]); Return control and optional value to enclosing block. See BLOCK.");

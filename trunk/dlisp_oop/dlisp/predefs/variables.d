@@ -50,6 +50,16 @@ public {
     }
     return cell;
   }
+
+  Cell* evalSetGlobal(IDLisp dlisp, Cell* cell) {
+    Cell*[] args = evalArgs(dlisp, "('y'.)+", cell.cdr);
+    for(int i = 0; i < args.length; i += 2) {
+      char[] name = args[i].name;
+      cell = dlisp.eval(args[i + 1]);
+      dlisp.environment.globals.bind(name,cell);
+    }
+    return cell;
+  }
   
   Cell* evalPut(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "('..)+", cell.cdr);
@@ -114,6 +124,7 @@ public IEnvironment addToEnvironment(IEnvironment environment) {
   
   environment.bindPredef("isset", &evalIsSet, "(ISSET <sym> .. ); Returns true if all <sym>s are set to a value.");
   environment.bindPredef("set", &evalSet, "(SET <sym> <cons>); Sets global symbol <sym> to <cons>.", true);
+  environment.bindPredef("set!", &evalSetGlobal, "(SET! <sym> <cons>); Sets global symbol <sym> to <cons>.", true);
   environment.bindPredef("put", &evalPut, "(PUT <pos> <cons>); Place sym at pos.", true);
   environment.bindPredef("unset", &evalUnset, "(UNSET <sym> ...); Unset symbol value, returns last symbols value or NIL if none is set.");
   

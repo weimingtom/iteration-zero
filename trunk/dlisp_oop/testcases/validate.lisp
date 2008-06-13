@@ -106,6 +106,7 @@
   (check-eq 4 (f1))
   (check-eq 2 (f2)))
 
+
 ;;;
 ;;; DEFMACRO
 (test "DEFMACRO"
