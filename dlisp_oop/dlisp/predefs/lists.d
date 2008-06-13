@@ -260,6 +260,7 @@ public {
     }
   }
   
+  // FIXME: Broken, gets overriden by correct version in system.lisp
   Cell* evalMap(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "ol", cell.cdr);
     Cell*[] ret = listToArray(args[1]);

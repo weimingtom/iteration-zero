@@ -81,7 +81,6 @@ public template Evaluator() {
             {
                 Cell* temp = environment["GENCALL"];
                 Cell* rval = eval(newList(temp,cell));
-                //  writefln("GENERIC: ", cell.name," ==> ", cellToString(newList(temp,cell))," ==> ", cellToString(rval));
                 return rval;
             }
         }
@@ -165,7 +164,7 @@ public template Evaluator() {
                                             func.name ~ " got to many arguments.", func.pos);
               } else {
                 if (ismacro) {
-                  environment.addLocal(isrest, params);
+                  ctxt.bind(isrest, params);
                 } else {
                   Cell* rest = null;
                   while (params) {
@@ -210,10 +209,8 @@ public template Evaluator() {
             cell = func.func(this, cell);
           break;
         default:
-/*          if (allowLists == 0) {
             throw new EvalState("Unexpected list", func.pos);
-          }
-*/      }
+      }
       if (name in tracefuncs) {
         writefln(repeat(" ", tracelevel), "Trace ", name, " out: ", cellToString(cell));
         tracelevel -= tracetabs;

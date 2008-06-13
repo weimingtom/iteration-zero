@@ -13,3 +13,6 @@ for FILE in $FILES; do
 done
 
 dmd build/*.o -ofdle -unittest
+
+./dle testcases/validate.lisp
+

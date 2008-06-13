@@ -4,6 +4,20 @@
          (funcall (get-method object ',function-name) (cons object args))))
 (set <- gencall)
 
+(defmacro defvar (name &optional initial-value)
+  `(unless (boundp ',name) (set! ,name ,initial-value)))
+
+(defvar *gensym-counter* 0)
+
+(defmacro map (fun l)
+    (let ((stack (gensym)) (item (gensym)))
+    `(let ((,stack '()))
+        (dolist (,item ,l (reverse ,stack))
+            (set ,stack (cons (,fun ,item) ,stack))))))
+
+(defun gensym (&optional(prefix "gensym"))
+    (symbol (join prefix ":" (tostring (incput *gensym-counter*)))))
+
 (defun 1+ (a) 
     "(1+ <num>); return <num> increased by 1."
   (+ a 1))
@@ -50,8 +64,6 @@
 (defmacro return (&optional a)
   `(return-from nil ,a))
 
-(defmacro defvar (name &optional initial-value)
-  `(unless (boundp ',name) (set! ,name ,initial-value)))
 
 (defun second (a) (nth 1 a))
 (defun third (a) (nth 2 a))
@@ -101,9 +113,10 @@
 
 (defun reverse (l)
     "(REVERSE <list>) Returns the reverse list."
-    (if (<= (elements l) 1)
-        l
-        (append (reverse (rest l)) (list (first l)))))
+    (set stack '())
+    (dolist (item l stack)
+        (set stack (cons (first l) stack))
+        (set l (rest l))))
 
 (set length elements)
 
