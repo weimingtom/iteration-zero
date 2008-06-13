@@ -26,10 +26,11 @@ module dlisp.dlisp;
 
 public {
   import dlisp.concell;
+  import dlisp.environment;
   import dlisp.concellhelpers;
   import dlisp.oopextension;
-  import dlisp.environment;
   import dlisp.states;
+  import dlisp.types;
 }
 
 private {
@@ -38,10 +39,10 @@ private {
   import dlisp.parser;
 }
 
-public class DLisp {
+public class DLisp : IDLisp {
     
     private {
-      Environment _environment;
+      IEnvironment _environment;
     }
     
     public {
@@ -54,13 +55,13 @@ public class DLisp {
         return 0.99;
       }
       
-      this(Environment environment) {
+      this(IEnvironment environment) {
         _environment = environment;
         _environment["*version*"] = newFloat(versionReal());
         _environment["*version-string*"] = newStr(versionString());
       }
       
-      Environment environment() {
+      IEnvironment environment() {
         return _environment;
       }
         

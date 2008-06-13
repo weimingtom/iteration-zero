@@ -33,12 +33,12 @@ private {
 public {
   
   // Boolean ops not, and, or
-  Cell* evalNot(DLisp dlisp, Cell* cell) {
+  Cell* evalNot(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".", cell.cdr);
     return newBool(!isTrue(args[0]));
   }
   
-  Cell* evalAnd(DLisp dlisp, Cell* cell) {
+  Cell* evalAnd(IDLisp dlisp, Cell* cell) {
     Cell* args = cell.cdr;
     if (args) {
       while (args.cdr) {
@@ -53,7 +53,7 @@ public {
     }
   }
   
-  Cell* evalOr(DLisp dlisp, Cell* cell) {
+  Cell* evalOr(IDLisp dlisp, Cell* cell) {
     Cell* args = cell.cdr;
     if (args) {
       while (args.cdr) {

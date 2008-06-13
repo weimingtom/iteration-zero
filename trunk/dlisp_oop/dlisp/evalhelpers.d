@@ -25,13 +25,16 @@
 module dlisp.evalhelpers;
 
 private {
-  import dlisp.dlisp;
   import std.stdio;
+  import dlisp.types;
+  import dlisp.states;
+  import dlisp.concell;
+  import dlisp.concellhelpers;
 }
 
 public {
 
-  Cell*[] evalArgs(DLisp dlisp, Cell* cell)
+  Cell*[] evalArgs(IDLisp dlisp, Cell* cell)
   {
     Cell*[] args;
     while( cell !is null )
@@ -42,12 +45,12 @@ public {
     return args;
   }
 
-  Cell*[] evalArgs(DLisp dlisp, char[] fmt, Cell* args) {
+  Cell*[] evalArgs(IDLisp dlisp, char[] fmt, Cell* args) {
     uint[] cnts;
     return evalArgs(dlisp, fmt, args, cnts);
   }
   
-  Cell*[] evalArgs(DLisp dlisp, char[] fmt, Cell* args, out uint[] cnts) {
+  Cell*[] evalArgs(IDLisp dlisp, char[] fmt, Cell* args, out uint[] cnts) {
     // "yifscan" "'y+" 1 eller fler symboler, ingen eval."
 //     writefln(">>evalArgs: ",fmt);
 //     scope(exit) writefln("<<evalArgs: ",fmt);

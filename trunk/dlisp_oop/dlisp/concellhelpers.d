@@ -29,7 +29,9 @@ private {
   import std.math;
   import std.string;
   
-  import dlisp.dlisp;
+  import dlisp.types;
+  import dlisp.states;
+  import dlisp.concell;
 }
 
 public {

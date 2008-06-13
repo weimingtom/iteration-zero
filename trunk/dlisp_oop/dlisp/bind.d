@@ -65,17 +65,17 @@ public {
 class Function
 {
     public:
-        DLisp dlisp;
+        IDLisp dlisp;
         Cell* func;
-        Cell*[string] context;
+        Context context;
 
         mixin BindClass!("DFunction");
 
-    this(Cell* fun,DLisp dl)
+    this(Cell* fun, IDLisp dl)
     {
         func = fun;
         dlisp = dl;
-        dlisp.environment.saveContext(context);
+        context = dlisp.environment.context;
     }
 
     bool isValid()
@@ -94,8 +94,7 @@ class Function
         foreach(param; params)
            cells ~= boxValue(param);
 
-        dlisp.environment.pushScope();
-        dlisp.environment.loadContext(context);
+        dlisp.environment.pushScope(context);
         dlisp.eval(newList(cells));
         // Maybe save context?
         //dlisp.environment.saveContext();
@@ -454,7 +453,7 @@ template BindClass(string classname)
 
   private static Cell* _classCell;
   private static Cell*[string] _methods;
-  private static typeof(this) function(DLisp,Cell*) _constructor;
+  private static typeof(this) function(IDLisp,Cell*) _constructor;
 
   static void bindClass(Environment environment)
   {
@@ -495,7 +494,7 @@ template BindClass(string classname)
     return typeof(this).wrapInstance(this);
   }
 
-  static typeof(this) createInstance(DLisp dlisp,Cell* object, Cell* cell)
+  static typeof(this) createInstance(IDLisp dlisp,Cell* object, Cell* cell)
   {
     typeof(this) instance;
     //writefln("CONSTRUCTOR ARGS: %s",cellToString(cell.cdr.cdr));
@@ -520,7 +519,7 @@ template BindClass(string classname)
     return unbox!(typeof(this))(cell.instance);
   }
 
-  static Cell* makeInstance(DLisp dlisp, Cell* cell)
+  static Cell* makeInstance(IDLisp dlisp, Cell* cell)
   {
      Cell* object = newObject("INSTANCE OF CLASS " ~ toupper(classname),getClass());
      object.instance = box(createInstance(dlisp, object, cell));
@@ -528,7 +527,7 @@ template BindClass(string classname)
      return object;
   }
 
-  static Cell* castToClass(DLisp dlisp, Cell* cell)
+  static Cell* castToClass(IDLisp dlisp, Cell* cell)
   {
     Cell* cells[] = evalArgs(dlisp,"OO",cell.cdr);
      if( !isInstance(cells[1]) )
@@ -536,7 +535,7 @@ template BindClass(string classname)
      return wrapInstance(getInstance(cells[1]));
   }
 
-  static Cell* canCastToClass(DLisp dlisp, Cell* cell)
+  static Cell* canCastToClass(IDLisp dlisp, Cell* cell)
   {
     Cell* cells[] = evalArgs(dlisp,"OO",cell.cdr);
      if( !isInstance(cells[1]) )
@@ -597,7 +596,7 @@ template BindConstructor(T)
 {
     static this()
     {
-      static typeof(this) initWrapper(DLisp dlisp, Cell* cell)
+      static typeof(this) initWrapper(IDLisp dlisp, Cell* cell)
       {
         T func;
         // pragma(msg,T.stringof);

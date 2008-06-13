@@ -32,7 +32,7 @@ private {
 
 public {
 
-  Cell* evalWhile(DLisp dlisp, Cell* cell) {
+  Cell* evalWhile(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'.'.+", cell.cdr);
     cell = null;
     while (isTrue(dlisp.eval(args[0]))) {
@@ -43,7 +43,7 @@ public {
     return cell;
   }
   
-  Cell* evalUntil(DLisp dlisp, Cell* cell) {
+  Cell* evalUntil(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'.'.+", cell.cdr);
     cell = null;
     while (!isTrue(dlisp.eval(args[0]))) {
@@ -54,7 +54,7 @@ public {
     return cell;
   }
 
-  Cell* evalDo(DLisp dlisp, Cell* cell) {
+  Cell* evalDo(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'.+", cell.cdr);
     while(1) {
       for (uint i = 0; i < args.length; i++) {
@@ -64,10 +64,10 @@ public {
     return null;
   }
 
-  Cell* evalDoTimes(DLisp dlisp, Cell* cell) {
+  Cell* evalDoTimes(IDLisp dlisp, Cell* cell) {
     Cell*[] forms = evalArgs(dlisp, "'l'.+", cell.cdr);
     Cell*[] args = evalArgs(dlisp, "'yi'.?", forms[0]);
-    dlisp.environment.pushScope();
+    dlisp.environment.pushContext();
     dlisp.environment.addLocal(args[0].name, null);
     cell = null;
     try {
@@ -84,15 +84,15 @@ public {
       }
     }
     finally {
-      dlisp.environment.popScope();
+      dlisp.environment.popContext();
     }
     return cell;
   }
 
-  Cell* evalDoRange(DLisp dlisp, Cell* cell) {
+  Cell* evalDoRange(IDLisp dlisp, Cell* cell) {
     Cell*[] forms = evalArgs(dlisp, "'l'.+", cell.cdr);
     Cell*[] args = evalArgs(dlisp, "'yii'.?", forms[0]);
-    dlisp.environment.pushScope();
+    dlisp.environment.pushContext();
     dlisp.environment.addLocal(args[0].name, null);
     cell = null;
     try {
@@ -108,15 +108,15 @@ public {
       }
     }
     finally {
-      dlisp.environment.popScope();
+      dlisp.environment.popContext();
     }
     return cell;
   }
 
-  Cell* evalDoList(DLisp dlisp, Cell* cell) {
+  Cell* evalDoList(IDLisp dlisp, Cell* cell) {
     Cell*[] forms = evalArgs(dlisp, "'l'.+", cell.cdr);
     Cell*[] args = evalArgs(dlisp, "'yl'.?", forms[0]);
-    dlisp.environment.pushScope();
+    dlisp.environment.pushContext();
     dlisp.environment.addLocal(args[0].name, null);
     cell = null;
     try {
@@ -133,14 +133,14 @@ public {
       }
     }
     finally {
-      dlisp.environment.popScope();
+      dlisp.environment.popContext();
     }
     return cell;
   }
 
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
 
   environment.bindPredef("while", &evalWhile, "(WHEN <bool> <form> ...); Executes all <form>s in succession while <bool> holds true, returns result of last form.");
   environment.bindPredef("until", &evalUntil, "(UNTIL <bool> <form> ...); Executes all <form>s in succession until <bool> holds true, returns result of last form.");

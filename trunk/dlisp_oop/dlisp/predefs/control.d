@@ -50,7 +50,7 @@ public {
     }
   }
   
-  Cell* evalLet(DLisp dlisp, Cell* cell) {
+  Cell* evalLet(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.*", cell.cdr);
     Cell*[] locs = evalArgs(dlisp, "'l+", args[0]);
     // Do this in paralell somehow :/
@@ -59,7 +59,7 @@ public {
       Cell*[] arg = evalArgs(dlisp, "'y.?", pair);
       vars[arg[0].name] = (arg.length == 2) ? arg[1] : null;
     }
-    dlisp.environment.pushScope();
+    dlisp.environment.pushContext();
     try {
       foreach(char[] name, Cell* value; vars) {
         dlisp.environment.addLocal(name, value);
@@ -68,12 +68,12 @@ public {
         cell = dlisp.eval(args[i]);
       }
     } finally {
-      dlisp.environment.popScope();
+      dlisp.environment.popContext();
     }
     return cell;
   }
   
-  Cell* evalProgn(DLisp dlisp, Cell* cell) {
+  Cell* evalProgn(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, ".*", cell.cdr);
     if (args.length == 0) {
       return null;
@@ -82,7 +82,7 @@ public {
     }
   }
   
-  Cell* evalBlock(DLisp dlisp, Cell* cell) {
+  Cell* evalBlock(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'y'.*", cell.cdr);
     Cell* ret = null;
     try {
@@ -99,7 +99,7 @@ public {
     return ret;
   }
   
-  Cell* evalReturnFrom(DLisp dlisp, Cell* cell) {
+  Cell* evalReturnFrom(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'..?", cell.cdr);
     if( args[0] is null )
     {
@@ -116,7 +116,7 @@ public {
     return null;
   }
   
-  Cell* evalTagbody(DLisp dlisp, Cell* cell) {
+  Cell* evalTagbody(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'.*", cell.cdr);
     uint s = 0;
 start:
@@ -140,13 +140,13 @@ start:
     return null;
   }
   
-  Cell* evalGo(DLisp dlisp, Cell* cell) {
+  Cell* evalGo(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'y", cell.cdr);
     throw new GoState("GO " ~ cellToString(args[0]), args[0]);
     return null;
   }
 
-  Cell* evalCatch(DLisp dlisp, Cell* cell) {
+  Cell* evalCatch(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.*", cell.cdr);
     Cell*[] cargs = evalArgs(dlisp, "'y'y?'.*", args[0]);
     Cell* ret = null;
@@ -187,7 +187,7 @@ start:
   }
 
   
-  Cell* evalIf(DLisp dlisp, Cell* cell) {
+  Cell* evalIf(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "b'.'.?", cell.cdr);
     if (isTrue(args[0])) {
       return dlisp.eval(args[1]);
@@ -200,7 +200,7 @@ start:
     }
   }
   
-  Cell* evalWhen(DLisp dlisp, Cell* cell) {
+  Cell* evalWhen(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "b'.+", cell.cdr);
     if (isTrue(args[0])) {
       for (uint i = 1; i < args.length; i++) {
@@ -212,7 +212,7 @@ start:
     }
   }
   
-  Cell* evalUnless(DLisp dlisp, Cell* cell) {
+  Cell* evalUnless(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "b'.+", cell.cdr);
     if (!isTrue(args[0])) {
       for (uint i = 1; i < args.length; i++) {
@@ -224,7 +224,7 @@ start:
     }
   }
   
-  Cell* evalCond(DLisp dlisp, Cell* cell) {
+  Cell* evalCond(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l*", cell.cdr);
     foreach(Cell* arg; args) {
       Cell*[] test = evalArgs(dlisp, "b'.*", arg);
@@ -241,12 +241,12 @@ start:
 
 }
 
-public Environment addToEnvironment(Environment environment) {
+public IEnvironment addToEnvironment(IEnvironment environment) {
 
   environment["*STATE*"] = null;
 
-  environment.bindPredef("let", &evalLet, "(LET ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in paralell and then valauta all <form>s.");
-  environment.bindPredef("progn", &evalProgn, "(PROGN [<form>] ...); Evaluates all form in the order they apear, and returns the result of the last form.");
+  environment.bindPredef("let", &evalLet, "(LET ((<sym> <cons>) ...) <form> ...); Bind all <sym>s to <cons> in paralell and then evalaute all <form>s.");
+  environment.bindPredef("progn", &evalProgn, "(PROGN [<form>] ...); Evaluates all form in the order they appear, and returns the result of the last form.");
   environment.bindPredef("block", &evalBlock, "(BLOCK <sym> [<form>] ...); Establishes a block named <sym> and evaluates all forms as an implicit progn. See RETURN-FROM.");
   environment.bindPredef("return-from", &evalReturnFrom, "(RETURN-FROM <sym> [<value>]); Return control and optional value to enclosing block. See BLOCK.");
   environment.bindPredef("tagbody", &evalTagbody, "(TAGBODY {<tag>|<form>} ...); Evaluates all forms. See GO.");
