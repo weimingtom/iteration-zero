@@ -15,11 +15,10 @@
 
 (defmacro w/object (object &rest forms)
     (let ((obj (gensym)) (form (gensym)))
-        (print forms)
-        `(let ((obj ,object))
-            (dolist (form ',forms)
-                (eval (cons (first form) (cons obj (rest form)))))
-            obj)))
+        `(let ((,obj ,object))
+            (dolist (,form ',forms)
+                (eval (cons (first ,form) (cons ,obj (rest ,form)))))
+            ,obj)))
 
 ;; (defmacro w/object (object &rest forms)
 ;;     `(let ((obj ,object))
