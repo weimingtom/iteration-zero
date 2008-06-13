@@ -9,17 +9,21 @@
      (map eval ',forms)))
 
 (defmacro check-eq (value form)
-  `(let ((rval ,form))
-     (unless (eq ,value rval)
-	 (print "ERR: " ,value " <=/=> " rval *ln*))))
+    (let ((rval (gensym)))
+        `(let ((,rval ,form))
+            (unless (eq ,value ,rval)
+                (print "ERR: " ,value " <=/=> " ,rval *ln*)))))
 
 (defmacro check-equal (value form)
-  `(let ((rval ,form))
-     (unless (equal ,value rval)
-	 (print "ERR: expected " ,value " <=/=> " rval "  from " ',form *ln*))))
+    (let ((rval (gensym)))
+        `(let ((,rval ,form))
+            (unless (equal ,value ,rval)
+                (print "ERR: " ,value " <=/=> " ,rval *ln*)))))
 
 ;; Check the ckecks
 (check-eq 1 (+ 6 -5))
+(check-eq nil
+    (check-equal -1 (+ -6 5)))
 
 ;;;
 ;;; SET
@@ -28,6 +32,10 @@
   (check-equal '(1 2 3) (list a b c))
   (check-equal 7 (set a (1+ b) b (1+ a) c (+ a b)))
   (check-equal '(3 4 7) (list a b c)))
+
+;; (test "BASICS"
+;;   (set a 42)
+;;   (check-equal '(42) '(a)))
 
 ;;;
 ;;; PUT
@@ -53,7 +61,19 @@
   (check-equal 7
 	       ((lambda (x) (+ x 3)) 4))
   (check-equal "foo"
-	       ((lambda () "foo"))))
+	       ((lambda () "foo")))
+  (check-equal '(1 2 3)
+               ((lambda (a) a)  '(1 2 3))))
+
+(test "REVERSE"
+      (check-equal '(1 2 3)
+                   (reverse '(3 2 1))))
+
+(test "MAP"
+      (check-equal '(2 3 4)
+                   (map 1+ '(1 2 3)))
+      (check-equal '(1 2 3)
+                   (map car '((1) (2) (3)))))
 
 ;;;
 ;;; EVAL
@@ -111,11 +131,28 @@
 ;;; DEFMACRO
 (test "DEFMACRO"
       (defmacro inc (x) (list 'setq x (list '1+ x)))
-      (set a 41)
+      (defmacro letmac0 (x y &optional (z 0) &rest args)
+        `'(,x ,y ,z ,args))
+      (defmacro letmac1 (a)
+          (let ((x 0)) `,a))
+      (defmacro letmac2 (a &rest args)
+          (let ((x (gensym)))
+            `(let ((,x 0)) ,a)))
+      (defmacro letmac3 (a &rest args)
+          (let ((x (gensym)))
+            `(let ((,x ,a)) (cons ,a ',args))))
+      (set x 41)
       (check-equal 42
-		   (inc a))
+		   (inc x))
       (check-equal 42
-		   a))
+		   x)
+      (check-equal '(1 2 0 nil) (letmac0 1 2))
+      (check-equal '(1 2 3 nil) (letmac0 1 2 3))
+      (check-equal '(1 2 3 (4 5)) (letmac0 1 2 3 4 5))
+      (check-equal 42 (letmac1 x))
+      (check-equal 42 (letmac2 x 89))
+      (check-equal '(42 89) (letmac3 x 89))
+)
 
 ;;;
 ;;; LOOPCONTROL
