@@ -47,11 +47,11 @@ class Level : ILevel
         dataset = new Dataset;
         _party = new Party;
 
-        Engine.instance.dlisp.environment.pushScope();
+        //Engine.instance.dlisp.environment.pushScope();
         bindInstance(Engine.instance.dlisp.environment,"*LEVEL*");
 
         Engine.instance.dlisp.parseEvalPrint("(LOAD \"" ~ filename ~ "\" T)", true);//"
-        Engine.instance.dlisp.environment.popScope();
+        //Engine.instance.dlisp.environment.popScope();
     }
 
     void init(int w_, int h_)

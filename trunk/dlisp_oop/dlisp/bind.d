@@ -94,11 +94,11 @@ class Function
         foreach(param; params)
            cells ~= boxValue(param);
 
-        dlisp.environment.pushScope(context);
+//        dlisp.environment.pushScope(context);
         dlisp.eval(newList(cells));
         // Maybe save context?
         //dlisp.environment.saveContext();
-        dlisp.environment.popScope();
+//        dlisp.environment.popScope();
     }
 
     Cell* boxValue(T)(T return_value)
@@ -455,7 +455,7 @@ template BindClass(string classname)
   private static Cell*[string] _methods;
   private static typeof(this) function(IDLisp,Cell*) _constructor;
 
-  static void bindClass(Environment environment)
+  static void bindClass(IEnvironment environment)
   {
       environment[classname] = getClass();
       foreach(string key, Cell* method; _methods)
@@ -465,7 +465,7 @@ template BindClass(string classname)
       }
   }
 
-  void bindInstance(Environment environment, string name)
+  void bindInstance(IEnvironment environment, string name)
   {
       bindClass(environment);
       environment[name] = wrap;
@@ -675,7 +675,7 @@ template BindMethod(string name,alias func)
     static this()
     {
 //       writefln("DLISP.BIND: method %s of class %s",toupper(name), toupper(typeof(this).stringof) );
-      static Cell* methodWrapper(DLisp dlisp, Cell* cell)
+      static Cell* methodWrapper(IDLisp dlisp, Cell* cell)
       {
         assert(cell !is null);
         if(cell.cdr is null)
@@ -789,7 +789,7 @@ template BindFunction(string name,alias func)
     //  pragma(msg,name);
     static this()
     {
-      static Cell* functionWrapper(DLisp dlisp, Cell* cell)
+      static Cell* functionWrapper(IDLisp dlisp, Cell* cell)
       {
         Cell*[] cargs = evalArgs(dlisp,cell.cdr);
 

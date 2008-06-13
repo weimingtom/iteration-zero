@@ -199,7 +199,7 @@ public {
     if( dlisp.environment.context.master )
        cell.context = dlisp.environment.context.dup;
     else { cell.context = new Context; cell.context.master = dlisp.environment.globals; }
-    dlisp.environment.bind(cell.name,cell);
+    dlisp.environment.globals.bind(cell.name,cell);
     return cell;
   }
   

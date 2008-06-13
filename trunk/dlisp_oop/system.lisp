@@ -2,7 +2,7 @@
 (defmacro gencall (function-name)
      `(lambda (object &rest args)
          (funcall (get-method object ',function-name) (cons object args))))
-
+(set <- gencall)
 
 (defun 1+ (a) 
     "(1+ <num>); return <num> increased by 1."

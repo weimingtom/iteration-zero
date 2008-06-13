@@ -72,9 +72,8 @@
 
 (defun create-menu (options &optional (name "unnamed") (width 200) (h 0))
     (let ((box (make-instance C/CONTAINER))
-          (y 0)
-          (make-button
-            (lambda (o) (create-menu-button o box width))))
+          (y 0))
+        (set make-button (lambda (o) (print y) (create-menu-button o box width)))
         (set-id box name)
         (set-size box width h)
 ;;         (set-border-size 2)
