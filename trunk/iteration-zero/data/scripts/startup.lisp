@@ -2,19 +2,35 @@
 ;; Startup of the game iteration zero.
 ;;
 
+(defvar *data-path*      "data/")
+(defvar *materials-path* "data/materials/")
+
+;;;
+;;; 'Import modules'
+;;;
 (load "data/scripts/basics.lisp" t)
 (load "data/scripts/layout.lisp" t)
 (load "data/scripts/ui.lisp" t)
+(load "data/scripts/db.lisp" t)
 
-(defvar *main-menu*
-    '(("New Party"    (start *engine* "new-party-state"))
-      ("Demo Level01" (load-and-start-level "data/test/level01.dl"))
-      ("Demo Level02" (load-and-start-level "data/test/level02.dl"))
-      ("Quit"         (stop *engine*))))
+;;;
+;;; Dataset descriptions are located in the data subfolders.
+;;;
+(load "data/materials/materials.lisp" t)
 
-(defvar *toolbar*
-    '(("quit" (stop *engine*))
-     ("menu" (start *engine* "menu"))))
+
+(deftable *main-menu*
+    ("New Party"    (start *engine* "new-party-state"))
+    ("Demo Level01" (load-and-start-level "data/test/level01.dl"))
+    ("Demo Level02" (load-and-start-level "data/test/level02.dl"))
+    ("Quit"         (stop *engine*))
+)
+
+(deftable *toolbar*
+    ("quit" (stop *engine*))
+    ("menu" (start *engine* "menu"))
+    ("test-db" (load-all-material-defs))
+)
 
 (defmacro menu-option (item options) `(eval (find ,item ,options)))
 (defvar *new-party-menu-left*

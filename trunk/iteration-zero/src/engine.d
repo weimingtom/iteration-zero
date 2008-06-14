@@ -147,8 +147,8 @@ class Engine
         setupGL();
 
         _dlisp = new DLisp(addAllToEnvironment(new Environment));
-        _dlisp.parseEvalPrint("(LOAD \"dlisp_oop/system.lisp\" T)", true);//"
         bindInstance(_dlisp.environment,"*engine*");
+        _dlisp.parseEvalPrint("(LOAD \"../dLISP/system.lisp\" T)", true);
 
         bindGuichan(_dlisp.environment);
         GameState.bindClass(dlisp.environment);
