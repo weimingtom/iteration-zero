@@ -1,7 +1,0 @@
-Models:
-
- - TurboSquid: http://tinyurl.com/35h7vg
-
-Textures:
-
- - KatsBits: http://www.katsbits.com/htm/textures.htm
