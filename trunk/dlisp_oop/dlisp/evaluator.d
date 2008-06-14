@@ -93,7 +93,7 @@ public template Evaluator() {
             return temp;
           }
         } else {
-          writefln("XXX:", environment.globals.isBound(cell.name));
+          //writefln("XXX:", environment.globals.isBound(cell.name));
           throw new UnboundSymbolState("Unbound symbol: " ~ cell.name, cell.pos); 
         }
       }
@@ -119,7 +119,8 @@ public template Evaluator() {
             bool isoptional = false;
             char[] isrest = "";
 	    version(debugContext) writef(func.name);
-	    assert( func.context );
+	    assert( func.context !is null );
+	    assert( func.context.master !is null);
             Context ctxt = func.context;
             while (args) {
               if (args.car.name == "&OPTIONAL" ) {

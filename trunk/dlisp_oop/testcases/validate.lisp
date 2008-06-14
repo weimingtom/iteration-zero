@@ -175,6 +175,30 @@
       (check-equal 187 xyz)
 )
 
+
+;;;
+;;; DEFVAR
+(test "DEFVAR"
+      (defun make-var ()
+         (defvar *testvar* 6677))
+      (make-var)
+      (check-equal 6677 *testvar*)
+      (eval (parse "(defvar *testvar2* 7766)"))
+
+      (set f (open "/tmp/test.lisp"))
+      (write f "(defvar *testvar3* 7676)")
+      (close f)
+      (load "/tmp/test.lisp" t)
+      (check-equal 7676 *testvar3*)
+
+      (set f (open "/tmp/test2.lisp"))
+      (write f "(defun getvar3p2 ()  (+ 2 *testvar3*))")
+      (close f)
+      (load "/tmp/test2.lisp" t)
+
+      (check-equal 7678 (getvar3p2))
+)
+
 ;;;
 ;;; LOOPCONTROL
 (test "DOTIMES"

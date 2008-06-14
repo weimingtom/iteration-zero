@@ -5,7 +5,8 @@
 (set <- gencall)
 
 (defmacro defvar (name &optional initial-value)
-  `(unless (boundp ',name) (set! ,name ,initial-value)))
+  `(unless (boundp ',name)
+      (set! ,name ,initial-value)))
 
 (defvar *gensym-counter* 0)
 
