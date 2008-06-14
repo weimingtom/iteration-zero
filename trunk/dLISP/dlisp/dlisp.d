@@ -39,6 +39,13 @@ private {
   import dlisp.parser;
 }
 
+const string VERSION = "0.100.0";
+
+const int    VERSION_MAJOR = 0;
+const int    VERSION_MINOR = 100;
+const int    VERSION_PATCH = 0;
+
+
 public class DLisp : IDLisp {
     
     private {
@@ -48,16 +55,11 @@ public class DLisp : IDLisp {
     public {
       
       char[] versionString() {
-        return "dLISP environment v" ~ toString(versionReal()) ~ " (" ~ std.string.toString(Cell.sizeof) ~ ")";
-      }
-          
-      float versionReal() {
-        return 0.99;
+        return "dLISP environment v" ~ VERSION ~ " (" ~ std.string.toString(Cell.sizeof) ~ ")";
       }
       
       this(IEnvironment environment) {
         _environment = environment;
-        _environment["*version*"] = newFloat(versionReal());
         _environment["*version-string*"] = newStr(versionString());
       }
       
