@@ -109,7 +109,7 @@ class Dataset
     this()
     {
         _instance = this;
-        bindInstance(Engine.instance.dlisp.environment,"*dataset*");
+        bindInstance(Engine.instance.dlisp.environment,"*db*");
     }
 
     public:
@@ -167,6 +167,15 @@ class Dataset
 
     }
 
+    void addMaterial(string name, Material material)
+    {
+    }
+
+    Material getMaterial(string name)
+    {
+        return null;
+    }
+
     TilePrototype getTilePrototype(string name)
     {
       return _prototypes[name];
@@ -186,4 +195,5 @@ class Dataset
 
     mixin BindClass!("C/DATASET");
     mixin BindMethods!(load,getTilePrototype,getGObjectPrototype,getModel);
+    mixin BindMethods!(addMaterial,getMaterial);
 }

@@ -17,6 +17,7 @@ private {
     import vector;
     import util;
     import sofu = Sofu.Sofu;
+    import dlisp.bind;
 
     TextureManager _textures;
     Material[char[]] _materials;
@@ -72,6 +73,8 @@ public:
 
 
 public:
+    mixin BindClass!("C/MATERIAL");
+
     // default constructor
     this() {
     }
@@ -126,6 +129,13 @@ public:
     Material setTexture(Texture texture_)
     {
         texture = texture_;
+        return this;
+    }
+
+    // load texture
+    void loadTexture(string filename)
+    {
+        texture = _textures.load(filename);
         return this;
     }
 
@@ -235,4 +245,7 @@ public:
         if (texture !is null) texture.unregister();
         return this;
     }
+
+    mixin BindMethods!(setColor,setLight,loadTexture);
+
 }

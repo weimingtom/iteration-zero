@@ -44,7 +44,7 @@ class Level : ILevel
 
     this(string filename)
     {
-        dataset = new Dataset;
+        dataset = Dataset.instance;
         _party = new Party;
 
         //Engine.instance.dlisp.environment.pushScope();
