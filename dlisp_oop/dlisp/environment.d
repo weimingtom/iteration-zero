@@ -145,7 +145,10 @@ public class Environment : public IEnvironment {
         return _stack[0];
     }
 
-    void pushContext(Context s = null) {
+    void pushContext(Context s = null)
+    out {
+      assert( context.master !is null );
+    } body {
        version(debugContext)
 	  { scope(exit) writefln("push-scope:#",_stack.length," >>",context.allKeys); }
 

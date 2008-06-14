@@ -119,7 +119,7 @@
         (set-x 5)
         (set-y (- (y-resolution *engine*) 25))))
 
-;; (test-button)
+(test-button)
 (start *engine* "menu")
 
 

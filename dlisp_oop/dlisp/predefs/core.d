@@ -178,7 +178,7 @@ public {
   Cell* evalFunction(IDLisp dlisp, Cell* cell) {
     Cell*[] args = evalArgs(dlisp, "'l'.+", cell.cdr);
     cell = newFunc(cell.cdr.cdr, args[0]);
-    if( dlisp.environment.context.master )
+    if( dlisp.environment.context.master !is null )
        cell.context = dlisp.environment.context.dup;
     else { cell.context = new Context; cell.context.master = dlisp.environment.globals; }
     return cell;
