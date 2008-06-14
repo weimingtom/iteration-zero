@@ -4,8 +4,10 @@
  
  Author: Fredrik Olsson <peylow@treyst.se>
  Author: Klaus Blindert <klaus.blindert@web.de>
+
  Copyright (c) 2005 Treyst AB, <http://www.treyst.se>
  Copyright (c) 2008 Klaus Blindert
+
  All rights reserved.
  
  This file is part of dLISP.
