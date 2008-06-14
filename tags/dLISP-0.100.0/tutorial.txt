@@ -1,0 +1,129 @@
+Well, this is a short tutorial in Lisp. Written for Andreas Olasusson, hi!
+
+If someone else have use of it, then congratulations. I take no responsibility
+for this being academcaly correct, in line with any specifications etc. This
+is a crash course to get going.
+
+First of Lisp is not like any programming language you normaly see, in fact it
+is probably like nothing you have seen before. First of Lisp is built upon
+S-expressions, so what is this?
+
+Lets have simple expression as in C, Basic or whatever:
+  1 + 2
+Written as an S-expression this becomes:
+  (+ 1 2)
+Go ahead type it at the dle promt and see what it does.
+
+A slightly more complex example:
+  2 + 10 * 4
+As an S-expression:
+  (+ 2 (* 10 4))
+
+As can be seen + and * are function names, if put first in a list they will be
+called with all other elements of the list as arguments. Try out -, /, <, =,
+and <= and see the result. For the boolean results you will notice that T is
+returned for true and NIL for false.
+
+Now here is a treat with Lisp; it does no discrimination of data and code,
+everything is S-expressions. To make it easier to talk one programmer to 
+another we call S-expressions that are meant as data "lists", and if they are
+meant to be evaulated we call them "forms". In reality they are the same, but 
+now now you know what my intentions are with each S-expression. This takes some 
+getting used to, but is mighty useful.
+Try this one:
+  (0 1 2 3)
+Oops, not quite what one would want. One problem is that sometimes you do not
+want a S-expression to evaluate but rather return the list as it is. To do this
+you "quote" the list. Try this instead:
+  '(0 1 2 3)
+Ah, that is better. Here is a secret, '() is just a short hand for (quote ()).
+So instead of the last example you could just as well have typed:
+  (quote (0 1 2 3))
+But as we all know, shorter is better :).
+
+Ok, all good so far, but variables? No problem, Lisp have them! Try the next
+two one at a time:
+  (setq foo 40)
+  (+ foo 2)
+Works for lists as well:
+  (setq bar '(1 2 3))
+  bar
+Hmm... you say, and this might be usefull. Sure is, try this one:
+  (setq baz '(list foo bar))
+  baz
+  (eval baz)
+  
+Pretty neat, as you see you can put a list in variables and run as a formit 
+using the function eval. But is this functions? Nope it is not, functions takes
+arguments. But do not fear, Lisp have them naturaly. Lets try defining a simple
+one:
+  (defun inc (value) (+ 1 value))
+  (inc 41)
+So defun is the function that defines functions, first argument is the name of
+the function, the second is a list with arguments, and the rest of the 
+arguments are the forms that will be the body of the function. They are 
+evaluated when the function is called in order, and the result of the last one
+is returned.
+
+Hmm... but the forms when given to defun are not quoted, should they not be
+evaluated then? They should, but are not. That is because defun is not realy a
+function, it is a macro. Macros evaluate their arguments when executed, not 
+before the call. This is a lesson for another time, for the time being just 
+think of functions and macros as the same thing, only diffrence is that you do
+not need to quote the arguments for a macro. But what is what? Well, thankfully
+you can ask, try:
+  defun
+You what you get is: "<Predefined macro: DEFUN>", ok so it is a macro.
+  second
+And now "<Interpreded function: SECOND>", ok so it is a function. Predefined
+functions/macros are implemented in D, and Interpreted are implemented in Lisp.
+Naturraly you can gain some speed by prefering predefined functions. No need
+to give you a cliffhanger so here is what the function second do:
+  (second '(a b c))
+As you might have guess, third is also a function, and so is fourth etc all the
+way up to tenth.
+
+Well our function inc was rather puny, and to tell the truth the existing
+function 1+ does the same thing. So lets make it more grand!
+  (defun inc (value &optional (delta 1)) (+ value delta))
+  (inc 39)
+  (inc 39 3)
+  (inc 39 3 2 1)
+Ok, so with &optional in the argument list we can have optional arguments. The
+arguments that are optional are either as a list pair with the name and default
+value, or just the name. The two are equal:
+  (defun foo (&optional bar) bar)
+  (defun foo (&optional (bar nil)) bar)
+  (defun foo (&optional (bar ())) bar)
+Two lessons learned; if no default to an optional argument is given, then nil
+is default, and nil is the same thing as the empty list ().
+
+That is the basics, lets do something fancy, like a function that calculates
+factorials!
+  (defun fac (a) (if (< a 2) 1 (* a (fac (1- a)))))
+  (fac 10)
+  (fac 0)
+Works nice, all the way to (fac 19), then the 32 bit integer limit breaks in.
+In a complete CL Lisp that is no limitation, as the number of bits for an
+integer is only limited by available ram. We'll see when/if that gets into 
+dLisp.
+
+That line of code was not too readable, sort of confirms the old joke of Lisp
+being an acronym for Lots of Incredibly Silly Parantesis. Dle, the command
+promt for dLisp only support one line input. But to get around it you can put
+your code in a text-file, break lines however you like and run the file with:
+  (load "myfile.lisp")
+Then you are not limited to one line of code eather but can execute a whole
+bunch of statements.
+
+Lets take the last function definition, linebreak and indent it as a normal
+Lisp-programmer would:
+  (defun fac (a) 
+    (if (< a 2) 
+        1 
+      (* a (fac (1- a)))))
+Slightly more readable, is it not. Make sure you have a text editor that
+matches parantesises. There still are lots of incredibly silly parantesis :).
+
+
+Next up we will take adeeper look at lists...
