@@ -93,6 +93,7 @@ public template Evaluator() {
             return temp;
           }
         } else {
+          writefln("XXX:", environment.globals.isBound(cell.name));
           throw new UnboundSymbolState("Unbound symbol: " ~ cell.name, cell.pos); 
         }
       }
@@ -205,11 +206,18 @@ public template Evaluator() {
             }
           }
           break;
+
         case CellType.ctPREDEF:
             cell = func.func(this, cell);
           break;
+
+        case CellType.ctCONS:
+            func = newCons(eval(func.car),func.cdr);
+            //writefln("Evaluating list to: ",cellToString(func));
+            cell = eval(func);
+          break;
         default:
-            throw new EvalState("Unexpected list", func.pos);
+            throw new EvalState("Not a function: " ~ cellToString(cell.car), func.pos);
       }
       if (name in tracefuncs) {
         writefln(repeat(" ", tracelevel), "Trace ", name, " out: ", cellToString(cell));

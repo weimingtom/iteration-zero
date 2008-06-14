@@ -117,12 +117,12 @@ public {
     Cell*[] forms = evalArgs(dlisp, "'l'.+", cell.cdr);
     Cell*[] args = evalArgs(dlisp, "'yl'.?", forms[0]);
     dlisp.environment.pushContext();
-    dlisp.environment.addLocal(args[0].name, null);
+    dlisp.environment.bind(args[0].name, null);
     cell = null;
     try {
       Cell* list = args[1];
       while (list) {
-        dlisp.environment()[args[0].name] = list.car;
+        dlisp.environment.bind(args[0].name, list.car);
         list = list.cdr;
         for (uint i = 1; i < forms.length; i++) {
           cell = dlisp.eval(forms[i]);

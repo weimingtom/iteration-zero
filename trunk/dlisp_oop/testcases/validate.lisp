@@ -63,21 +63,32 @@
   (check-equal "foo"
 	       ((lambda () "foo")))
   (check-equal '(1 2 3)
-               ((lambda (a) a)  '(1 2 3))))
+               ((lambda (a) a)  '(1 2 3)))
+)
 
 (test "REVERSE"
+      (check-equal nil
+                   (reverse nil))
       (check-equal '(1 2 3)
-                   (reverse '(3 2 1))))
+                   (reverse '(3 2 1)))
+      (check-equal '((1) (2) (3))
+                   (reverse '((3) (2) (1))))
+)
 
 (test "MAP"
       (check-equal '(2 3 4)
                    (map 1+ '(1 2 3)))
       (check-equal '(1 2 3)
-                   (map car '((1) (2) (3)))))
+                   (map car '((1) (2) (3))))
+      (defmacro plus2 (x) `(+ 2 ,x))
+      (check-equal '(3 4 5)
+                   (map plus2 '(1 2 3)))
+)
 
 ;;;
 ;;; EVAL
 (test "EVAL"
+  (check-equal 1 (eval '1))
   (check-equal 999
 	       (setq form '(1+ a) a 999))
   (check-equal 1000
@@ -141,6 +152,10 @@
       (defmacro letmac3 (a &rest args)
           (let ((x (gensym)))
             `(let ((,x ,a)) (cons ,a ',args))))
+      (defmacro myapply (f l)
+          `((cons ',f ,l)))
+      (defmacro set-xyz (x)
+        `(set xyz ,x))
       (set x 41)
       (check-equal 42
 		   (inc x))
@@ -152,13 +167,22 @@
       (check-equal 42 (letmac1 x))
       (check-equal 42 (letmac2 x 89))
       (check-equal '(42 89) (letmac3 x 89))
+      (check-equal '(42 89) (letmac3 (letmac2 x) 89))
+      (check-equal 3 (myapply + '(1 2)))
+
+      ;; Macro expand scope is current execution scope.
+      (set-xyz 187)
+      (check-equal 187 xyz)
 )
 
 ;;;
 ;;; LOOPCONTROL
 (test "DOTIMES"
-  (check-equal 9
-	       (dotimes (k 10) k)))
+  (check-equal 99
+               (dotimes (k 10 (- 100 1)) k))
+  (check-equal 187
+               (dotimes (k 10 187) k))
+)
 
 
 ;;;
@@ -168,11 +192,11 @@
       (set-attr name 'attr1 1)
       (check-equal (get-attr name 'attr1) 1)
       (set-attr name 'inc-attr1
-		(lambda (self) 
-		  (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
+                (lambda (self) 
+                    (set-attr self 'attr1 (1+ (get-attr name 'attr1)))))
       ((gencall inc-attr1) name)
       (check-equal 2
-		   (get-attr name 'attr1)))
+                   (get-attr name 'attr1)))
 
 (println
  "Known to be broken are self-made generic functions.") 
