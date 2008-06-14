@@ -3,7 +3,8 @@
   dLISP
 
   Author: Klaus Blindert <klaus.blindert@web.de>
-  Copyright (c) 2008
+  Copyright (c) 2008 Klaus Blindert
+
   All rights reserved.
 
     This file is part of dLISP.
