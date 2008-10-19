@@ -11,6 +11,7 @@ namespace gcn
      * @see Widget::addMouseListener, Widget::removeMouseListener
      * @since 0.1.0
      */
+    %nodefaultctor;
     class MouseListener
     {
     public:
@@ -125,14 +126,7 @@ namespace gcn
 
         }
 
-    protected:
-        /**
-         * Constructor.
-         *
-         * You should not be able to make an instance of MouseListener,
-         * therefore its constructor is protected.
-         */
-        MouseListener() { }
     };
+    %clearnodefaultctor;
 }
 

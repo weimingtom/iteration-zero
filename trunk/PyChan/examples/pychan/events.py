@@ -38,7 +38,7 @@ Available Events
 
 """
 
-from compat import guichan
+from compat import guichan,in_fife
 
 import exceptions
 from internal import get_manager
@@ -74,7 +74,6 @@ CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to %s.capture, which would normally remove a mapped event.
 But there was no event mapped. Did you accidently call a function instead of passing it?
 """
-guichan.GUIEventListener = object
 class EventListener(guichan.GUIEventListener):
 	"""
 	Redirector for event callbacks.
@@ -172,9 +171,10 @@ class EventMapper(object):
 		if not self.listener.events:
 			return
 		if self.debug: print "Attach:",self
-		self.widget.real_widget.addKeyListener( self.listener )
-		self.widget.real_widget.addMouseListener( self.listener )
 		self.widget.real_widget.addActionListener( self.listener )
+		self.widget.real_widget.addKeyListener( self.listener )
+		if in_fife:
+			self.widget.real_widget.addMouseListener( self.listener )
 		self.is_attached = True
 
 	def detach(self):
@@ -187,7 +187,8 @@ class EventMapper(object):
 			return
 		if self.debug: print "Detach:",self
 		self.widget.real_widget.removeKeyListener( self.listener )
-		self.widget.real_widget.removeMouseListener( self.listener )
+		if in_fife:
+			self.widget.real_widget.removeMouseListener( self.listener )
 		self.widget.real_widget.removeActionListener( self.listener )
 		self.is_attached = False
 
