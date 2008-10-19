@@ -7,7 +7,8 @@ Widget wrappers.
 Please look at the documentation of L{Widget} for details.
 """
 
-import guichan as fife
+from compat import guichan
+
 import tools
 import events
 from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer, isLayouted
@@ -42,7 +43,7 @@ class Widget(object):
 	Widgets are manipulated (mostly) through attributes - and these can all be set by XML attributes.
 	Derived widgets will have other attributes. Please see their B{New Attributes} sections. The types of the
 	attributes are pretty straightforward, but note that Position and Color attribute types will also accept
-	C{fife.Point} and C{fife.Color} values.
+	C{guichan.Point} and C{guichan.Color} values.
 
 	  - name: String: The identification of the widget, most useful if it is unique within a given widget hiarachy.
 	  This is used to find widgets by L{mapEvents},L{distributeInitialData},L{distributeData} and L{collectData}.
@@ -562,7 +563,7 @@ class Widget(object):
 		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.name,id(self))
 
 	def _setPosition(self,size):
-		if isinstance(size,fife.Point):
+		if isinstance(size,guichan.Point):
 			self.x, self.y = size.x, size.y
 		else:
 			self.x, self.y = size
@@ -576,7 +577,7 @@ class Widget(object):
 	def _getY(self): return self.real_widget.getY()
 
 	def _setSize(self,size):
-		if isinstance(size,fife.Point):
+		if isinstance(size,guichan.Point):
 			self.width, self.height = size.x, size.y
 		else:
 			self.width, self.height = size
@@ -630,28 +631,28 @@ class Widget(object):
 	def _getBaseColor(self): return self.real_widget.getBaseColor()
 	def _setBaseColor(self,color):
 		if isinstance(color,type(())):
-			color = fife.Color(*color)
+			color = guichan.Color(*color)
 		self.real_widget.setBaseColor(color)
 	base_color = property(_getBaseColor,_setBaseColor)
 
 	def _getBackgroundColor(self): return self.real_widget.getBackgroundColor()
 	def _setBackgroundColor(self,color):
 		if isinstance(color,type(())):
-			color = fife.Color(*color)
+			color = guichan.Color(*color)
 		self.real_widget.setBackgroundColor(color)
 	background_color = property(_getBackgroundColor,_setBackgroundColor)
 
 	def _getForegroundColor(self): return self.real_widget.getForegroundColor()
 	def _setForegroundColor(self,color):
 		if isinstance(color,type(())):
-			color = fife.Color(*color)
+			color = guichan.Color(*color)
 		self.real_widget.setForegroundColor(color)
 	foreground_color = property(_getForegroundColor,_setForegroundColor)
 
 	def _getSelectionColor(self): return self.real_widget.getSelectionColor()
 	def _setSelectionColor(self,color):
 		if isinstance(color,type(())):
-			color = fife.Color(*color)
+			color = guichan.Color(*color)
 		self.real_widget.setSelectionColor(color)
 	selection_color = property(_getSelectionColor,_setSelectionColor)
 
@@ -742,7 +743,7 @@ class Container(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), Attr('background_image'), BoolAttr('opaque'),PointAttr('margins') ]
 
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
-		self.real_widget = _real_widget or fife.Container()
+		self.real_widget = _real_widget or guichan.Container()
 		self.children = []
 		self.margins = margins
 		self.padding = padding
@@ -798,12 +799,12 @@ class Container(Widget):
 
 		# Now tile the background over the widget
 		self._background = []
-		icon = fife.Icon(image)
+		icon = guichan.Icon(image)
 		x, w = 0, image_w
 		while x < back_w:
 			y, h = 0, image_h
 			while y < self.height:
-				icon = fife.Icon(image)
+				icon = guichan.Icon(image)
 				icon.setPosition(x,y)
 				self._background.append(icon)
 				y += h
@@ -821,7 +822,7 @@ class Container(Widget):
 
 		# Background generation is done in _resetTiling
 
-		if not isinstance(image, fife.GuiImage):
+		if not isinstance(image, guichan.GuiImage):
 			image = get_manager().loadImage(image)
 		self._background_image = image
 
@@ -880,7 +881,7 @@ class Window(VBoxLayoutMixin,Container):
 	ATTRIBUTES = Container.ATTRIBUTES + [ Attr('title'), IntAttr('titlebar_height') ]
 
 	def __init__(self,title="title",titlebar_height=0,**kwargs):
-		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
+		super(Window,self).__init__(_real_widget = guichan.Window(), **kwargs)
 		if titlebar_height == 0:
 			titlebar_height = self.real_font.getHeight() + 4
 		self.titlebar_height = titlebar_height
@@ -961,7 +962,7 @@ class Icon(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('image')]
 
 	def __init__(self,image="",**kwargs):
-		self.real_widget = fife.Icon(None)
+		self.real_widget = guichan.Icon(None)
 		super(Icon,self).__init__(**kwargs)
 		self._source = self._image = None
 		if image:
@@ -971,7 +972,7 @@ class Icon(Widget):
 		if isinstance(source,str):
 			self._source = source
 			self._image = get_manager().loadImage(source)
-		elif isinstance(source,fife.GuiImage):
+		elif isinstance(source,guichan.GuiImage):
 			self._source = None
 			self._image = source
 		else:
@@ -1007,7 +1008,7 @@ class Label(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
 
 	def __init__(self,wrap_text=False,**kwargs):
-		self.real_widget = fife.Label("")
+		self.real_widget = guichan.Label("")
 		self.wrap_text = wrap_text
 		super(Label,self).__init__(**kwargs)
 		
@@ -1034,7 +1035,7 @@ class Button(BasicTextWidget):
 	A basic push button.
 	"""
 	def __init__(self,**kwargs):
-		self.real_widget = fife.Button("")
+		self.real_widget = guichan.Button("")
 		super(Button,self).__init__(**kwargs)
 		self.hexpanding = 0
 
@@ -1056,7 +1057,7 @@ class ImageButton(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image')]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
-		self.real_widget = fife.TwoButton()
+		self.real_widget = guichan.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
 
 		self.up_image = up_image
@@ -1130,7 +1131,7 @@ class CheckBox(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked')]
 
 	def __init__(self,**kwargs):
-		self.real_widget = fife.CheckBox()
+		self.real_widget = guichan.CheckBox()
 		super(CheckBox,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
@@ -1163,7 +1164,7 @@ class RadioButton(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked'),Attr('group')]
 
 	def __init__(self,group="_no_group_",**kwargs):
-		self.real_widget = fife.RadioButton()
+		self.real_widget = guichan.RadioButton()
 		super(RadioButton,self).__init__(**kwargs)
 
 		self.group = group
@@ -1187,7 +1188,7 @@ class RadioButton(BasicTextWidget):
 		self.width = self.real_font.getWidth(self.text) + 35# Size of the Checked box?
 		self.height = self.real_font.getHeight()
 
-class GenericListmodel(fife.ListModel,list):
+class GenericListmodel(guichan.ListModel,list):
 	"""
 	A wrapper for the exported list model to behave more like a Python list.
 	Don't use directly.
@@ -1226,7 +1227,7 @@ class ListBox(Widget):
 	"""
 	def __init__(self,items=[],**kwargs):
 		self._items = GenericListmodel(*items)
-		self.real_widget = fife.ListBox(self._items)
+		self.real_widget = guichan.ListBox(self._items)
 		super(ListBox,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
@@ -1286,7 +1287,7 @@ class DropDown(Widget):
 	"""
 	def __init__(self,items=[],**kwargs):
 		self._items = GenericListmodel(*items)
-		self.real_widget = fife.DropDown(self._items)
+		self.real_widget = guichan.DropDown(self._items)
 		super(DropDown,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
@@ -1343,7 +1344,7 @@ class TextBox(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text'),Attr('filename')]
 
 	def __init__(self,text="",filename = "", **kwargs):
-		self.real_widget = fife.TextBox()
+		self.real_widget = guichan.TextBox()
 		self.text = text
 		self.filename = filename
 		super(TextBox,self).__init__(**kwargs)
@@ -1396,7 +1397,7 @@ class TextField(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
 
 	def __init__(self,text="", **kwargs):
-		self.real_widget = fife.TextField()
+		self.real_widget = guichan.TextField()
 		self.text = text
 		super(TextField,self).__init__(**kwargs)
 
@@ -1438,7 +1439,7 @@ class ScrollArea(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
 
 	def __init__(self,**kwargs):
-		self.real_widget = fife.ScrollArea()
+		self.real_widget = guichan.ScrollArea()
 		self._content = None
 		super(ScrollArea,self).__init__(**kwargs)
 		self.vexpanding = 1
@@ -1479,11 +1480,11 @@ class ScrollArea(Widget):
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility: 
-			return fife.ScrollArea.SHOW_AUTO
-		return fife.ScrollArea.SHOW_NEVER
+			return guichan.ScrollArea.SHOW_AUTO
+		return guichan.ScrollArea.SHOW_NEVER
 
 	def _scrollPolicyToVisibility(self,policy):
-		if policy == fife.ScrollArea.SHOW_NEVER:
+		if policy == guichan.ScrollArea.SHOW_NEVER:
 			return False
 		return True
 
@@ -1520,13 +1521,13 @@ class Slider(Widget):
 		- update docstrings		
 	"""
 	
-	HORIZONTAL = fife.Slider.Horizontal
-	VERTICAL = fife.Slider.Vertical
+	HORIZONTAL = guichan.Slider.Horizontal
+	VERTICAL = guichan.Slider.Vertical
 	
 	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
 	
 	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, **kwargs):
-		self.real_widget = fife.Slider(scaleStart, scaleEnd)
+		self.real_widget = guichan.Slider(scaleStart, scaleEnd)
 		self.orientation = orientation
 		super(Slider, self).__init__(**kwargs)
 	

@@ -38,7 +38,8 @@ Available Events
 
 """
 
-import guichan as fife
+from compat import guichan
+
 import exceptions
 from internal import get_manager
 import tools
@@ -73,8 +74,8 @@ CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to %s.capture, which would normally remove a mapped event.
 But there was no event mapped. Did you accidently call a function instead of passing it?
 """
-fife.GUIEventListener = object
-class EventListener(fife.GUIEventListener):
+guichan.GUIEventListener = object
+class EventListener(guichan.GUIEventListener):
 	"""
 	Redirector for event callbacks.
 	Use *only* from L{EventMapper}.
@@ -97,7 +98,6 @@ class EventListener(fife.GUIEventListener):
 		self.events = {}
 		self.indent = 0
 		self.debug = debug
-		self.guimanager = get_manager().guimanager
 
 	def _redirectEvent(self,name,event):
 		self.indent += 4
@@ -115,9 +115,9 @@ class EventListener(fife.GUIEventListener):
 
 	def translateEvent(self,event_type,event):
 		if event_type == MOUSE_EVENT:
-			return self.guimanager.translateMouseEvent(event)
+			return get_manager().hook.translate_mouse_event(event)
 		if event_type == KEY_EVENT:
-			return self.guimanager.translateKeyEvent(event)
+			return get_manager().hook.translate_key_event(event)
 		return event
 
 def _redirect(name):
