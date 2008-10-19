@@ -16,10 +16,10 @@ def get_manager():
 	return Manager.manager
 
 def screen_width():
-	return get_manager().engine.getRenderBackend().getScreenWidth()
+	return get_manager().hook.screen_width
 
 def screen_height():
-	return get_manager().engine.getRenderBackend().getScreenHeight()
+	return get_manager().hook.screen_height
 
 class Manager(object):
 	manager = None

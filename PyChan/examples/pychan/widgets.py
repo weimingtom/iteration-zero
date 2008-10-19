@@ -7,7 +7,7 @@ Widget wrappers.
 Please look at the documentation of L{Widget} for details.
 """
 
-from compat import guichan
+from compat import guichan, in_fife
 
 import tools
 import events
@@ -1019,8 +1019,12 @@ class Label(BasicTextWidget):
 		self.width  = self.real_widget.getWidth()  + self.margins[0]*2
 		#print self.width,self.max_size[0]
 	
-	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
-	def _getTextWrapping(self): self.real_widget.isTextWrapping()
+	def _setTextWrapping(self,wrapping):
+		if in_fife:
+			self.real_widget.setTextWrapping(wrapping)
+	def _getTextWrapping(self):
+		if in_fife:
+			return self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
 
 class ClickLabel(Label):
