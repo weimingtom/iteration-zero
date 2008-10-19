@@ -11,7 +11,6 @@ namespace gcn
      * @see Widget::addMouseListener, Widget::removeMouseListener
      * @since 0.1.0
      */
-    %nodefaultctor;
     class MouseListener
     {
     public:
@@ -126,7 +125,8 @@ namespace gcn
 
         }
 
+    protected:
+        MouseListener() { }
     };
-    %clearnodefaultctor;
 }
 

@@ -41,7 +41,10 @@ def _munge_engine_hook(engine):
 		index = engine.imagePool.addResourceFromFile(filename)
 		return guichan.GuiImage(index,engine.getImagePool())
 
-	hook = object()
+	class hook:
+		pass
+	hook = hook()
+
 	hook.add_widget    = guimanager.add
 	hook.remove_widget = guimanager.remove
 	hook.default_font  = engine.getDefaultFont()
@@ -59,7 +62,7 @@ def _munge_engine_hook(engine):
 class _multilistener(guichan.ActionListener,guichan.MouseListener,guichan.KeyListener):
 	def __init__(self):
 		guichan.ActionListener.__init__(self)
-		#guichan.MouseListener.__init__(self)
+		guichan.MouseListener.__init__(self)
 		guichan.KeyListener.__init__(self)
 
 assert isinstance(_multilistener(),guichan.ActionListener)
