@@ -1,0 +1,67 @@
+Important legal stuff
+=====================
+
+For licence details see doc/COPYING. It's the LGPL.
+All binary content files are accompanied by a LICENSE file in their respective folders.
+Not all authors in the docs/AUTHORS file contributed directly to PyChan.
+Nevertheless it should be assumed that they contributed, unless you really
+want to dig through the complete svn log of FIFE.
+
+What is PyChan?
+===============
+
+It started as a wrapper for the GUI library Guichan, which was and is used in the game engine
+FIFE. The aim was to create a *simple* *powerful* and *pythonic* API for developing a GUI,
+as used in games.
+
+I'm pretty happy with the API, though I don't want to assess how powerful PyChan really is.
+It is somewhat limited by the underlying Guichan library (which of course does all the hard
+stuff, like focussing and such, for PyChan - so don't take offense).
+
+It's been used since the start of 2008, and the projects OpenAnno and Zero-Projekt
+use it a lot.
+
+Features
+--------
+
+ - Simple Interface
+ - Extensive documentation.
+ - Easy XML Format
+ - Layout Engine
+ - Pseudo-Synchronous Dialogs.  [api change possible]
+ - Basic Styling.
+
+ - It will not take over your application.
+
+And other stuff not mentioned here :-)
+
+API Stability
+-------------
+
+Changes will trigger deprecation warnings. only 0.x releases _may_ make change
+the API in incompatible ways.
+
+
+
+How to get something on screen
+==============================
+
+To compile do this:
+cd PyChan
+#
+# Get revision 1148 + a small fix, compile and 'install' in PyChan/install
+#
+cd ext
+sh get_and_compile_guichan.sh
+cd ..
+
+#
+# Run SWIG on guichan, create a microscopic engine which glues together the loose ends.
+#
+python make.py
+
+# Tests:
+python examples/simple.py
+python examples/demoxml.py examples/xml/credits.xml
+
+I use ubuntu 8.4. You'll probably need python headers, the sdl stuff, gl headers and swig.

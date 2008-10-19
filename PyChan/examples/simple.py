@@ -10,7 +10,7 @@ gui = guichan.Gui()
 gui.setGraphics( engine.getGraphics() )
 gui.setInput( engine.getInput() )
 
-font = micron.TTFont("vera.ttf",48)
+font = micron.TTFont("content/fonts/vera.ttf",48)
 
 guichan.Widget.setGlobalFont(font)
 
