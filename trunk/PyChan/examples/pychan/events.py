@@ -74,7 +74,7 @@ CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to %s.capture, which would normally remove a mapped event.
 But there was no event mapped. Did you accidently call a function instead of passing it?
 """
-class EventListener(guichan.GUIEventListener):
+class EventListenerBase(object):
 	"""
 	Redirector for event callbacks.
 	Use *only* from L{EventMapper}.
@@ -92,11 +92,37 @@ class EventListener(guichan.GUIEventListener):
 	This way L{EVENTS} and the actually receivable events
 	are forced to be in sync.
 	"""
-	def __init__(self,debug=True):
-		super(EventListener,self).__init__()
+	def __init__(self):
+		super(EventListenerBase,self).__init__()
 		self.events = {}
 		self.indent = 0
-		self.debug = debug
+		self.debug = 1
+		self.is_attached = False
+
+	def attach(self,widget):
+		"""
+		Start receiving events.
+		No need to call this manually.
+		"""
+
+		if self.is_attached:
+			return
+		if not self.events:
+			return
+		if self.debug: print "Attach:",self
+		self.doAttach(widget.real_widget)
+		self.is_attached = True
+
+	def detach(self):
+		"""
+		Stop receiving events.
+		No need to call this manually.
+		"""
+		if not self.is_attached:
+			return
+		if self.debug: print "Detach:",self
+		self.doDetach(widget.real_widget)
+		self.is_attached = False
 
 	def _redirectEvent(self,name,event):
 		self.indent += 4
@@ -109,7 +135,6 @@ class EventListener(guichan.GUIEventListener):
 		except:
 			traceback.print_exc()
 			raise
-			print "...discarded."
 		self.indent -= 4
 
 	def translateEvent(self,event_type,event):
@@ -118,14 +143,33 @@ class EventListener(guichan.GUIEventListener):
 		if event_type == KEY_EVENT:
 			return get_manager().hook.translate_key_event(event)
 		return event
+class _ActionEventListener(EventListenerBase,guichan.ActionListener):
+	def __init__(self):super(_ActionEventListener,self).__init__()
+	def doAttach(self,real_widget):	real_widget.addActionListener(self)
+	def doDetach(self,real_widget): real_widget.removeActionListener(self)
 
-def _redirect(name):
-	def redirectorFunc(self,event):
-		self._redirectEvent(name,event)
-	return redirectorFunc
+	def action(self,event): self._redirectEvent("action",event)
 
-for event_name in EVENTS:
-	setattr(EventListener,event_name,_redirect(event_name))
+class _MouseEventListener(EventListenerBase,guichan.MouseListener):
+	def __init__(self):super(_MouseEventListener,self).__init__()
+	def doAttach(self,real_widget):	real_widget.addMouseListener(self)
+	def doDetach(self,real_widget): real_widget.removeMouseListener(self)
+
+	def mouseEntered(self,e): self._redirectEvent("mouseEntered",event)
+	def mouseExited(self,e): self._redirectEvent("mouseExited",event)
+	def mousePressed(self,e): self._redirectEvent("mousePressed",event)
+	def mouseReleased(self,e): self._redirectEvent("mouseReleased",event)
+	def mouseClicked(self,e): self._redirectEvent("mouseClicked",event)
+	def mouseMoved(self,e): self._redirectEvent("mouseMoved",event)
+	def mouseDragged(self,e): self._redirectEvent("mouseDragged",event)
+
+class _KeyEventListener(EventListenerBase,guichan.KeyListener):
+	def __init__(self):super(_KeyEventListener,self).__init__()
+	def doAttach(self,real_widget):	real_widget.addKeyListener(self)
+	def doDetach(self,real_widget): real_widget.removeKeyListener(self)
+
+	def keyPressed(self,e): self._redirectEvent("keyPressed",event)
+	def keyReleased(self,e): self._redirectEvent("keyReleased",event)
 
 class EventMapper(object):
 	"""
@@ -151,46 +195,17 @@ class EventMapper(object):
 	def __init__(self,widget):
 		super(EventMapper,self).__init__()
 		self.widget = widget
-		self.listener = EventListener()
+		self.listener = {
+			KEY_EVENT    : _KeyEventListener(),
+			ACTION_EVENT : _ActionEventListener(),
+			MOUSE_EVENT  : _MouseEventListener(),
+		}
 		self.is_attached = False
 		self.debug = get_manager().debug
 
-	def __del__(self):
-		self.detach()
 	def __repr__(self):
 		return "EventMapper(%s)" % repr(self.widget)
 
-	def attach(self):
-		"""
-		Start receiving events.
-		No need to call this manually.
-		"""
-
-		if self.is_attached:
-			return
-		if not self.listener.events:
-			return
-		if self.debug: print "Attach:",self
-		self.widget.real_widget.addActionListener( self.listener )
-		self.widget.real_widget.addKeyListener( self.listener )
-		if in_fife:
-			self.widget.real_widget.addMouseListener( self.listener )
-		self.is_attached = True
-
-	def detach(self):
-		"""
-		Stop receiving events.
-		No need to call this manually.
-		"""
-
-		if not self.is_attached:
-			return
-		if self.debug: print "Detach:",self
-		self.widget.real_widget.removeKeyListener( self.listener )
-		if in_fife:
-			self.widget.real_widget.removeMouseListener( self.listener )
-		self.widget.real_widget.removeActionListener( self.listener )
-		self.is_attached = False
 
 	def capture(self,event_name,callback,group_name):
 		if event_name not in EVENTS:
@@ -198,32 +213,43 @@ class EventMapper(object):
 
 		if callback is None:
 			if self.isCaptured(event_name,group_name):
-				del self.listener.events[event_name][group_name]
-				if not self.listener.events[event_name]:
-					del self.listener.events[event_name]
-				if not self.listener.events:
-					self.detach()
+				self.removeEvent(event_name,group_name)
 			elif self.debug:
 					print CALLBACK_NONE_MESSAGE % str(self.widget)
 			return
-
-		if not callable(callback):
-			raise RuntimeError("An event callback must be either a callable or None - not %s" % repr(callback))
-
-		def captured_f(event):
-			tools.applyOnlySuitable(callback,event=event,widget=self.widget)
-
-		if event_name not in self.listener.events:
-			self.listener.events[event_name] = {group_name : captured_f}
-		else:
-			self.listener.events[event_name][group_name] = captured_f
-		self.attach()
+		self.addEvent(event_name,callback,group_name)
 
 	def isCaptured(self,event_name,group_name="default"):
 		return event_name in self.listener.events and group_name in self.listener.events[event_name]
 
 	def getCapturedEvents(self):
 		return self.listener.events.keys()
+
+	def getListener(self,event_name):
+		return self.listener[getEventType(event_name)]
+
+	def removeEvent(self,event_name,group_name):
+		listener = self.getListener(event_name)
+		del listener.events[event_name][group_name]
+		if not listener.events[event_name]:
+			del listener.events[event_name]
+		if not listener.events:
+			self.listener.detach(self.widget)
+
+	def addEvent(self,event_name,callback,group_name):
+		if not callable(callback):
+			raise RuntimeError("An event callback must be either a callable or None - not %s" % repr(callback))
+
+		def captured_f(event):
+			tools.applyOnlySuitable(callback,event=event,widget=self.widget)
+
+		listener = self.getListener(event_name)
+
+		if event_name not in listener.events:
+			listener.events[event_name] = {group_name : captured_f}
+		else:
+			listener.events[event_name][group_name] = captured_f
+		listener.attach(self.widget)
 
 
 def splitEventDescriptor(name):

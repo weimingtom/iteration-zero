@@ -7,7 +7,7 @@ import guichan, micron
 import pychan
 
 class Application(object):
-	def __init__(self, xmlfile):
+	def __init__(self, xmlfiles):
 		self.engine = micron.Micron()
 
 		self.engine.init(640,640,1)
@@ -25,9 +25,14 @@ class Application(object):
 		self.top.setSize(640,640)
 
 		pychan.init( self.create_hook(), debug = True )
-		self.widget = pychan.loadXML(xmlfile)
-		self.widget.mapEvents({'okButton':self.quit})
-		self.widget.show()
+		for xmlfile in xmlfiles:
+			self.widget = pychan.loadXML(xmlfile)
+			self.widget.mapEvents({
+				'okButton/mouseEntered': pychan.tools.attrSetCallback(base_color=(255,0,0)),
+				'okButton/mouseExited': pychan.tools.attrSetCallback(base_color=(255,0,255)),
+				'okButton':self.quit
+			})
+			self.widget.show()
 
 	def mainLoop(self):
 		self.running = 1
@@ -60,6 +65,5 @@ class Application(object):
 
 if __name__ == '__main__':
 	import sys
-
-	app = Application(sys.argv[1])
+	app = Application(sys.argv[1:])
 	app.mainLoop()
