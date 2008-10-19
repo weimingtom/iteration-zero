@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import guichan as fife
+from compat import guichan, in_fife
 import widgets
 import fonts
 from exceptions import *
@@ -24,21 +24,20 @@ def screen_height():
 class Manager(object):
 	manager = None
 
-	def __init__(self, engine, debug = False):
+	def __init__(self, hook, debug = False):
 		super(Manager,self).__init__()
-		self.engine = engine
+		self.hook = hook
 		self.debug = debug
 
-		if not self.engine.getEventManager():
-			raise InitializationError("No event manager installed.")
-		if not self.engine.getGuiManager():
-			raise InitializationError("No GUI manager installed.")
+		if in_fife:
+			if not hook.engine.getEventManager():
+				raise InitializationError("No event manager installed.")
+			if not hook.engine.getGuiManager():
+				raise InitializationError("No GUI manager installed.")
 
-		self.guimanager = engine.getGuiManager()
-		self.fontmanager = self.guimanager.getFontManager();
 		self.fonts = {}
 		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-		self.fonts['default'] = self.engine.getDefaultFont()
+		self.fonts['default'] = hook.default_font
 
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
@@ -67,13 +66,13 @@ class Manager(object):
 		Shows a widget on screen. Used by L{Widget.show} - do not use directly.
 		"""
 		self.placeWidget(widget, widget.position_technique)
-		self.guimanager.add( widget.real_widget )
+		self.hook.add_widget( widget.real_widget )
 
 	def hide(self,widget):
 		"""
 		Hides a widget again. Used by L{Widget.hide} - do not use directly.
 		"""
-		self.guimanager.remove( widget.real_widget )
+		self.hook.remove_widget( widget.real_widget )
 
 	def setDefaultFont(self,name):
 		self.fonts['default'] = self.getFont(name)
@@ -86,13 +85,15 @@ class Manager(object):
 
 		@param name: A string identifier from the font definitions in pychans config files.
 		"""
-		font = self.fonts.get(name)
-		if isinstance(font,fife.GuiFont):
-			return font
-		if hasattr(font,"font") and isinstance(getattr(font,"font"),fife.GuiFont):
-			return font.font
-
-		return fonts.parseFontSpec(name)
+		if in_fife:
+			font = self.fonts.get(name)
+			if isinstance(font,guichan.GuiFont):
+				return font
+			if hasattr(font,"font") and isinstance(getattr(font,"font"),guichan.GuiFont):
+				return font.font
+			return fonts.parseFontSpec(name)
+		else:
+			return self.hook.get_font(name)
 
 	def addFont(self,font):
 		"""
@@ -154,8 +155,7 @@ class Manager(object):
 	def loadImage(self,filename):
 		if not filename:
 			  raise InitializationError("Empty Image file.")
-		index = self.engine.imagePool.addResourceFromFile(filename)
-		return fife.GuiImage(index,self.engine.imagePool)
+		return self.hook.load_image(filename)
 
 # Default Widget style.
 
@@ -163,9 +163,9 @@ DEFAULT_STYLE = {
 	'default' : {
 		'border_size': 0,
 		'margins': (0,0),
-		'base_color' : fife.Color(28,28,28),
-		'foreground_color' : fife.Color(255,255,255),
-		'background_color' : fife.Color(50,50,50),
+		'base_color' : guichan.Color(28,28,28),
+		'foreground_color' : guichan.Color(255,255,255),
+		'background_color' : guichan.Color(50,50,50),
 	},
 	'Button' : {
 		'border_size': 2,
@@ -177,7 +177,7 @@ DEFAULT_STYLE = {
 	},
 	'RadioButton' : {
 		'border_size': 0,
-		'background_color' : fife.Color(0,0,0),
+		'background_color' : guichan.Color(0,0,0),
 	},
 	'Label' : {
 		'border_size': 0,

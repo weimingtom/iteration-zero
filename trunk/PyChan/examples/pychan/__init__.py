@@ -225,8 +225,6 @@ __all__ = [
 	'manager'
 ]
 
-import guichan as fife
-
 from widgets import *
 from exceptions import *
 
@@ -244,10 +242,11 @@ def init(engine,debug=False):
 	
 	@param engine: The FIFE engine object.
 	"""
+	from compat import _munge_engine_hook
 	from internal import Manager
 	global manager
 
-	manager = Manager(engine,debug)
+	manager = Manager(_munge_engine_hook(engine),debug)
 
 # XML Loader
 

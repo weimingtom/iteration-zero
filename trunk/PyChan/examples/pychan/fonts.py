@@ -1,11 +1,12 @@
 # coding: utf-8
 
 # Font handling
+from compat import guichan, in_fife
 from exceptions import *
-import guichan as fife
 import ConfigParser
 
 def loadFontDefs(filename):
+	assert in_fife
 	from internal import get_manager
 	fmanager = get_manager().guimanager.getFontManager()
 
@@ -36,6 +37,8 @@ def _minicss(text,d):
 	return d
 
 def parseFontSpec(text):
+	assert in_fife
+
 	from internal import get_manager
 	fmanager = get_manager().guimanager.getFontManager()
 	d = dict(family="default",weight=fife.FontSpec.NORMAL,variant=fife.FontSpec.NORMAL,size=12)
@@ -51,6 +54,7 @@ class Font(object):
 		pass
 
 	def load(self,name,get):
+		assert in_fife
 		from internal import get_manager
 		fmanager = get_manager().guimanager.getFontManager()
 		self.font = None
