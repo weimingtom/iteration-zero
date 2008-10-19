@@ -16,7 +16,7 @@ class Application(object):
 		self.gui.setGraphics( self.engine.getGraphics() )
 		self.gui.setInput( self.engine.getInput() )
 
-		self.font = micron.TTFont("vera.ttf",12)
+		self.font = micron.TTFont("content/fonts/vera.ttf",12)
 
 		guichan.Widget.setGlobalFont(self.font)
 
