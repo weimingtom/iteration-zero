@@ -101,7 +101,9 @@ void Micron::pumpEvents()
 	}
 }
 
-void Micron::startFrame() { }
+void Micron::startFrame() {
+	glClear(GL_COLOR_BUFFER_BIT);
+}
 
 void Micron::endFrame()
 {

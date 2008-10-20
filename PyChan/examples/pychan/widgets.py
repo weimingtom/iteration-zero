@@ -270,7 +270,7 @@ class Widget(object):
 			if not isLayouted(widget.parent):
 				break
 			widget = widget.parent
-		#print "adaptLayout",self,"==>",widget
+		print "adaptLayout",self,"==>",widget
 		widget._recursiveResizeToContent()
 		widget._recursiveExpandContent()
 
@@ -625,6 +625,12 @@ class Widget(object):
 	def _getFont(self):
 		return self._font
 
+	def _isFocusable(self): return self.real_widget.isFocusable()
+	def _setFocusable(self,size): self.real_widget.setFocusable(size)
+
+	def _isEnabled(self): return self.real_widget.isEnabled()
+	def _setEnabled(self,size): self.real_widget.setEnabled(size)
+
 	def _getBorderSize(self): return self.real_widget.getFrameSize()
 	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
 
@@ -684,6 +690,8 @@ class Widget(object):
 	size = property(_getSize,_setSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
+	focusable = property(_isFocusable,_setFocusable)
+	enabled = property(_isEnabled,_setEnabled)
 	border_size = property(_getBorderSize,_setBorderSize)
 
 	def setEnterCallback(self, cb):
@@ -853,7 +861,6 @@ class VBox(VBoxLayoutMixin,Container):
 		self.padding = padding
 		self.vexpanding = 1
 		self.hexpanding = 0
-
 
 class HBox(HBoxLayoutMixin,Container):
 	"""
@@ -1475,7 +1482,7 @@ class ScrollArea(Widget):
 			visitorFunc(self)
 
 	def resizeToContent(self,recurse=True):
-		pass
+		self.size = self.min_size
 
 	def expandContent(self,recurse=True):
 		if self._content is None: return
