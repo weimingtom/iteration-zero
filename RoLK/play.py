@@ -1,9 +1,7 @@
-import game
 #!/usr/bin/env python
 # coding: utf-8
+import game
 
-
-#import startup; startup.findGuichan()
 from game import guichan, micron
 from game import pychan, partycreation
 
@@ -58,17 +56,17 @@ STYLE = {
 }
 class Application(object):
 	def __init__(self, xmlfiles):
+		# start 'engine'
 		self.engine = micron.Micron()
 		self.screen_w,self.screen_h = 1000,800
-		self.engine.init(self.screen_w,self.screen_h,1)
-		self.loaded_images = {}
+		self.engine.init(self.screen_w,self.screen_h,0)
 
+		# hook to guichan
 		self.gui = guichan.Gui()
 		self.gui.setGraphics( self.engine.getGraphics() )
 		self.gui.setInput( self.engine.getInput() )
 
 		self.font = micron.TTFont("content/fonts/vera.ttf",12)
-
 		guichan.Widget.setGlobalFont(self.font)
 
 		self.top = guichan.Container()
@@ -76,9 +74,13 @@ class Application(object):
 		self.gui.setTop(self.top)
 		self.top.setSize(self.screen_w,self.screen_h)
 
+		self.loaded_images = {}
+
+		# init pychan
 		pychan.init( self.create_hook(), debug = True )
 		pychan.manager.addStyle("default",STYLE)
 
+		# init self
 		self.mainmenu = pychan.loadXML("content/gui/mainmenu.xml")
 		self.mainmenu.mapEvents({
 			'new' :self.new_game,
@@ -89,10 +91,10 @@ class Application(object):
 		self.show_mainmenu()
 		self.party_creation = partycreation.PartyCreation(self)
 
+	# mainmenu callbacks
 	def new_game(self):
 		self.mainmenu.hide()
 		self.party_creation.start()
-
 
 	def load_game(self):
 		self.mainmenu.hide()
@@ -104,6 +106,7 @@ class Application(object):
 		self.mainmenu.show()
 
 	def main_loop(self):
+		# just testing *g* the image stuff
 		image = self.load_image("content/gui/desert_1024.jpg")
 		self.running = 1
 		while not self.engine.isQuitRequested() and self.running:
@@ -123,6 +126,7 @@ class Application(object):
 
 
 	def create_hook(self):
+		# create the hooks needed by pychan.
 		class hook:pass
 		hook = hook()
 
@@ -133,10 +137,11 @@ class Application(object):
 		hook.screen_height = self.screen_h
 
 		hook.get_font      = lambda name: self.font
-		hook.load_image    = guichan.Image.load
+		hook.load_image    = self.load_image
 		return hook
 
 	def load_image(self,filename):
+		# simple image cache.
 		if filename in self.loaded_images:
 			return self.loaded_images[filename]
 		self.loaded_images[filename] = guichan.Image.load(filename)

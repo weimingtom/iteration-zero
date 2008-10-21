@@ -24,7 +24,7 @@ void Micron::init(int x, int y, bool fullscreen)
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if(fullscreen) {
+	if(!fullscreen) {
 		m_screen = SDL_SetVideoMode(x, y, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_HWACCEL);
 	} else {
 		m_screen = SDL_SetVideoMode(x, y, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_HWACCEL | SDL_FULLSCREEN);

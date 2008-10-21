@@ -1,15 +1,18 @@
-def xy_range(s):
-	for x in range(s[0]):
-		for y in range(s[1]):
-			yield x,y
+"""
+Simplistic tile generator from textures.
+"""
 
 import Image,os,sys,os.path
-import psyco; psyco.full()
 from os.path import join as J
+import ConfigParser
+
+try:
+	import psyco; psyco.full()
+except:pass
 
 size = 46*2,24*2
-mul = 2
-prep_size =  size[0]*mul,size[0]*mul
+quality = 2
+prep_size =  size[0]*quality, size[0]*quality
 
 def prep_image(fname):
 	image = Image.open(fname)
@@ -17,10 +20,9 @@ def prep_image(fname):
 		image = image.resize(prep_size)
 	return image
 
-import sys
-
 _tmasks = {}
 def make_tilemasks(s):
+	# create a tilemask and its inverse. cached.
 	if s in _tmasks: return _tmasks[s]
 	tilemask = Image.new("1",s,0)
 	itilemask = Image.new("1",s,1)
@@ -47,30 +49,36 @@ def make_tile(fname,out,rot=0):
 	image = prep_image(fname)
 	image = image.rotate(rot,expand=1)
 
-	d = mul*4
+	# chop added extra pixels by expanding
+	d = quality*4
 	dx,dy = image.size
 	image = image.crop((d,d,dx-d,dy-d)).copy()
 
+	# Scale Y-axis
+	# convert -resample is much better than PIL.
+	# ideally we'd use GIMP ...
 	image.save("in.png")
-	os.system("convert in.png -resample %dx%d  out.png" % (size[0]*mul,size[1]*mul))
+	os.system("convert in.png -resample %dx%d  out.png" % (size[0]*quality,size[1]*quality))
 	image = Image.open("out.png")
 
+	# Apply tilemask
 	w,h = image.size
-
 	tmask,imask = make_tilemasks((w,h))
 	tile = Image.new("RGBA",(w,h),(0,0,0,0))
 	tile.paste(image,tmask)
 
+	# Again convert -resize is better ...
 	tile.save("in.png")
 	os.system("convert in.png -resize %dx%d out.png" % (size))
 	image = Image.open("out.png")
 	image.save(out)
 
-import ConfigParser
 def make_tiles(tdef):
+	# parse the tiles.def file.
+	# create tiles from square images -- like nexuiz textures ^^
 	in_dir  = "content/base/"
 	out_dir = "content/tiles/"
-	cfg = ConfigParser.ConfigParser({'quality':4})
+	cfg = ConfigParser.ConfigParser({})
 	cfg.read(tdef)
 
 	for index, name in enumerate(cfg.sections()):
