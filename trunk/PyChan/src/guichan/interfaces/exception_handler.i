@@ -27,7 +27,7 @@ namespace std {
 };
 
 %{
-/* #include "util/base/exception.h" */
+#include <guichan/exception.hpp> 
 static void handleDirectorException() {
 	PyObject* exception = NULL;
 	PyObject* value = NULL;
@@ -68,8 +68,8 @@ print s\n\
 	}
 }
 
-#define _FIFE_EXC_HANDLER(_fife_exc_type, _converted_type) \
-	catch (FIFE::_fife_exc_type& _e) { \
+#define _GCN_EXC_HANDLER(_fife_exc_type, _converted_type) \
+	catch (const gcn::_fife_exc_type& _e) { \
 		PyErr_Clear(); \
 		SWIG_exception(_converted_type, _e.getMessage().c_str()); \
 	}
@@ -92,6 +92,6 @@ print s\n\
 	try {
 		$action
 	}
+ 	_GCN_EXC_HANDLER(Exception, SWIG_RuntimeError) 
  	_FIFE_DIRECTOR_EXC_HANDLER() 
-/*  	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)  */
 }
