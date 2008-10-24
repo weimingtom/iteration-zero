@@ -9,12 +9,12 @@ GUICHAN_BUILD_DIR   = abspath("src/guichan")
 GUICHAN_INCLUDE_DIR = abspath("install/include")
 GUICHAN_LIB_DIR     = abspath("install/lib/")
 
-GUICHAN_INSTALL_DIR = abspath("modules")
+GUICHAN_INSTALL_DIR = abspath("guichan")
 
 MICRON_BUILD_DIR    = abspath("src/micron")
 MICRON_LIB_DIR      = LIB_INSTALL_PATH
 
-MICRON_INSTALL_DIR  = abspath("modules")
+MICRON_INSTALL_DIR  = abspath("guichan")
 
 
 SDL_CXXFLAGS = "-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
@@ -113,5 +113,5 @@ def make_micron():
 
 make_guichan()
 make_micron()
-system('cd modules;python -c "import micron"; cd ..')
-system('cd modules;python -c "import guichan"; cd ..')
+system('python -c "import guichan"')
+system('python -c "import guichan.micron"')
