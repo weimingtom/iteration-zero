@@ -19,8 +19,10 @@ from guichan import \
 	Widget, \
 	Container, \
 	TextBox, \
+	TextField, \
 	Label, \
 	Button, \
+	RadioButton, \
 	CheckBox, \
 	ScrollArea, \
 	Slider
