@@ -35,10 +35,15 @@ def _munge_engine_hook(engine):
 	if not isinstance(engine,fife.Engine):
 		return engine
 
+	if not engine.getEventManager():
+		raise InitializationError("No event manager installed.")
+	if not engine.getGuiManager():
+		raise InitializationError("No GUI manager installed.")
+
 	guimanager = engine.getGuiManager()
 
 	def _fife_load_image(filename):
-		index = engine.imagePool.addResourceFromFile(filename)
+		index = engine.getImagePool().addResourceFromFile(filename)
 		return guichan.GuiImage(index,engine.getImagePool())
 
 	class hook:
@@ -65,9 +70,6 @@ class _multilistener(guichan.ActionListener,guichan.MouseListener,guichan.KeyLis
 		guichan.MouseListener.__init__(self)
 		guichan.KeyListener.__init__(self)
 
-assert isinstance(_multilistener(),guichan.ActionListener)
-assert isinstance(_multilistener(),guichan.MouseListener)
-assert isinstance(_multilistener(),guichan.KeyListener)
 
 class _point(object):
 	def __init__(self,x=0,y=0):
@@ -76,10 +78,17 @@ class _point(object):
 
 if in_fife:
 	fife = guichan
+	guichan.ActionListener._ActionListener_init__ = lambda x : x
+	#guichan.MouseListener.__init__ = lambda x : x
+	guichan.KeyListener.__init__ = lambda x : x
 else:
 	guichan.Point = _point
 	guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto
 	guichan.ScrollArea.SHOW_NEVER = guichan.ScrollArea.ShowNever
 	guichan.ScrollArea.SHOW_ALWAYS = guichan.ScrollArea.ShowAlways
-	guichan.GUIEventListener = _multilistener
+	guichan.Slider.HORIZONTAL = guichan.Slider.Horizontal
+	guichan.Slider.VERTICAL = guichan.Slider.Vertical
 
+assert isinstance(_multilistener(),guichan.ActionListener)
+assert isinstance(_multilistener(),guichan.MouseListener)
+assert isinstance(_multilistener(),guichan.KeyListener)

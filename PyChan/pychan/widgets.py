@@ -11,7 +11,7 @@ from compat import guichan, in_fife
 
 import tools
 import events
-from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer, isLayouted
+from compat_layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer, isLayouted
 
 from exceptions import *
 from attrs import Attr,PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
@@ -22,15 +22,12 @@ def _mungeText(text):
 	"""
 	This function is applied to all text set on widgets, currently only replacing tabs with four spaces.
 	"""
-	text = text.replace('\t'," "*4)
-	text = text.replace('[br]','\n')
-	if isinstance(text,unicode):
-		text = text.encode('utf-8')
-	return text
+	return text.replace('\t'," "*4).replace('[br]','\n')
 
 class _DummyImage(object):
 	def getWidth(self): return 0
 	def getHeight(self): return 0
+
 
 class Widget(object):
 	"""
@@ -43,7 +40,7 @@ class Widget(object):
 	Widgets are manipulated (mostly) through attributes - and these can all be set by XML attributes.
 	Derived widgets will have other attributes. Please see their B{New Attributes} sections. The types of the
 	attributes are pretty straightforward, but note that Position and Color attribute types will also accept
-	C{guichan.Point} and C{guichan.Color} values.
+	C{fife.Point} and C{fife.Color} values.
 
 	  - name: String: The identification of the widget, most useful if it is unique within a given widget hiarachy.
 	  This is used to find widgets by L{mapEvents},L{distributeInitialData},L{distributeData} and L{collectData}.
@@ -54,8 +51,6 @@ class Widget(object):
 	  of the actual size attribute.
 	  - max_size: Position: The maximal size this widget is allowed to have. This is enforced through the accessor methods
 	  of the actual size attribute.
-	  - vexpanding: Int: Set to 1 to let the widget expand vertically if space is available.
-	  - hexpanding: Int: Set to 1 to let the widget expand horizontally if space is available.
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
@@ -83,22 +78,12 @@ class Widget(object):
 	   - width: Integer: The horizontal part of the size attribute.
 	   - height: Integer: The vertical part of the size attribute.
 
-	   - min_width: Integer: The horizontal part of the min_size attribute.
-	   - min_height: Integer: The vertical part of the min_size attribute.
-	   - max_width: Integer: The horizontal part of the max_size attribute.
-	   - max_height: Integer: The vertical part of the max_size attribute.
 	"""
 
 	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
-		IntAttr('width'),IntAttr('height'),
-		IntAttr('max_width'),IntAttr('max_height'),
-		IntAttr('min_width'),IntAttr('min_height'),
-
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),
-		Attr('style'), Attr('font'),IntAttr('border_size'),
-		IntAttr('vexpanding'),IntAttr('hexpanding'),
-		Attr('position_technique'),
+		Attr('style'), Attr('font'),IntAttr('border_size')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
@@ -130,8 +115,6 @@ class Widget(object):
 		self.size = size
 		self.position_technique = "explicit"
 		self.font = 'default'
-		self.vexpanding = 0
-		self.hexpanding = 0
 
 		# Inherit style
 		if style is None and parent:
@@ -167,14 +150,10 @@ class Widget(object):
 		for name,returnValue in bind.items():
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
-				#self.real_widget.releaseFocus()
 				self.hide()
 			self.findChild(name=name).capture( _quitThisDialog )
-
 		self.show()
-		#self.real_widget.requestFocus()
 		return get_manager().mainLoop()
-
 
 	def match(self,**kwargs):
 		"""
@@ -196,7 +175,6 @@ class Widget(object):
 		wether this widgets events are currently captured.
 
 		It might be useful to check out L{tools.callbackWithArguments}.
-		Alse check out the B{mighty} L{tools.attrSetCallback}.
 
 		@param callback: Event callback - may accept keyword arguments event and widget.
 		@paran event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
@@ -270,7 +248,6 @@ class Widget(object):
 			if not isLayouted(widget.parent):
 				break
 			widget = widget.parent
-		print "adaptLayout",self,"==>",widget
 		widget._recursiveResizeToContent()
 		widget._recursiveExpandContent()
 
@@ -356,12 +333,10 @@ class Widget(object):
 		Example::
 		    guiElement.mapEvents({
 			"button" : guiElement.hide,
-			"button/mouseEntered" : tools.attrSetCallback(base_color=(0,255,255)),
+			"button/mouseEntered" : toggleButtonColorGreen,
 			"button/mouseExited" :  toggleButtonColorBlue,
 		    })
 
-		It might be useful to check out L{tools.callbackWithArguments}.
-		Alse check out the B{mighty} L{tools.attrSetCallback}.
 		"""
 		for descr,func in eventMap.items():
 			name, event_name, group_name = events.splitEventDescriptor(descr)
@@ -532,7 +507,7 @@ class Widget(object):
 		def _callResizeToContent(widget):
 			#print "RTC:",widget
 			widget.resizeToContent()
-		self.deepApply(_callResizeToContent,post_order = True)
+		self.deepApply(_callResizeToContent)
 
 	def _recursiveExpandContent(self):
 		"""
@@ -542,9 +517,9 @@ class Widget(object):
 		def _callExpandContent(widget):
 			#print "ETC:",widget
 			widget.expandContent()
-		self.deepApply(_callExpandContent,post_order = False)
+		self.deepApply(_callExpandContent)
 
-	def deepApply(self,visitorFunc, post_order = False):
+	def deepApply(self,visitorFunc):
 		"""
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""
@@ -562,6 +537,16 @@ class Widget(object):
 	def __repr__(self):
 		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.name,id(self))
 
+	def _setSize(self,size):
+		if isinstance(size,guichan.Point):
+			self.width, self.height = size.x, size.y
+		else:
+			self.width, self.height = size
+		#self.sizeChanged()
+
+	def _getSize(self):
+		return self.width, self.height
+
 	def _setPosition(self,size):
 		if isinstance(size,guichan.Point):
 			self.x, self.y = size.x, size.y
@@ -576,47 +561,18 @@ class Widget(object):
 	def _setY(self,y): self.real_widget.setY(y)
 	def _getY(self): return self.real_widget.getY()
 
-	def _setSize(self,size):
-		if isinstance(size,guichan.Point):
-			self.width, self.height = size.x, size.y
-		else:
-			self.width, self.height = size
-		#self.sizeChanged()
-
-	def _getSize(self):
-		return self.width, self.height
-
 	def _setWidth(self,w):
 		w = max(self.min_size[0],w)
 		w = min(self.max_size[0],w)
 		self.real_widget.setWidth(w)
-	def _getWidth(self): return self.real_widget.getWidth()
 
+	def _getWidth(self): return self.real_widget.getWidth()
 	def _setHeight(self,h):
 		h = max(self.min_size[1],h)
 		h = min(self.max_size[1],h)
 		self.real_widget.setHeight(h)
+
 	def _getHeight(self): return self.real_widget.getHeight()
-
-	def _setMinWidth(self,w):
-		self.min_size = w,self.min_size[1]
-		self.width = self.width
-	def _getMinWidth(self): return self.min_size[0]
-
-	def _setMinHeight(self,h):
-		self.min_size = self.min_size[0],h
-		self.height = self.height
-	def _getMinHeight(self): return self.min_size[1]
-
-	def _setMaxWidth(self,w):
-		self.max_size = w,self.max_size[1]
-		self.width = self.width
-	def _getMaxWidth(self): return self.max_size[0]
-
-	def _setMaxHeight(self,h):
-		self.max_size = self.max_size[0],h
-		self.height = self.height
-	def _getMaxHeight(self): return self.max_size[1]
 
 	def _setFont(self, font):
 		self._font = font
@@ -624,12 +580,6 @@ class Widget(object):
 		self.real_widget.setFont(self.real_font)
 	def _getFont(self):
 		return self._font
-
-	def _isFocusable(self): return self.real_widget.isFocusable()
-	def _setFocusable(self,size): self.real_widget.setFocusable(size)
-
-	def _isEnabled(self): return self.real_widget.isEnabled()
-	def _setEnabled(self,size): self.real_widget.setEnabled(size)
 
 	def _getBorderSize(self): return self.real_widget.getFrameSize()
 	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
@@ -673,9 +623,7 @@ class Widget(object):
 		self._parent = parent
 	parent = property(_getParent,_setParent)
 
-	def _setName(self,name):
-		self.real_widget.setId(self.__class__.__name__  + ':' + name)
-		self._name = name
+	def _setName(self,name): self._name = name
 	def _getName(self): return self._name
 	name = property(_getName,_setName)
 
@@ -683,15 +631,9 @@ class Widget(object):
 	y = property(_getY,_setY)
 	width = property(_getWidth,_setWidth)
 	height = property(_getHeight,_setHeight)
-	min_width = property(_getMinWidth,_setMinWidth)
-	min_height = property(_getMinHeight,_setMinHeight)
-	max_width = property(_getMaxWidth,_setMaxWidth)
-	max_height = property(_getMaxHeight,_setMaxHeight)
 	size = property(_getSize,_setSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
-	focusable = property(_isFocusable,_setFocusable)
-	enabled = property(_isEnabled,_setEnabled)
 	border_size = property(_getBorderSize,_setBorderSize)
 
 	def setEnterCallback(self, cb):
@@ -755,7 +697,6 @@ class Container(Widget):
 		self.children = []
 		self.margins = margins
 		self.padding = padding
-		self._extra_border = 0,0
 		self._background = []
 		self._background_image = None
 		super(Container,self).__init__(**kwargs)
@@ -784,13 +725,10 @@ class Container(Widget):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def deepApply(self,visitorFunc,post_order = False):
-		if not post_order:
-			visitorFunc(self)
+	def deepApply(self,visitorFunc):
 		for child in self.children:
-			child.deepApply(visitorFunc,post_order = post_order)
-		if post_order:
-			visitorFunc(self)
+			child.deepApply(visitorFunc)
+		visitorFunc(self)
 
 	def beforeShow(self):
 		self._resetTiling()
@@ -830,7 +768,7 @@ class Container(Widget):
 
 		# Background generation is done in _resetTiling
 
-		if not isinstance(image, guichan.GuiImage):
+		if not isinstance(image, guichan.Image):
 			image = get_manager().loadImage(image)
 		self._background_image = image
 
@@ -840,7 +778,6 @@ class Container(Widget):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
-
 
 
 class VBox(VBoxLayoutMixin,Container):
@@ -859,8 +796,7 @@ class VBox(VBoxLayoutMixin,Container):
 	def __init__(self,padding=5,**kwargs):
 		super(VBox,self).__init__(**kwargs)
 		self.padding = padding
-		self.vexpanding = 1
-		self.hexpanding = 0
+
 
 class HBox(HBoxLayoutMixin,Container):
 	"""
@@ -871,8 +807,7 @@ class HBox(HBoxLayoutMixin,Container):
 	def __init__(self,padding=5,**kwargs):
 		super(HBox,self).__init__(**kwargs)
 		self.padding = padding
-		self.vexpanding = 0
-		self.hexpanding = 1
+
 
 class Window(VBoxLayoutMixin,Container):
 	"""
@@ -893,11 +828,6 @@ class Window(VBoxLayoutMixin,Container):
 			titlebar_height = self.real_font.getHeight() + 4
 		self.titlebar_height = titlebar_height
 		self.title = title
-		self._extra_border = 4,2
-		self.vexpanding = 1
-		self.hexpanding = 1
-		self.accepts_initial_data = True
-		self._realSetInitialData = self._setTitle
 
 		# Override explicit positioning
 		self.position_technique = "automatic"
@@ -924,7 +854,7 @@ class Window(VBoxLayoutMixin,Container):
 
 class BasicTextWidget(Widget):
 	"""
-	The baseclass for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
+	The base class for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
 	Do not use directly.
 
 	New Attributes
@@ -944,13 +874,16 @@ class BasicTextWidget(Widget):
 		self.margins = (5,5)
 		self.text = text
 		super(BasicTextWidget,self).__init__(**kwargs)
-		self.hexpanding = 1
+
 		# Prepare Data collection framework
 		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
 
 	def _getText(self): return self.real_widget.getCaption()
-	def _setText(self,text): self.real_widget.setCaption(_mungeText(text))
+	def _setText(self,text):
+		self.real_widget.setCaption(_mungeText(text))
+		if not in_fife:
+			self.real_widget.adjustSize()
 	text = property(_getText,_setText)
 
 	def resizeToContent(self, recurse = True):
@@ -983,7 +916,7 @@ class Icon(Widget):
 			self._source = None
 			self._image = source
 		else:
-			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
+			raise RuntimeError("Icon.image only accepts Image and python strings, not '%s'" % repr(source))
 		self.real_widget.setImage( self._image )
 
 		# Set minimum size accoriding to image
@@ -1048,8 +981,6 @@ class Button(BasicTextWidget):
 	def __init__(self,**kwargs):
 		self.real_widget = guichan.Button("")
 		super(Button,self).__init__(**kwargs)
-		self.hexpanding = 0
-
 
 class ImageButton(BasicTextWidget):
 	"""
@@ -1068,6 +999,9 @@ class ImageButton(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image')]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
+		if not in_fife:
+			raise RuntimeError("ImageButton is only supported in FIFE at the moment.")
+
 		self.real_widget = guichan.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
 
@@ -1075,8 +1009,6 @@ class ImageButton(BasicTextWidget):
 		self.down_image = down_image
 		self.hover_image = hover_image
 		self.offset = offset
-		self.hexpanding = 0
-
 
 	def _setUpImage(self,image):
 		self._upimage_source = image
@@ -1453,8 +1385,6 @@ class ScrollArea(Widget):
 		self.real_widget = guichan.ScrollArea()
 		self._content = None
 		super(ScrollArea,self).__init__(**kwargs)
-		self.vexpanding = 1
-		self.hexpanding = 1
 
 	def addChild(self,widget):
 		self.content = widget
@@ -1469,25 +1399,19 @@ class ScrollArea(Widget):
 	def _setContent(self,content):
 		self.real_widget.setContent(content.real_widget)
 		self._content = content
-
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def deepApply(self,visitorFunc,post_order = False):
-		if not post_order:
-			visitorFunc(self)
-		if self._content:
-			self._content.deepApply(visitorFunc,post_order = post_order)
-		if post_order:
-			visitorFunc(self)
+	def deepApply(self,visitorFunc):
+		if self._content: self._content.deepApply(visitorFunc)
+		visitorFunc(self)
 
 	def resizeToContent(self,recurse=True):
-		self.size = self.min_size
-
-	def expandContent(self,recurse=True):
 		if self._content is None: return
-		self.content.width = max(self.content.width,self.width-10)
-		self.content.height = max(self.content.height,self.height-10)
+		if recurse:
+			self.content.resizeToContent(recurse=True)
+		self.content.width = max(self.content.width,self.width-5)
+		self.content.height = max(self.content.height,self.height-5)
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility: 
@@ -1514,6 +1438,7 @@ class ScrollArea(Widget):
 	vertical_scrollbar = property(_getVerticalScrollbar,_setVerticalScrollbar)
 	horizontal_scrollbar = property(_getHorizontalScrollbar,_setHorizontalScrollbar)
 
+
 class Slider(Widget):
 	""" A slider widget
 	
@@ -1532,14 +1457,15 @@ class Slider(Widget):
 		- update docstrings		
 	"""
 	
-	HORIZONTAL = guichan.Slider.Horizontal
-	VERTICAL = guichan.Slider.Vertical
+	HORIZONTAL = guichan.Slider.HORIZONTAL
+	VERTICAL = guichan.Slider.VERTICAL
 	
 	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
 	
 	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, **kwargs):
 		self.real_widget = guichan.Slider(scaleStart, scaleEnd)
 		self.orientation = orientation
+		self.setOrientation(self.orientation)
 		super(Slider, self).__init__(**kwargs)
 	
 	def _setScale(self, start, end):
@@ -1594,9 +1520,6 @@ class Slider(Widget):
 
 	def setOrientation(self, orientation):
 		"""setOrientation(self, Orientation orientation)"""
-		self.hexpanding,self.vexpanding = 0,1
-		if orientation == Slider.HORIZONTAL:
-			self.hexpanding,self.vexpanding = 1,0
 		self.real_widget.setOrientation(orientation)
 		
 	def getOrientation(self):
@@ -1633,7 +1556,6 @@ WIDGETS = {
 	"Button" : Button,
 	"CheckBox" : CheckBox,
 	"RadioButton" : RadioButton,
-	"ImageButton" : ImageButton,
 
 	#Complexer Widgets / Text io
 	"TextField" : TextField,
@@ -1652,3 +1574,7 @@ def registerWidget(cls):
 	if name in WIDGETS:
 		raise InitializationError("Widget class name '%s' already registered." % name)
 	WIDGETS[name] = cls
+
+if in_fife:
+	registerWidget(ImageButton)
+

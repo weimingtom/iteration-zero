@@ -29,12 +29,6 @@ class Manager(object):
 		self.hook = hook
 		self.debug = debug
 
-		if in_fife:
-			if not hook.engine.getEventManager():
-				raise InitializationError("No event manager installed.")
-			if not hook.engine.getGuiManager():
-				raise InitializationError("No GUI manager installed.")
-
 		self.fonts = {}
 		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
 		self.fonts['default'] = hook.default_font

@@ -276,9 +276,12 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
-		attrstrings = map(lambda t: '%s="%s"' % tuple(map(str,t)),attrs.items())
-		tag = "<%s " % name + " ".join(attrstrings) + ">"
-		print self.indent + tag
+		# FIXME use encode replace?
+		try:
+			attrstrings = map(lambda t: '%s="%s"' % tuple(map(str,t)),attrs.items())
+			tag = "<%s " % name + " ".join(attrstrings) + ">"
+			print self.indent + tag
+		except UnicodeEncodeError: pass
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """

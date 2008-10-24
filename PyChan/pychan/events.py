@@ -38,7 +38,7 @@ Available Events
 
 """
 
-from compat import guichan,in_fife
+from compat import guichan
 
 import exceptions
 from internal import get_manager
@@ -61,6 +61,10 @@ EVENTS = [
 # Add the EVENTS to the docs.
 __doc__ += "".join([" - %s\n" % event for event in EVENTS])
 
+# The line before seems to leak the variable event into the global namespace ... remove that!
+try: del event
+except:pass
+
 MOUSE_EVENT, KEY_EVENT, ACTION_EVENT = range(3)
 def getEventType(name):
 	if "mouse" in name:
@@ -69,6 +73,8 @@ def getEventType(name):
 		return KEY_EVENT
 	return ACTION_EVENT
 
+DEFAULT_CHANNEL = "default"
+DEFAULT_EVENT = "action"
 
 CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to %s.capture, which would normally remove a mapped event.
@@ -83,14 +89,6 @@ class EventListenerBase(object):
 	virtual methods are called from C++ to - listen to
 	Guichan events.
 
-	When the module is first loaded the event handler
-	methods are auto-generated from the list L{EVENTS}.
-	This is effectively the same code as::
-	  def mouseEntered(self,event):
-	    self._redirectEvent("mouseEntered",event)
-
-	This way L{EVENTS} and the actually receivable events
-	are forced to be in sync.
 	"""
 	def __init__(self):
 		super(EventListenerBase,self).__init__()
@@ -126,16 +124,20 @@ class EventListenerBase(object):
 
 	def _redirectEvent(self,name,event):
 		self.indent += 4
-		event = self.translateEvent(getEventType(name), event)
 		try:
+			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
 					f( event )
+
 		except:
+			print name, event
 			traceback.print_exc()
 			raise
-		self.indent -= 4
+
+		finally:
+			self.indent -= 4
 
 	def translateEvent(self,event_type,event):
 		if event_type == MOUSE_EVENT:
@@ -143,33 +145,34 @@ class EventListenerBase(object):
 		if event_type == KEY_EVENT:
 			return get_manager().hook.translate_key_event(event)
 		return event
+
 class _ActionEventListener(EventListenerBase,guichan.ActionListener):
 	def __init__(self):super(_ActionEventListener,self).__init__()
 	def doAttach(self,real_widget):	real_widget.addActionListener(self)
 	def doDetach(self,real_widget): real_widget.removeActionListener(self)
 
-	def action(self,event): self._redirectEvent("action",event)
+	def action(self,e): self._redirectEvent("action",e)
 
 class _MouseEventListener(EventListenerBase,guichan.MouseListener):
 	def __init__(self):super(_MouseEventListener,self).__init__()
 	def doAttach(self,real_widget):	real_widget.addMouseListener(self)
 	def doDetach(self,real_widget): real_widget.removeMouseListener(self)
 
-	def mouseEntered(self,e): self._redirectEvent("mouseEntered",event)
-	def mouseExited(self,e): self._redirectEvent("mouseExited",event)
-	def mousePressed(self,e): self._redirectEvent("mousePressed",event)
-	def mouseReleased(self,e): self._redirectEvent("mouseReleased",event)
-	def mouseClicked(self,e): self._redirectEvent("mouseClicked",event)
-	def mouseMoved(self,e): self._redirectEvent("mouseMoved",event)
-	def mouseDragged(self,e): self._redirectEvent("mouseDragged",event)
+	def mouseEntered(self,e): self._redirectEvent("mouseEntered",e)
+	def mouseExited(self,e): self._redirectEvent("mouseExited",e)
+	def mousePressed(self,e): self._redirectEvent("mousePressed",e)
+	def mouseReleased(self,e): self._redirectEvent("mouseReleased",e)
+	def mouseClicked(self,e): self._redirectEvent("mouseClicked",e)
+	def mouseMoved(self,e): self._redirectEvent("mouseMoved",e)
+	def mouseDragged(self,e): self._redirectEvent("mouseDragged",e)
 
 class _KeyEventListener(EventListenerBase,guichan.KeyListener):
 	def __init__(self):super(_KeyEventListener,self).__init__()
 	def doAttach(self,real_widget):	real_widget.addKeyListener(self)
 	def doDetach(self,real_widget): real_widget.removeKeyListener(self)
 
-	def keyPressed(self,e): self._redirectEvent("keyPressed",event)
-	def keyReleased(self,e): self._redirectEvent("keyReleased",event)
+	def keyPressed(self,e): self._redirectEvent("keyPressed",e)
+	def keyReleased(self,e): self._redirectEvent("keyReleased",e)
 
 class EventMapper(object):
 	"""
@@ -251,17 +254,25 @@ class EventMapper(object):
 			listener.events[event_name][group_name] = captured_f
 		listener.attach(self.widget)
 
-
 def splitEventDescriptor(name):
-	""" Utility function to split "widgetName/eventName" descriptions into tuples. """
+	"""
+	Utility function to split "widgetName/eventName/channelName" descriptions into tuples.
+
+	C{channelName} is optional and defaults to L{DEFAULT_CHANNEL}.
+
+	That's the default channel used in normal application code.
+
+	C{eventName} is optional and defaults to L{DEFAULT_EVENT}.
+
+	That's the B{action} event distributed by buttons when they are activated.
+	"""
 	L = name.split("/")
 	if len(L) not in (1,2,3):
 		raise exceptions.RuntimeError("Invalid widgetname / eventname combination: " + name)
-	if len(L) == 1:
-		L = L[0],"action"
+	if len(L) == 1: 
+		L = L[0],DEFAULT_EVENT
 	elif L[1] not in EVENTS:
 		raise exceptions.RuntimeError("Unknown event name: " + name)
 	if len(L) == 2:
-		L = L[0],L[1],"default"
+		L = L[0],L[1],DEFAULT_CHANNEL
 	return L
-

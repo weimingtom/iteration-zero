@@ -1,62 +1,11 @@
 # coding: utf-8
 
 # Font handling
-from compat import guichan, in_fife
 from exceptions import *
-import ConfigParser
-
-def loadFontDefs(filename):
-	assert in_fife
-	from internal import get_manager
-	fmanager = get_manager().guimanager.getFontManager()
-
-	fontdef = ConfigParser.ConfigParser()
-	fontdef.read(filename)
-
-	sections = [section for section in fontdef.sections() if section.startswith("Font/")]
-
-	fonts = []
-	for section in sections:
-		name = section[5:]
-		def _load(variant,w,v):
-			if fontdef.has_option(section,variant):
-				fspec = fife.FontSpec(name,w,v)
-				fmanager.addFont(fspec, fontdef.get(section,variant))
-
-		_load("normal",     fife.FontSpec.NORMAL,fife.FontSpec.NORMAL)
-		_load("bold",       fife.FontSpec.BOLD,  fife.FontSpec.NORMAL)
-		_load("italic",     fife.FontSpec.NORMAL,fife.FontSpec.ITALIC)
-		_load("bold-italic",fife.FontSpec.BOLD,  fife.FontSpec.ITALIC)
-
-def _minicss(text,d):
-	tokens = text.split(";")
-	for tok in tokens:
-		if ':' in tok:
-			k,v = tok.split(":")
-			d[k] = v
-	return d
-
-def parseFontSpec(text):
-	assert in_fife
-
-	from internal import get_manager
-	fmanager = get_manager().guimanager.getFontManager()
-	d = dict(family="default",weight=fife.FontSpec.NORMAL,variant=fife.FontSpec.NORMAL,size=12)
-	d = _minicss(text,d)
-	d['size'] = int(d['size'])
-	print text,d
-	font = fmanager.createFont(fife.FontSpec(d['family'],d['weight'],d['variant']), d['size'])
-	return font
-
 
 class Font(object):
-	def __init__(self):
-		pass
-
-	def load(self,name,get):
-		assert in_fife
+	def __init__(self,name,get):
 		from internal import get_manager
-		fmanager = get_manager().guimanager.getFontManager()
 		self.font = None
 		self.name = name
 		self.typename = get("type")
@@ -68,8 +17,7 @@ class Font(object):
 			self.size = int(get("size"))
 			self.antialias = int(get("antialias",1))
 			self.color = map(int,get("color","255,255,255").split(','))
-			fmanager.addFont(fife.FontSpec(name),self.source)
-			self.font = fmanager.createFont(fife.FontSpec(name),self.size)
+			self.font = get_manager().hook.engine.getGuiManager().createFont(self.source,self.size,"")
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
@@ -81,7 +29,6 @@ class Font(object):
 
 		self.font.setRowSpacing( self.row_spacing )
 		self.font.setGlyphSpacing( self.glyph_spacing )
-		return self
 
 	@staticmethod
 	def loadFromFile(filename):
@@ -102,7 +49,7 @@ class Font(object):
 				if fontdef.has_option(section,name):
 					return fontdef.get(section,name)
 				return default
-			fonts.append( Font().load(name,_get) )
+			fonts.append( Font(name,_get) )
 		return fonts
 
 	def __str__(self):

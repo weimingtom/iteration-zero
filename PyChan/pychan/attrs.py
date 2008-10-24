@@ -42,7 +42,12 @@ class Attr(object):
 		Parses a value and checks for errors.
 		Override with specialiced behaviour.
 		"""
-		return str(value)
+		try:
+			return str(value)
+		except UnicodeEncodeError:
+			# Guichan and our fonts don't support unicode atm.
+			# We need a unicode policy.
+			return value.encode("latin-1","replace")
 
 class PointAttr(Attr):
 	def parse(self,value):
