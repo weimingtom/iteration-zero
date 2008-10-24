@@ -1,7 +1,16 @@
 import sys
 import os
 
-def findGuichan():
+def haveGuichan():
+	try:
+		import guichan.guichan as _dummy1_
+		import guichan as _dummy2_
+	except ImportError, e:
+		print e
+		return False
+	return True
+
+def getDefaultPaths():
 	global guichan_path
 	try:
 		import config
@@ -9,7 +18,21 @@ def findGuichan():
 	except (ImportError, AttributeError):
 		_paths = []
 	_paths += [ '.', '..', '../..' ]
+	return _paths
 
+def findGuichan():
+	if haveGuichan():
+		return
+
+	sys_path = sys.path[:]
+	for path in getDefaultPaths():
+		sys.path.append(path)
+		print ">",path,
+		if haveGuichan():
+			return
+		sys.path = sys_path[:]
+
+	_paths = getDefaultPaths()
 	guichan_path = None
 	for p in _paths:
 		if p in sys.path:

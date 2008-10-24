@@ -1,6 +1,7 @@
 import startup; startup.findGuichan()
 
-import guichan, micron
+import guichan
+import guichan.micron as micron
 
 engine = micron.Micron()
 
