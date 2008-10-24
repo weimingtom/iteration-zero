@@ -5,7 +5,7 @@ import guichan.micron as micron
 
 engine = micron.Micron()
 
-engine.init(640,480,1)
+engine.init(640,480,0)
 
 gui = guichan.Gui()
 gui.setGraphics( engine.getGraphics() )

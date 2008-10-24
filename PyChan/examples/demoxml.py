@@ -11,7 +11,7 @@ class Application(object):
 	def __init__(self, xmlfiles):
 		self.engine = micron.Micron()
 
-		self.engine.init(640,640,1)
+		self.engine.init(640,640,0)
 
 		self.gui = guichan.Gui()
 		self.gui.setGraphics( self.engine.getGraphics() )
