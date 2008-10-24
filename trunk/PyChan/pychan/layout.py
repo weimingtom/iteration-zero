@@ -2,6 +2,8 @@
 
 from attrs import IntAttr
 
+raise Exception("Don't use the new layout engine yet.")
+
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 def isLayouted(widget):
 	return isinstance(widget,LayoutBase)
