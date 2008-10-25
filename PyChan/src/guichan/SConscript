@@ -1,0 +1,23 @@
+import glob
+import distutils.sysconfig
+def make_iface():
+	ifaces =  sorted(glob.glob("interfaces/*.i"))
+	ifaces += sorted(glob.glob("interfaces/widgets/*.i"))
+	in_templ = open("guichan_template.i").read()
+	includes = ''.join(['%%include %s\n' % iface for iface in ifaces])
+	out_file = open("guichan.i","w")
+	out_file.write( in_templ )
+	out_file.write( includes )
+	out_file.close()
+make_iface()
+
+Import("env")
+env = env.Clone(SWIGFLAGS=['-python','-c++'],
+                CPPPATH=[distutils.sysconfig.get_python_inc()],
+                SHLIBPREFIX="")
+
+env.Append(CPPPATH="../../install/include")
+
+env.SharedLibrary("_guichan","guichan.i")
+env.Command("../../guichan/_guichan.so","_guichan.so", Copy("$TARGET","$SOURCE"))
+env.Command("../../guichan/guichan.py","guichan.py", Copy("$TARGET","$SOURCE"))

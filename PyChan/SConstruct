@@ -1,0 +1,29 @@
+#import os,sys, glob
+
+from os.path import abspath
+opts = Options('options.py', ARGUMENTS)
+env = Environment(
+#unused
+	LIB_INSTALL_PATH    = abspath("install/lib/"),
+
+	GUICHAN_BUILD_DIR   = abspath("src/guichan"),
+
+	GUICHAN_INCLUDE_DIR = abspath("install/include"),
+	GUICHAN_LIB_DIR     = abspath("install/lib/"),
+
+	GUICHAN_INSTALL_DIR = abspath("guichan"),
+
+	MICRON_BUILD_DIR    = abspath("src/micron"),
+	MICRON_LIB_DIR      = abspath("install/lib/"),
+
+	MICRON_INSTALL_DIR  = abspath("guichan")
+)
+
+SDL_CXXFLAGS = "-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
+SDL_LDFLAGS = "-L/usr/lib -lSDL -lSDL_image -lSDL_ttf "
+
+PYTHON_INCLUDE_DIR = "/usr/include/python2.5"
+
+Export('env')
+
+SConscript("src/guichan/SConscript")
