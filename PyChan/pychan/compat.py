@@ -73,13 +73,13 @@ class _point(object):
 		self.x=0
 		self.y=0
 
-#if in_fife:
-	#fife = guichan
-	#guichan.ActionListener._ActionListener_init__ = lambda x : x
-	##guichan.MouseListener.__init__ = lambda x : x
-	#guichan.KeyListener.__init__ = lambda x : x
-#else:
-	#guichan.Point = _point
+if in_fife:
+	fife = guichan
+	guichan.ActionListener._ActionListener_init__ = lambda x : x
+	#guichan.MouseListener.__init__ = lambda x : x
+	guichan.KeyListener.__init__ = lambda x : x
+else:
+	guichan.Point = _point
 
 guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto
 guichan.ScrollArea.SHOW_NEVER = guichan.ScrollArea.ShowNever
