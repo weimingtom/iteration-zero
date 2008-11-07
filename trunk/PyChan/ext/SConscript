@@ -1,0 +1,14 @@
+import os
+
+Import("env")
+
+if env['build_guichan']:
+    os.chdir("guichan")
+    os.system("cmake .")
+    os.system("cmake -DCMAKE_INSTALL_PREFIX:PATH=\"../../install\"")
+    os.system("make install")
+
+env.Install(env['GUICHAN_LIB_DIR'],'#/install/lib/libguichan_x.so')
+env.Install(env['GUICHAN_LIB_DIR'],'#/install/lib/libguichan_x.so.0.9.0')
+
+env.Install(env['GUICHAN_INC_DIR'],'#/install/include/guichan.hpp')

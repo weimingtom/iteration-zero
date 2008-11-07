@@ -1,23 +1,19 @@
-#import os,sys, glob
-
-from os.path import abspath
 opts = Options('options.py', ARGUMENTS)
-env = Environment(
-#unused
-	LIB_INSTALL_PATH    = abspath("install/lib/"),
+opts.Add(BoolOption('build_guichan',
+		    'Build guichan libraries', 0))
+opts.Add(PathOption('GUICHAN_LIB_DIR',
+		    'Directory to install guichan libraries', '/usr/local/lib'))
+opts.Add(PathOption('GUICHAN_INC_DIR',
+		    'Directory to install guichan includes', '/usr/local/include'))
 
-	GUICHAN_BUILD_DIR   = abspath("src/guichan"),
+env = Environment(options = opts)
+Help(opts.GenerateHelpText(env))
 
-	GUICHAN_INCLUDE_DIR = abspath("install/include"),
-	GUICHAN_LIB_DIR     = abspath("install/lib/"),
+env.Alias("install-libs",env['GUICHAN_LIB_DIR'])
+env.Alias("install-includes",env['GUICHAN_INC_DIR'])
 
-	GUICHAN_INSTALL_DIR = abspath("guichan"),
-
-	MICRON_BUILD_DIR    = abspath("src/micron"),
-	MICRON_LIB_DIR      = abspath("install/lib/"),
-
-	MICRON_INSTALL_DIR  = abspath("guichan")
-)
+env.Alias("install",env['GUICHAN_LIB_DIR'])
+env.Alias("install",env['GUICHAN_INC_DIR'])
 
 SDL_CXXFLAGS = "-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
 SDL_LDFLAGS = "-L/usr/lib -lSDL -lSDL_image -lSDL_ttf "
@@ -26,4 +22,5 @@ PYTHON_INCLUDE_DIR = "/usr/include/python2.5"
 
 Export('env')
 
+SConscript("ext/SConscript")
 SConscript("src/guichan/SConscript")
