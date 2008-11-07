@@ -5,22 +5,29 @@ opts.Add(PathOption('GUICHAN_LIB_DIR',
 		    'Directory to install guichan libraries', '/usr/local/lib'))
 opts.Add(PathOption('GUICHAN_INC_DIR',
 		    'Directory to install guichan includes', '/usr/local/include'))
+#FIXME: query current python version
+opts.Add(PathOption('PACKAGE_DIR',
+		    'Directory to install python packages',
+		    '/usr/lib/python2.5/site-packages/'))
 
 env = Environment(options = opts)
 Help(opts.GenerateHelpText(env))
 
 env.Alias("install-libs",env['GUICHAN_LIB_DIR'])
 env.Alias("install-includes",env['GUICHAN_INC_DIR'])
+env.Alias("install-packages",env['PACKAGE_DIR'])
 
 env.Alias("install",env['GUICHAN_LIB_DIR'])
-env.Alias("install",env['GUICHAN_INC_DIR'])
+env.Alias("install",env['PACKAGE_DIR'])
 
-SDL_CXXFLAGS = "-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
-SDL_LDFLAGS = "-L/usr/lib -lSDL -lSDL_image -lSDL_ttf "
+#SDL_CXXFLAGS = "-I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
+#SDL_LDFLAGS = "-L/usr/lib -lSDL -lSDL_image -lSDL_ttf "
 
-PYTHON_INCLUDE_DIR = "/usr/include/python2.5"
+#PYTHON_INCLUDE_DIR = "/usr/include/python2.5"
 
 Export('env')
 
 SConscript("ext/SConscript")
 SConscript("src/guichan/SConscript")
+
+env.Install(env['PACKAGE_DIR']+"/pychan",Glob("#/pychan/*py"))
