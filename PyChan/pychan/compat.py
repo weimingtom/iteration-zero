@@ -13,7 +13,6 @@ def _import_guichan():
 		return fife
 	except ImportError, e:
 		err_fife = str(e)
-	
 	try:
 		import guichan
 		in_fife = False
@@ -23,8 +22,6 @@ def _import_guichan():
 		traceback.print_exc()
 		raise ImportError("Couldn't import neither fife nor guichan: fife:'%s' guichan:'%s'" % (err_fife,str(e)))
 guichan = _import_guichan()
-
-
 
 def _munge_engine_hook(engine):
 	engine.translate_mouse_event = getattr(engine,'translate_mouse_event',lambda x : x )
@@ -76,18 +73,19 @@ class _point(object):
 		self.x=0
 		self.y=0
 
-if in_fife:
-	fife = guichan
-	guichan.ActionListener._ActionListener_init__ = lambda x : x
-	#guichan.MouseListener.__init__ = lambda x : x
-	guichan.KeyListener.__init__ = lambda x : x
-else:
-	guichan.Point = _point
-	guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto
-	guichan.ScrollArea.SHOW_NEVER = guichan.ScrollArea.ShowNever
-	guichan.ScrollArea.SHOW_ALWAYS = guichan.ScrollArea.ShowAlways
-	guichan.Slider.HORIZONTAL = guichan.Slider.Horizontal
-	guichan.Slider.VERTICAL = guichan.Slider.Vertical
+#if in_fife:
+	#fife = guichan
+	#guichan.ActionListener._ActionListener_init__ = lambda x : x
+	##guichan.MouseListener.__init__ = lambda x : x
+	#guichan.KeyListener.__init__ = lambda x : x
+#else:
+	#guichan.Point = _point
+
+guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto
+guichan.ScrollArea.SHOW_NEVER = guichan.ScrollArea.ShowNever
+guichan.ScrollArea.SHOW_ALWAYS = guichan.ScrollArea.ShowAlways
+guichan.Slider.HORIZONTAL = guichan.Slider.Horizontal
+guichan.Slider.VERTICAL = guichan.Slider.Vertical
 
 assert isinstance(_multilistener(),guichan.ActionListener)
 assert isinstance(_multilistener(),guichan.MouseListener)
