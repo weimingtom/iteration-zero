@@ -23,3 +23,7 @@ env.Append(LIBS    = "guichan_x")
 env.SharedLibrary("_guichan",["guichan.i"])
 env.Command("#/guichan/_guichan.so","_guichan.so", Copy("$TARGET","$SOURCE"))
 env.Command("#/guichan/guichan.py","guichan.py", Copy("$TARGET","$SOURCE"))
+
+#env.Mkdir(env['PACKAGE_DIR']+"/guichan")
+env.Install(env['PACKAGE_DIR']+"/guichan","#/guichan/_guichan.so")
+env.Install(env['PACKAGE_DIR']+"/guichan",Glob("#/guichan/*py"))
