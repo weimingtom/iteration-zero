@@ -44,13 +44,6 @@ prototypes = {
 
 }
 
-objects = {
-    blade = {
-        model = blade
-        speed = 3
-    }
-}
-
 models = {
     blade = {
         mesh = "data/models/blade/tris.md2"
@@ -59,5 +52,12 @@ models = {
         scale = .04
         skin = "data/models/blade/blade.png"
     }
-
 }
+
+objects = {
+    blade = {
+        model = blade
+        speed = 3
+    }
+}
+

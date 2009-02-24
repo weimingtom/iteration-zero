@@ -32,14 +32,14 @@ class GObjectBase
 
 interface IGObject
 {
-    void setLevel(ILevel l);
+    void setLevel(ILevel level);
     void setPosition(int x,int y);
 }
 
 interface ILevel
 {
     bool isBlocked(int x, int y);
-    void loadDataset(string);
+    void loadDataset(string filename);
     void placeIObject(int x, int y, IGObject o);
 }
 

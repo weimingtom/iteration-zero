@@ -3,6 +3,7 @@ module levelstate;
 import engine;
 import derelict.sdl.sdl;
 import level;
+import levelrenderer;
 import pipeline;
 import std.stdio;
 import std.utf;
