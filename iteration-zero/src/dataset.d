@@ -188,7 +188,11 @@ class Dataset
 
     Model getModel(string name)
     {
-      return _models[name].clone();
+      if( name in _models )
+      {
+         return _models[name].clone();
+      }
+      throw new Exception("Unknown model: " ~ name);
     }
 
     Face getFace(string name) { return _faces[name]; }

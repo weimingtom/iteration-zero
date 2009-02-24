@@ -26,11 +26,11 @@
         (y-resolution *engine*)))
 
 (defun not-implemented ()
-    (show-widget (make-info-window "not implemented")))
+    (show-widget (make-info-window "Not implemented")))
 
 
 (defun show-widget (w)
-    (add *top* w) 
+    (add *top* w)
     w)
 
 (defun show-quit-button ()
@@ -101,7 +101,7 @@
             (set-size box (+ (* (length options) (+ 5 (funcall max (map get-width buttons) 10)))) 20)
             (hpack-widgets box 0 0 buttons))
         box)))
-    
+
 
 (defun make-info-window (text)
     (let ((win (make-instance C/WINDOW))

@@ -20,17 +20,15 @@
 
 
 (deftable *main-menu*
-    ("New Party"    (start *engine* "new-party-state"))
-    ("Demo Level01" (load-and-start-level "data/test/level01.dl"))
-    ("Demo Level02" (load-and-start-level "data/test/level02.dl"))
-    ("Quit"         (stop *engine*))
-)
+;;    ("New Party"    (start *engine* "new-party-state"))
+    ("Demo Level01" (load-and-start-level "data/test/level01.lisp"))
+    ("Demo Level02" (load-and-start-level "data/test/level02.lisp"))
+    ("Quit"         (stop *engine*)))
 
 (deftable *toolbar*
     ("quit" (stop *engine*))
     ("menu" (start *engine* "menu"))
-    ("test-db" (load-all-material-defs))
-)
+    ("test-db" (load-all-material-defs)))
 
 (defmacro menu-option (item options) `(eval (find ,item ,options)))
 (defvar *new-party-menu-left*
@@ -57,13 +55,6 @@
         (create-menu *main-menu* "main-menu"
             (/ (x-resolution *engine*) 2)
             (/ (y-resolution *engine*) 2))))
-
-(add-state *engine*
-    (let ((menu-state (make-instance C/GAME-STATE "menu"))
-          (main-menu (make-main-menu)))
-        (on-start menu-state (lambda () (show-widget main-menu)))
-        (on-stop  menu-state  (lambda () (hide-widget main-menu)))
-        menu-state))
 
 (defun character-selected (chara)
     (print "Character selected " (get-name chara) *ln*)
@@ -117,6 +108,13 @@
             (lambda () (map hide-widget party-widgets)))))
 
 (add-state *engine*
+    (let ((menu-state (make-instance C/GAME-STATE "menu"))
+          (main-menu (make-main-menu)))
+        (on-start menu-state (lambda () (show-widget main-menu)))
+        (on-stop  menu-state  (lambda () (hide-widget main-menu)))
+        menu-state))
+
+(add-state *engine*
     (let ((new-party-state (make-instance C/GAME-STATE "new-party-state")))
         (on-start new-party-state start-party-creation)
          new-party-state))
@@ -127,15 +125,12 @@
             (show-widget portraits)
             (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
-;;(show-quit-button)
-
-
 (show-widget
     (w/object (create-toolbar *toolbar*)
         (set-x 5)
         (set-y (- (y-resolution *engine*) 25))))
 
-(test-button)
+;; (test-button)
 (start *engine* "menu")
 
 

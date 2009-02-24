@@ -15,9 +15,9 @@
     (dotimes (dy d)
         (place-tile x (+ y dy) name)))
 
-(defmacro call-method (name object &rest args)
-    `(let ((m (get-attr ,object ,name)))
-        (funcall m (cons ,object ,args))))
+;; (defmacro call-method (name object &rest args)
+;;     `(let ((m (get-attr ,object ,name)))
+;;         (funcall m (cons ,object ,args))))
 
 ;; (place-object-by-name *level* 5 5 "blade")
 
