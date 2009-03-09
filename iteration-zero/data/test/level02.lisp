@@ -1,5 +1,4 @@
 (load-dataset *level* "data/test/micro_dataset.dl")
-(load-dataset *level* "data/test/micro_dataset.dl")
 
 (init *level* 50 50)
 (finalize *level*)

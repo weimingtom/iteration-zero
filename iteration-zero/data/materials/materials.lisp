@@ -4,8 +4,8 @@
 
 (deftable *material-defs*
     "nexmtl"
-;;     "rock"
-;;     "rrock1"
+    "rock"
+    "rrock1"
 )
 
 (defun load-all-material-defs ()

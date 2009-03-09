@@ -9,14 +9,17 @@
 ;;; 'Import modules'
 ;;;
 (load "data/scripts/basics.lisp" t)
-(load "data/scripts/layout.lisp" t)
-(load "data/scripts/ui.lisp" t)
-(load "data/scripts/db.lisp" t)
+
+(import "data/scripts/layout.lisp")
+(import "data/scripts/ui.lisp")
+(import "data/scripts/db.lisp")
+
+(import "data/scripts/game.lisp")
 
 ;;;
 ;;; Dataset descriptions are located in the data subfolders.
 ;;;
-(load "data/materials/materials.lisp" t)
+(import "data/materials/materials.lisp")
 
 
 (deftable *main-menu*
@@ -42,13 +45,6 @@
 (defvar *character-creation-steps*
     '((race (show-race-selection))))
 
-(defun load-and-start-level (filename)
-    (load (get-state *engine* "level-state") filename)
-    (start *engine* "level-state"))
-
-(defmacro bind1st (fun a)
-    `(lambda (&rest args)
-        (funcall ,fun (cons ,a args))))
 
 (defun make-main-menu ()
     (center-on-screen
@@ -119,11 +115,6 @@
         (on-start new-party-state start-party-creation)
          new-party-state))
 
-(on-start (get-state *engine* "level-state")
-    (lambda ()
-        (let ((portraits (make-party-portraits-widget *party*)))
-            (show-widget portraits)
-            (on-stop (get-state *engine* "level-state") (bind1st hide-widget portraits)))))
 
 (show-widget
     (w/object (create-toolbar *toolbar*)

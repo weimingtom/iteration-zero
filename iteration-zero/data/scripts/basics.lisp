@@ -16,6 +16,7 @@
 (unless (issym (gensym)) (error))
 (when (eq (gensym) (gensym)) (error))
 
+;;; "<-" generates an unbound method.
 (set <- gencall)
 
 
@@ -24,7 +25,8 @@
 ;;;
 
 (defmacro w/object (object &rest forms)
-    (let ((obj (gensym "w/object")) (form (gensym "w/object")))
+    (let ((obj (gensym "w/object"))
+          (form (gensym "w/object")))
         `(let ((,obj ,object))
             (dolist (,form ',forms)
 ;;                 (print "W/OBJECT:" ,obj "-->" ,form *ln*)
@@ -33,6 +35,21 @@
 
 (defmacro deftable (name &rest table)
     `(defvar ,name ',table))
+
+(defmacro bind1st (fun a)
+    `(lambda (&rest args)
+        (funcall ,fun (cons ,a args))))
+
+;;;
+;;; Pseudo import
+;;;
+
+(defvar *loaded-files* '())
+
+(defun import (filename)
+	(unless (member filename *loaded-files*)
+		(push! filename *loaded-files*)
+		(load filename t)))
 
 ;;;
 ;;; List processing macros

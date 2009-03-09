@@ -89,7 +89,7 @@ protected:
     }
 
     mixin BindClass!("C/MODEL");
-    mixin BindMethods!(getName);
+    mixin BindMethods!(getName,isAnimated,setScale,getScale);
 }
 
 
