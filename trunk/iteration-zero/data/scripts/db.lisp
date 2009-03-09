@@ -35,9 +35,7 @@
 
     ;; Add list (name material)
     (dolist (mat materials)
-        (apply (bind1st add-material *db*)
-             mat))
-)
+        (apply (bind1st add-material *db*) mat)))
 
 
 

@@ -36,6 +36,24 @@
             (set x (+ x maxw 5)))
         box))
 
+(defun vbox-pack (box widgets)
+    (print "vboxbapck:" widgets *ln*)
+    (vpack-widgets box 0 0 widgets)
+    (when widgets
+        (set-height box
+            (* (length widgets) (+ 5 (apply max (map (<- get-height) widgets)))))
+        (set-width  box
+            (+ 5 (apply max (map (<- get-width)  widgets))))))
+
+(defun hbox-pack (box widgets)
+    (print "hboxbapck:" widgets *ln*)
+    (hpack-widgets box 0 0 widgets)
+    (when widgets
+        (set-width box
+            (* (length widgets) (+ 5 (apply max (map (<- get-width) widgets)))))
+        (set-height  box
+            (+ 5 (apply max (map (<- get-height)  widgets))))))
+
 (defmacro button (init-forms)
     `(init-widget
         (w/object (make-instance C/BUTTON)
@@ -44,17 +62,6 @@
             (set-position 0 0)
             (set-size 40 20))
          ',init-forms))
-
-(defun vbox-pack (box widgets)
-    (print "vboxbapck:" widgets *ln*)
-    (vpack-widgets box 0 0 widgets)
-    (when widgets
-        (set-height box 
-            (* (length widgets) (+ 5 (apply max (map (<- get-height) widgets)))))
-        (set-width  box 
-            (+ 5 (apply max (map (<- get-width)  widgets))))))
-
-(defun prx (x) (print "PRX: " x *ln*) x)
 
 (defmacro vbox (init-forms &rest subwidgets)
     `(init-widget
@@ -65,21 +72,25 @@
         ',init-forms
         vbox-pack (map eval ',subwidgets)))
 
+(defmacro hbox (init-forms &rest subwidgets)
+    `(init-widget
+        (w/object (make-instance C/CONTAINER)
+            (set-id (tostring (incput *widget-counter*)))
+            (set-position 500 50)
+            (set-size 40 20))
+        ',init-forms
+        hbox-pack (map eval ',subwidgets)))
+
 ;;
 ;; Example of the planned UI definition.
 ;;
 
 (defun test-button ()
-    (print "TTTTTTTTTT" *ln*)
     (show-widget
         (vbox ((set-position 300 50))
             (button
                 ((set-caption "Some wonky name")
-                (set-size 400 40)
-                (print "<<<<<<<<<<<<<" *ln*)))
+                 (set-size 400 40)))
             (button
                 ((set-caption "Some wonky name")
-                (print "<<<<<<<<<<<<<" *ln*)
-                (set-size 400 40))))
-
-))
+                 (set-size 400 40))))))

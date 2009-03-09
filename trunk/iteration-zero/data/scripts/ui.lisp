@@ -35,7 +35,7 @@
 
 (defun show-quit-button ()
     (show-widget
-        (let ((quit-button (create-button "quit" 100 40 (lambda (ev) (stop *engine*)))))
+        (let ((quit-button (create-button "quit" 100 40 (lambda (event) (stop *engine*)))))
             (set-position quit-button (- (x-resolution *engine*) 105) 5)
             quit-button)))
 
@@ -101,7 +101,6 @@
             (set-size box (+ (* (length options) (+ 5 (funcall max (map get-width buttons) 10)))) 20)
             (hpack-widgets box 0 0 buttons))
         box)))
-
 
 (defun make-info-window (text)
     (let ((win (make-instance C/WINDOW))
