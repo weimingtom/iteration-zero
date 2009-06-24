@@ -29,20 +29,28 @@
          (funcall (get-method object ',function-name) (cons object args))))
 (set <- gencall)
 
+(defmacro call (function-name object &rest args)
+   `(funcall (get-method ,object ',function-name) (cons ,object ,args)))
+;; (set b (create-object))
+;; (set-attr b 'print (lambda (self) (write *std-out* "Hello!" *ln*)))
+;; (call print b)
+(set . call)
+
 (defmacro defvar (name &optional initial-value)
   `(unless (boundp ',name)
       (set! ,name ,initial-value)))
 
 (defvar *gensym-counter* 0)
-
 (defmacro map (fun l)
     (let ((stack (gensym)) (item (gensym)))
     `(let ((,stack '()))
         (dolist (,item ,l (reverse ,stack))
             (set ,stack (cons (,fun ,item) ,stack))))))
 
-(defun gensym (&optional(prefix "gensym"))
+(defun gensym (&optional (prefix "gensym"))
     (symbol (join prefix ":" (tostring (incput *gensym-counter*)))))
+
+(set! fn lambda)
 
 (defun 1+ (a) 
     "(1+ <num>); return <num> increased by 1."

@@ -261,7 +261,7 @@ template CheckArgument(int n, string checkfun)
 {
     const CheckArgument = 
       "if( !" ~ checkfun ~ "("~ CArg!(n) ~") ) { "
-        ~ "throw new ArgumentState(\"Excepted " ~ checkfun ~ "\",cell.pos);"
+        ~ "throw new ArgumentState(\"Expected " ~ checkfun ~ "\",cell.pos);"
         ~ "}";//"
 }
 
@@ -269,7 +269,7 @@ template CheckArgumentAlternatives(int n, string checkfun1, string checkfun2)
 {
     const CheckArgumentAlternatives = 
       "if( !" ~ checkfun1 ~ "("~ CArg!(n) ~")  && !" ~ checkfun2 ~ "("~ CArg!(n) ~") ) { "
-        ~ "throw new ArgumentState(\"Excepted " ~ checkfun1 ~ " or " ~ checkfun2 ~ "\",cell.pos);"
+        ~ "throw new ArgumentState(\"Expected " ~ checkfun1 ~ " or " ~ checkfun2 ~ "\",cell.pos);"
         ~ "}";//"
 }
 

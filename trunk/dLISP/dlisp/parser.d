@@ -106,8 +106,8 @@ public template Parser() {
           }
           nextch();
           return newStr(tmp, _pos);
-        } else { 
-          while (inPattern(ch, "a-zA-Z0-9-") || inPattern(ch, "_.!@$&+*%/><='~^")) {
+        } else {
+          while(inPattern(ch, "a-zA-Z0-9-") || inPattern(ch, "_:!@$&+*%/><='~^") || ch == '.') {
             tmp ~= ch;
             nextch();
           }
@@ -115,6 +115,8 @@ public template Parser() {
             throw new ParseState("Unexpected character in parse stream", pos);
           }
           try {
+            if( !inPattern(tmp[0], "0-9+-") )
+               return newSym(tmp,_pos);
             if (find(tmp, ".") == -1) {
               return newInt(toInt(tmp), _pos);
             } else {
@@ -140,18 +142,18 @@ public template Parser() {
             Cell* cdr = null;
             skipWhite(true);
             
-            if (ch == '.') {
-              cdr = parseToken();
-              skipWhite(true);
-              if (ch != ')') {
-                throw new ParseState("End of list expected", pos);
-              } else {
-                if (lookahead() != char.init)
-                  nextch();          
-              }
-            } else {
+//             if (ch == '.') {
+//               cdr = parseToken();
+//               skipWhite(true);
+//               if (ch != ')') {
+//                 throw new ParseState("End of list expected", pos);
+//               } else {
+//                 if (lookahead() != char.init)
+//                   nextch();
+//               }
+//             } else {
               cdr = parseList(true);
-            }
+//             }
             return newCons(car, cdr);
           }
         }

@@ -28,7 +28,7 @@ private {
   import std.string;
   import std.stream;
   import std.boxer;
-  
+//     import std.stdio;
   import dlisp.types;
   import dlisp.states;
 }
@@ -40,6 +40,7 @@ public {
   Cell* newSym(char[] name, bool nilsym = false) {
     atomcount++;
     name = toupper(name);
+//     writefln("New symbol:",name);
     if (name != "NIL" || nilsym) {
       Cell* cell = new Cell;
       cell.cellType = CellType.ctSYM;
