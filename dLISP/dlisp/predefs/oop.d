@@ -39,7 +39,7 @@ public {
     Cell* evalCreateObject(IDLisp dlisp, Cell* cell)
     {
         if( cell.cdr )
-          return newObject("Unnamed object",dlisp.eval(cell.cdr));
+          return newObject("Unnamed object",dlisp.eval(cell.cdr.car));
         return newObject("Unnamed object");
     }
 
@@ -95,9 +95,9 @@ public {
 }
 
 public IEnvironment addToEnvironment(IEnvironment environment) {
-    environment.bindPredef("get-attr", &evalGetAttr, "(GET-ATTR <object> <sym>); Return attr of <objects>");
-    environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> <sym> <value>); Set attr of <objects>");
-    environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> <sym>); Return whether <objects> has attr");
+    environment.bindPredef("get-attr", &evalGetAttr, "(GET-ATTR <object> <sym>); Return attr of <object>");
+    environment.bindPredef("set-attr", &evalSetAttr, "(SET-ATTR <object> <sym> <value>); Set attr of <object>");
+    environment.bindPredef("has-attr", &evalHasAttr, "(HAS-ATTR <object> <sym>); Return whether <object> has attr");
 
     environment.bindPredef("create-object", &evalCreateObject, "(CREATE-OBJECT [<superclass>]); Creates a new Object.");
     environment.bindPredef("get-method", &evalGetMethod, "(GET-METHOD <object> <sym>); Get unbound method.");

@@ -195,6 +195,9 @@ public {
       docs = "";
       fbody = cell.cdr.cdr.cdr;
     }
+    if( args[0].name[0] == ':' )
+      throw new TypeState("""Can't bind keyword symbol '""" ~ args[0].name ~ """'""",cell.pos);
+
     cell = newFunc(fbody, args[1], docs, args[0].name);
     if( dlisp.environment.context.master )
        cell.context = dlisp.environment.context.dup;

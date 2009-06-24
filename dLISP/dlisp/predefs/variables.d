@@ -50,6 +50,8 @@ public {
     for(int i = 0; i < args.length; i += 2) {
       char[] name = args[i].name;
       cell = dlisp.eval(args[i + 1]);
+      if( name[0] == ':' )
+         throw new TypeState("""Can't bind keyword symbol '""" ~ name ~ """'""",cell.pos);
       dlisp.environment.bind(name,cell);
     }
     return cell;
@@ -60,6 +62,8 @@ public {
     for(int i = 0; i < args.length; i += 2) {
       char[] name = args[i].name;
       cell = dlisp.eval(args[i + 1]);
+      if( name[0] == ':' )
+         throw new TypeState("""Can't bind keyword symbol '""" ~ name ~ """'""",cell.pos);
       dlisp.environment.globals.bind(name,cell);
     }
     return cell;
@@ -127,7 +131,7 @@ public {
 public IEnvironment addToEnvironment(IEnvironment environment) {
   
   environment.bindPredef("isset", &evalIsSet, "(ISSET <sym> .. ); Returns true if all <sym>s are set to a value.");
-  environment.bindPredef("set", &evalSet, "(SET <sym> <cons>); Sets global symbol <sym> to <cons>.", true);
+  environment.bindPredef("set", &evalSet, "(SET <sym> <cons>); Sets symbol <sym> to <cons>.", true);
   environment.bindPredef("set!", &evalSetGlobal, "(SET! <sym> <cons>); Sets global symbol <sym> to <cons>.", true);
   environment.bindPredef("put", &evalPut, "(PUT <pos> <cons>); Place sym at pos.", true);
   environment.bindPredef("unset", &evalUnset, "(UNSET <sym> ...); Unset symbol value, returns last symbols value or NIL if none is set.");

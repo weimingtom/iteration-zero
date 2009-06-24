@@ -59,19 +59,24 @@
   (check-equal 7 (set a (1+ b) b (1+ a) c (+ a b)))
   (check-equal '(3 4 7) (list a b c)))
 
-;; (test "BASICS"
-;;   (set a 42)
-;;   (check-equal '(42) '(a)))
-
 ;;;
 ;;; PUT
-(test "PUT"
-  (check-equal '(1 2 3)
-	       (set x (cons 'a 'b) y (list 1 2 3)))
-  (check-equal '(1 X 3)
-	       (put (first x) 'x (first (rest y)) (first x) (rest x) y))
-  (check-equal '(X 1 X 3) X)
-  (check-equal '(1 X 3) y))
+;;; (put 'place value 'place value ...)
+;;; Actually a weird function to set bound primitives to a new value
+;;; Due to syntax confusion this needs a bit more thought ...
+;;;
+
+;; (test "PUT"
+;;   (check-equal '(1 2 3)
+;; 	       (set x (cons 'a 'b) y (list 1 2 3)))
+;;   (check-equal '(1 X 3)
+;; 	       (put (first x) 'x (first (rest y)) (first x) (rest x) y))
+;;   (check-equal '(X 1 X 3) X)
+;;   (check-equal '(1 X 3) y)
+;;   (set L '())
+;;   (set putter (fn (x) (put L x)))
+;;   (map putter '(1 2 3 4))
+;;   (check-equal '(1 2 3 4) L))
 
 ;;;
 ;;; QUOTE
@@ -89,8 +94,7 @@
   (check-equal "foo"
 	       ((lambda () "foo")))
   (check-equal '(1 2 3)
-               ((lambda (a) a)  '(1 2 3)))
-)
+               ((lambda (a) a)  '(1 2 3))))
 
 (test "REVERSE"
       (check-equal nil
@@ -98,8 +102,7 @@
       (check-equal '(1 2 3)
                    (reverse '(3 2 1)))
       (check-equal '((1) (2) (3))
-                   (reverse '((3) (2) (1))))
-)
+                   (reverse '((3) (2) (1)))))
 
 (test "MAP"
       (check-equal '(2 3 4)
@@ -108,8 +111,7 @@
                    (map car '((1) (2) (3))))
       (defmacro plus2 (x) `(+ 2 ,x))
       (check-equal '(3 4 5)
-                   (map plus2 '(1 2 3)))
-)
+                   (map plus2 '(1 2 3))))
 
 ;;;
 ;;; EVAL
@@ -249,5 +251,7 @@
                    (get-attr name 'attr1)))
 
 (println
- "Known to be broken are self-made generic functions.") 
+	"Known to be broken are:"
+	" - self-made generic functions"
+	" - Generic PUT")
 

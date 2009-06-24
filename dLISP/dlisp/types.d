@@ -107,7 +107,9 @@ public {
 
 class Context {
     private Cell*[string] _locals;
+
     public Context master;
+    public Context parent;
 
     void refresh()
     {
@@ -121,6 +123,7 @@ class Context {
        foreach(string key, Cell* cell; _locals)
 	  copy._locals[key] = cell;
        copy.master = master;
+       copy.parent = this;
        return copy;
     }
 

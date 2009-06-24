@@ -95,6 +95,8 @@ public template Evaluator() {
             return temp;
           }
         } else {
+          if( cell.name.length && cell.name[0] == ':')
+            return cell;
           //writefln("XXX:", environment.globals.isBound(cell.name));
           throw new UnboundSymbolState("Unbound symbol: " ~ cell.name, cell.pos); 
         }
@@ -131,7 +133,6 @@ public template Evaluator() {
                 args = args.cdr;
                 isrest = args.car.name;
               } else {
-//                 char[] name_; //KB
                 if (params) {
                   if (ismacro) {
                     cell = params.car;
