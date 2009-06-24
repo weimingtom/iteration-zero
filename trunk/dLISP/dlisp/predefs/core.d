@@ -138,7 +138,7 @@ public {
     } else if (isStream(args[0])) {
       return dlisp.parse(args[0].streamValue);
     } else {
-      throw new ArgumentState("Could not evaluate argument as: s or t", args[0].pos);
+      throw new ArgumentState("Could not evaluate argument as: string or stream", args[0].pos);
     }
   }
   

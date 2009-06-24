@@ -39,11 +39,11 @@ private {
   import dlisp.parser;
 }
 
-const string VERSION = "0.100.0";
+const string VERSION = "0.100.1";
 
 const int    VERSION_MAJOR = 0;
 const int    VERSION_MINOR = 100;
-const int    VERSION_PATCH = 0;
+const int    VERSION_PATCH = 1;
 
 
 public class DLisp : IDLisp {
