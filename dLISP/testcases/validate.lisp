@@ -233,8 +233,7 @@
   (check-equal 99
                (dotimes (k 10 (- 100 1)) k))
   (check-equal 187
-               (dotimes (k 10 187) k))
-)
+               (dotimes (k 10 187) k)))
 
 
 ;;;

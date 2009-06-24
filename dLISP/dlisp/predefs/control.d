@@ -112,7 +112,7 @@ public {
         ret = dlisp.eval(args[i]);
       }
     } catch (ReturnFromState rfe) {
-      if (rfe.block == args[0].name) {
+      if (rfe.block == args[0].name || rfe.block is null) {
         ret = rfe.value;
       } else {
         throw rfe;
